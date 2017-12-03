@@ -1,2 +1,1 @@
-# Snake-integer
-Snake integer c++
+Snake_Integer1.0
