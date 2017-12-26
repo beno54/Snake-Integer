@@ -1,15 +1,23 @@
 #include <SFML/Graphics.hpp>
 
+#include "Grille.h"
+
 int main()
 {
     // Create the main window
     sf::RenderWindow app(sf::VideoMode(800, 600), "SFML window");
 
-    // Load a sprite to display
-    sf::Texture texture;
-    if (!texture.loadFromFile("cb.bmp"))
-        return EXIT_FAILURE;
-    sf::Sprite sprite(texture);
+
+    sf::Font font;
+    try
+    {
+        font.loadFromFile("text/calibri.ttf");
+    }catch(exception e)
+    {
+        cout << "PAS LOAD" << endl;
+    }
+
+    Grille* ma_grille = new Grille(Vector2f (250, 100), 350);
 
 	// Start the game loop
     while (app.isOpen())
@@ -27,11 +35,13 @@ int main()
         app.clear();
 
         // Draw the sprite
-        app.draw(sprite);
+        ma_grille->draw_cases(app);
 
         // Update the window
         app.display();
     }
+
+    //delete ma_grille;
 
     return EXIT_SUCCESS;
 }
