@@ -1,29 +1,32 @@
-#include <SFML/Graphics.hpp>
-
+#include "EventListenner.h"  // Inclut SFML/Graphics
 #include "Grille.h"
 
 int main()
 {
     // Create the main window
     sf::RenderWindow app(sf::VideoMode(800, 600), "SFML window");
-
-
     sf::Font font;
+
+
     try
     {
         font.loadFromFile("text/calibri.ttf");
-    }catch(exception e)
+    }
+    catch(exception e)
     {
         cout << "PAS LOAD" << endl;
     }
 
     Grille* ma_grille = new Grille(Vector2f (250, 100), 350);
+    EventListenner Listenner (&app,ma_grille);
 
 	// Start the game loop
     while (app.isOpen())
     {
+
         // Process events
         sf::Event event;
+        Listenner.listen();
         while (app.pollEvent(event))
         {
             // Close window : exit
@@ -42,6 +45,7 @@ int main()
     }
 
     //delete ma_grille;
+    delete (ma_grille);
 
     return EXIT_SUCCESS;
 }

@@ -16,19 +16,52 @@ Grille::Grille(Vector2f posi, int taille)
     {
         posi_case.x = posi.x + (i%5)*taille_case;
         posi_case.y = posi.y + (i/5)*taille_case;
-        Case* new_case = new Case(posi_case, taille_case, font, i);
+        Case* new_case = new Case(posi_case, taille_case, font, numG.nexNum(),(i+1));
         cases.push_back(new_case);
     }
 }
 
 Grille::~Grille()
 {
-    //dtor
+    for (int i=0;i<cases.size();i++)
+    {
+        delete cases[i];
+    }
 }
 
-Case* Grille::get_Case(Vector2i posi)
+Case* Grille::get_Case(Vector2f posi)
 {
+    int i = 0 ;
+    for (; i < cases.size();i++)
+    {
+        if (cases[i]->get_background().getGlobalBounds().contains(posi))
+        {
+            break;
+        }
+    }
 
+    return cases[i] ;
+}
+
+Case* Grille::get_Case(Vector2f posi,Case *caseSelected)
+{
+    int i  = (caseSelected->get_id())-1 ;
+    vector<int> idVoisin;
+
+    if(!((i-1)<0))idVoisin.push_back(i-1);
+    if(!((i+1)>24))idVoisin.push_back(i+1);
+    if(!((i-5)<0))idVoisin.push_back(i-5);
+    if(!((i+5)>24))idVoisin.push_back(i+5);
+
+    for (int e=0;e<idVoisin.size();e++)
+    {
+        if (cases[idVoisin[e]]->get_background().getGlobalBounds().contains(posi))
+        {
+            return cases[idVoisin[e]] ;
+        }
+    }
+
+    return 0 ;
 }
 
 void Grille::draw_cases(RenderWindow &win)
@@ -39,3 +72,4 @@ void Grille::draw_cases(RenderWindow &win)
         win.draw((cases[i]->get_text()));
     }
 }
+

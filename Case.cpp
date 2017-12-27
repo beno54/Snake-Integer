@@ -1,11 +1,11 @@
 #include "Case.h"
 
-Case::Case(Vector2f posi, int taille, Font& font, int valeur)
+Case::Case(Vector2f posi, int taille, Font& font, int valeur, int id )
 {
     this->posi_centre = posi;
     this->taille = taille;
     this->valeur = valeur;
-
+    this->id = id ;
     text.setFont(font);
     ostringstream ss;
     ss << valeur;
@@ -57,4 +57,9 @@ Text Case::get_text()
 RectangleShape Case::get_background()
 {
     return background;
+}
+
+int Case::get_id()
+{
+    return id ;
 }
