@@ -12,7 +12,7 @@ class EventListenner
 
     private:
         sf::RenderWindow *win;
-        vector<Case*>caseSelected;
+        vector<Case*>ptr_casesSelected;
         Grille *grid;
         bool isLeftPressed;
 };

@@ -21,6 +21,7 @@ class Case
         Text get_text();
         RectangleShape get_background();
         void draw();
+        void color_selected(bool isSelected);
         int get_id();
     protected:
         Vector2f get_posi();

@@ -12,13 +12,15 @@ class Grille
         Case* get_Case(Vector2f posi);
         Case* get_Case(Vector2f posi,Case *caseSelected);
         void draw_cases(RenderWindow &win);
+        NumGenerator* get_numG();
     protected:
     private:
         vector<Case*> cases;
         Font font;
         int taille;
         Vector2f posi;
-        NumGenerator numG;
+        NumGenerator* numG;
+        //Case* case_score;
 };
 
 #endif // GRILLE_H

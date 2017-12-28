@@ -16,52 +16,72 @@ EventListenner::~EventListenner()
 void EventListenner::listen ()
 {
 
-
     if (Mouse::isButtonPressed(Mouse::Left))
     {
         isLeftPressed = true ;
         bool CaseExist = false ;
         Vector2i localPosition = Mouse::getPosition(*win);
-        Case *tmpCase;
+        Case *casePointed;
         //Ajout dans le tableau s'il est vide (pas besoi nde vérifier que la valeur s'y trouve déjà)
-        if (!caseSelected.size())
+        if (!ptr_casesSelected.size())
         {
             cout <<" vide " << endl ;
-            tmpCase = grid->get_Case(Vector2f(localPosition));
-            if (tmpCase)
+            casePointed = grid->get_Case(Vector2f(localPosition));
+            if (casePointed)
             {
-                caseSelected.push_back(tmpCase);
-                cout << "case ajoutée " <<  tmpCase->get_id() << endl ;
+                ptr_casesSelected.push_back(casePointed);
+                casePointed->color_selected(true);
+                cout << "case ajoutée " <<  casePointed->get_id() << endl ;
             }
         }
         else
+        {
+            casePointed = grid->get_Case(Vector2f(localPosition),ptr_casesSelected.back());
+            if (casePointed)
             {
-
-                tmpCase = grid->get_Case(Vector2f(localPosition),caseSelected.back());
-                if (tmpCase)
+                for (int e = 0;e<ptr_casesSelected.size();e++)
                 {
-
-                    for (int e = 0;e<caseSelected.size();e++)
+                    if (ptr_casesSelected[e]->get_id()== casePointed->get_id())
                     {
-                        if (caseSelected[e]->get_id()== tmpCase->get_id())
-                        {
-                            CaseExist = true;
-                        }
+                        CaseExist = true;
+                        cout << "voisin touched " << endl ;
+                        //cout << "voisin selected"<< caseSelected.back()->get_id() << endl;
                     }
-                    if (!CaseExist)
+                }
+                if (!CaseExist && (casePointed->get_value() == ptr_casesSelected[0]->get_value()))
+                {
+                    ptr_casesSelected.push_back(casePointed);
+                    casePointed->color_selected(true);
+                    cout << "case ajoutée " <<  casePointed->get_id() << endl;
+                }
+                else if (ptr_casesSelected.size()-1 > 0)
+                {
+                    if (casePointed->get_id()== ptr_casesSelected[ptr_casesSelected.size()-2]->get_id())
                     {
-                        caseSelected.push_back(tmpCase);
-                        cout << "case ajoutée " <<  tmpCase->get_id() << endl ;
+                        cout << "Retour arriere" << endl;
+                        ptr_casesSelected.back()->color_selected(false);
+                        ptr_casesSelected.pop_back();
                     }
-
                 }
             }
+        }
     }
 
     if (isLeftPressed && !Mouse::isButtonPressed(Mouse::Left))
     {
+        int score = 0;
         isLeftPressed = false ;
-        cout<<" msg" <<endl;
-        caseSelected.clear();
+
+        for (int e = 0;e<ptr_casesSelected.size();e++)
+        {
+            ptr_casesSelected[e]->color_selected(false);
+            score += ptr_casesSelected[e]->get_value();
+            ptr_casesSelected[e]->set_value(grid->get_numG()->nexNum());
+        }
+
+        ptr_casesSelected.back()->set_value(score);
+
+        cout<<" unselected" <<endl;
+        ptr_casesSelected.clear();
     }
 }

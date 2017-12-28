@@ -10,6 +10,7 @@ Case::Case(Vector2f posi, int taille, Font& font, int valeur, int id )
     ostringstream ss;
     ss << valeur;
     text.setString(ss.str());
+    cout << ss.str() << endl;
 
     sf::FloatRect textRect = text.getLocalBounds();
 
@@ -20,7 +21,7 @@ Case::Case(Vector2f posi, int taille, Font& font, int valeur, int id )
     text.setColor(Color::Blue);
     background.setSize(Vector2f(taille, taille));
     background.setPosition(Vector2f(posi.x, posi.y));
-    background.setOutlineThickness(1);
+    background.setOutlineThickness(-1);
     background.setOutlineColor(Color::Blue);
 }
 
@@ -32,6 +33,14 @@ Case::~Case()
 void Case::set_value(int new_value)
 {
     valeur = new_value;
+    ostringstream ss;
+    ss << valeur;
+    text.setString(ss.str());
+
+    sf::FloatRect textRect = text.getLocalBounds();
+    text.setPosition(sf::Vector2f(posi_centre.x + taille/2.0f, posi_centre.y + taille/2.0f));
+    text.setOrigin(textRect.left + textRect.width/2.0f,
+               textRect.top  + textRect.height/2.0f);
 }
 
 int Case::get_value()
@@ -57,6 +66,18 @@ Text Case::get_text()
 RectangleShape Case::get_background()
 {
     return background;
+}
+
+void Case::color_selected(bool isSelected)
+{
+    if (isSelected)
+    {
+        background.setFillColor(Color::Red);
+    }
+    else
+    {
+        background.setFillColor(Color::White);
+    }
 }
 
 int Case::get_id()
