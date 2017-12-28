@@ -17,7 +17,7 @@ int main()
         cout << "PAS LOAD" << endl;
     }
 
-    Grille* ma_grille = new Grille(Vector2f (250, 100), 350);
+    Grille* ma_grille = new Grille(Vector2f (250, 100), 450);
     EventListenner Listenner (&app,ma_grille);
 
 	// Start the game loop

@@ -8,12 +8,12 @@ Grille::Grille(Vector2f posi, int taille)
     int taille_case = taille/5;
     numG = new NumGenerator();
 
-    case_score = new Case(Vector2f(0, 50), 70, font, 10, 30);
-
     if (!font.loadFromFile("text/calibri.ttf"))
     {
         cout << "NOOOOOOOOOO" << endl;
     }
+
+    case_score = new Case(Vector2f(800, 200), taille_case, font, 0, 30);
 
     for (int i = 0; i < 25; i++)
     {
@@ -41,22 +41,39 @@ Case* Grille::get_Case(Vector2f posi)
     {
         if (cases[i]->get_background().getGlobalBounds().contains(posi))
         {
-            break;
+            return cases[i] ;
         }
     }
 
-    return cases[i] ;
+    return NULL;
 }
 
 Case* Grille::get_Case(Vector2f posi,Case *caseSelected)
 {
-    int i  = (caseSelected->get_id())-1 ;
+    int i  = (caseSelected->get_id()) ;
     vector<int> idVoisin;
 
-    if(!((i-1)<0))idVoisin.push_back(i-1);
-    if(!((i+1)>24))idVoisin.push_back(i+1);
-    if(!((i-5)<0))idVoisin.push_back(i-5);
-    if(!((i+5)>24))idVoisin.push_back(i+5);
+    //Attention aux indices, indice dans le tab = id - 1
+    //si pas case bord gauche, alors on peut regarder le voisin de gauche
+    if (i%5 != 1)
+    {
+        idVoisin.push_back(i-2);
+    }
+    //si pas case bord droite, alors on peut regarder le voisin de droite
+    if (i%5 != 0)
+    {
+        idVoisin.push_back(i);
+    }
+    //si pas case bord haut, alors on peut regarder le voisin de haut
+    if (!(i < 5))
+    {
+        idVoisin.push_back(i-6);
+    }
+    //si pas case bord bas, alors on peut regarder le voisin de bas
+    if (!(i >= 20))
+    {
+         idVoisin.push_back(i+4);
+    }
 
     for (int e=0;e<idVoisin.size();e++)
     {
@@ -66,7 +83,7 @@ Case* Grille::get_Case(Vector2f posi,Case *caseSelected)
         }
     }
 
-    return 0 ;
+    return NULL ;
 }
 
 void Grille::draw_cases(RenderWindow &win)
@@ -78,11 +95,15 @@ void Grille::draw_cases(RenderWindow &win)
     }
     win.draw(case_score->get_background());
     win.draw(case_score->get_text());
-    //cout << "heloo" << case_score->get_text().getString().toAnsiString() << endl;
 }
 
 NumGenerator* Grille::get_numG()
 {
     return numG;
+}
+
+void Grille::update_score(int valeur)
+{
+    case_score->update_value(valeur);
 }
 

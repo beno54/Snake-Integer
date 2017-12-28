@@ -13,6 +13,7 @@ class Grille
         Case* get_Case(Vector2f posi,Case *caseSelected);
         void draw_cases(RenderWindow &win);
         NumGenerator* get_numG();
+        void update_score(int valeur);
     protected:
     private:
         vector<Case*> cases;
