@@ -65,14 +65,14 @@ Case* Grille::get_Case(Vector2f posi,Case *caseSelected)
         idVoisin.push_back(i);
     }
     //si pas case bord haut, alors on peut regarder le voisin de haut
-    if (!(i < 5))
+    if (!(i <= 5))
     {
         idVoisin.push_back(i-6);
     }
     //si pas case bord bas, alors on peut regarder le voisin de bas
     if (!(i >= 20))
     {
-         idVoisin.push_back(i+4);
+        idVoisin.push_back(i+4);
     }
 
     for (int e=0;e<idVoisin.size();e++)
