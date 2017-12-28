@@ -7,7 +7,6 @@ int main()
     sf::RenderWindow app(sf::VideoMode(1200, 800), "SFML window");
     sf::Font font;
 
-
     try
     {
         font.loadFromFile("text/calibri.ttf");
@@ -35,7 +34,7 @@ int main()
         }
 
         // Clear screen
-        app.clear();
+        app.clear(sf::Color(224, 224, 224));
 
         // Draw the sprite
         ma_grille->draw_cases(app);
