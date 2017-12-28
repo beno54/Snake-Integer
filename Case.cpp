@@ -10,7 +10,6 @@ Case::Case(Vector2f posi, int taille, Font& font, int valeur, int id )
     ostringstream ss;
     ss << valeur;
     text.setString(ss.str());
-    cout << ss.str() << endl;
 
     sf::FloatRect textRect = text.getLocalBounds();
 

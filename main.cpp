@@ -4,7 +4,7 @@
 int main()
 {
     // Create the main window
-    sf::RenderWindow app(sf::VideoMode(800, 600), "SFML window");
+    sf::RenderWindow app(sf::VideoMode(1200, 800), "SFML window");
     sf::Font font;
 
 

@@ -20,7 +20,7 @@ class Grille
         int taille;
         Vector2f posi;
         NumGenerator* numG;
-        //Case* case_score;
+        Case* case_score;
 };
 
 #endif // GRILLE_H

@@ -18,6 +18,7 @@ void EventListenner::listen ()
 
     if (Mouse::isButtonPressed(Mouse::Left))
     {
+        cout << "hello" << endl;
         isLeftPressed = true ;
         bool CaseExist = false ;
         Vector2i localPosition = Mouse::getPosition(*win);
@@ -67,7 +68,7 @@ void EventListenner::listen ()
         }
     }
 
-    if (isLeftPressed && !Mouse::isButtonPressed(Mouse::Left))
+    if (isLeftPressed && !Mouse::isButtonPressed(Mouse::Left) && ptr_casesSelected.size() != 0)
     {
         int score = 0;
         isLeftPressed = false ;
@@ -78,7 +79,6 @@ void EventListenner::listen ()
             score += ptr_casesSelected[e]->get_value();
             ptr_casesSelected[e]->set_value(grid->get_numG()->nexNum());
         }
-
         ptr_casesSelected.back()->set_value(score);
 
         cout<<" unselected" <<endl;

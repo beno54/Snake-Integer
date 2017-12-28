@@ -8,7 +8,7 @@ Grille::Grille(Vector2f posi, int taille)
     int taille_case = taille/5;
     numG = new NumGenerator();
 
-    //case_score = new Case(Vector2f(0, 50), 50, font, 10, 30);
+    case_score = new Case(Vector2f(0, 50), 70, font, 10, 30);
 
     if (!font.loadFromFile("text/calibri.ttf"))
     {
@@ -31,7 +31,7 @@ Grille::~Grille()
         delete cases[i];
     }
     delete numG;
-    //delete case_score;
+    delete case_score;
 }
 
 Case* Grille::get_Case(Vector2f posi)
@@ -76,8 +76,9 @@ void Grille::draw_cases(RenderWindow &win)
         win.draw((cases[i]->get_background()));
         win.draw((cases[i]->get_text()));
     }
-//    win.draw(case_score->get_background());
-//    win.draw(case_score->get_text());
+    win.draw(case_score->get_background());
+    win.draw(case_score->get_text());
+    //cout << "heloo" << case_score->get_text().getString().toAnsiString() << endl;
 }
 
 NumGenerator* Grille::get_numG()
