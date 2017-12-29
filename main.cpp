@@ -13,19 +13,21 @@ int main()
     }
     catch(exception e)
     {
-        cout << "PAS LOAD" << endl;
+        cout << "Police de texte non chargee." << endl;
     }
 
+    //on crée la grille et le EventListener
     Grille* ma_grille = new Grille(Vector2f (250, 100), 450);
     EventListenner Listenner (&app,ma_grille);
 
 	// Start the game loop
     while (app.isOpen())
     {
-
-        // Process events
         sf::Event event;
+
+        //on détecte le clique de souris et on fait les actions correspondantes
         Listenner.listen();
+
         while (app.pollEvent(event))
         {
             // Close window : exit
@@ -36,7 +38,7 @@ int main()
         // Clear screen
         app.clear(sf::Color(242, 223, 202));
 
-        // Draw the sprite
+        // Draw the grille + cases + score
         ma_grille->draw_cases(app);
 
         // Update the window
