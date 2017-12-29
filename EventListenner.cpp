@@ -2,9 +2,9 @@
 
 using namespace sf;
 /*
-Constructeur qui reçoit la grille de jeu et la fenêtre en entrée.
-Cet objet sert à gérer les évènement dû à la souris sur les différents
-objets présents dans la fenêtres
+Constructeur qui reï¿½oit la grille de jeu et la fenï¿½tre en entrï¿½e.
+Cet objet sert ï¿½ gï¿½rer les ï¿½vï¿½nement dï¿½ ï¿½ la souris sur les diffï¿½rents
+objets prï¿½sents dans la fenï¿½tres
 */
 EventListenner::EventListenner(sf::RenderWindow *win, Grille *grid)
 {
@@ -19,14 +19,14 @@ EventListenner::~EventListenner()
 }
 
 /*
-Lancement de l'écoute des évènements :
-- Bouton pressé :
-    on va capter la position de la souris pour savoir quelle case est sélectionnée.
-    on remplit un tableau de case sélectionnées qui doivent avoir la même valeur.
-    Chaque case de ce tableau doit être tangente à la case précédente dans le tableau.
-- Bouton relaché:
-    Si le tableau contient plus d'une case  on calcule le score pour la dernière case
-    et on regénère des nombres entre 1 et 3 pour les cases.
+Lancement de l'ï¿½coute des ï¿½vï¿½nements :
+- Bouton pressï¿½ :
+    on va capter la position de la souris pour savoir quelle case est sï¿½lectionnï¿½e.
+    on remplit un tableau de case sï¿½lectionnï¿½es qui doivent avoir la mï¿½me valeur.
+    Chaque case de ce tableau doit ï¿½tre tangente ï¿½ la case prï¿½cï¿½dente dans le tableau.
+- Bouton relachï¿½:
+    Si le tableau contient plus d'une case  on calcule le score pour la derniï¿½re case
+    et on regï¿½nï¿½re des nombres entre 1 et 3 pour les cases.
 */
 void EventListenner::listen ()
 {
@@ -38,7 +38,7 @@ void EventListenner::listen ()
         Vector2i localPosition = Mouse::getPosition(*win);
         Case *casePointed;
 
-        //Ajout de la case pointée par la souris dans le tableau s'il est vide
+        //Ajout de la case pointï¿½e par la souris dans le tableau s'il est vide
         if (!ptr_casesSelected.size())
         {
             casePointed = grid->get_Case(Vector2f(localPosition));
@@ -48,32 +48,32 @@ void EventListenner::listen ()
                 casePointed->color_selected(true);
             }
         }
-        //Ajout de la case pointée par la souris dans le tableau s'il n'est PAS vide
+        //Ajout de la case pointï¿½e par la souris dans le tableau s'il n'est PAS vide
         else
         {
             casePointed = grid->get_Case(Vector2f(localPosition),ptr_casesSelected.back());
-            //Peut être qu'une case est pointée, mais si elle n'est pas voisine de la dernière case
-            // présente dans le tableau de cases sélectionnées, alors la fonction ne retournera rien et
+            //Peut ï¿½tre qu'une case est pointï¿½e, mais si elle n'est pas voisine de la derniï¿½re case
+            // prï¿½sente dans le tableau de cases sï¿½lectionnï¿½es, alors la fonction ne retournera rien et
             // casePointed sera null
             if (casePointed)
             {
-                //test si  la case est déjà présente dans le tableau
-                for (int e = ptr_casesSelected.size()-1;e>=0;e--)
+                for (int e = 0;e<ptr_casesSelected.size();e++)
                 {
                     if (ptr_casesSelected[e]->get_id()== casePointed->get_id())
                     {
                         CaseExist = true;
-                        break;
+                        //cout << "voisin touched " << endl ;
+                        //cout << "voisin selected"<< caseSelected.back()->get_id() << endl;
                     }
                 }
-                //Ajout si pas présente dans le tableau et si valeur identique
+                //Ajout si pas prï¿½sente dans le tableau et si valeur identique
                 if (!CaseExist && (casePointed->get_value() == ptr_casesSelected[0]->get_value()))
                 {
                     ptr_casesSelected.push_back(casePointed);
                     casePointed->color_selected(true);
                 }
-                //si valeur pas identique, on regarde s'il n'y a pas u nretour en arrière (avant dernière case)
-                //dans quel cas on retire la dernière case du tableau
+                //si valeur pas identique, on regarde s'il n'y a pas u nretour en arriï¿½re (avant derniï¿½re case)
+                //dans quel cas on retire la derniï¿½re case du tableau
                 else if ((ptr_casesSelected.size()-1 > 0)&& (casePointed->get_id()== ptr_casesSelected[ptr_casesSelected.size()-2]->get_id()))
                 {
                     ptr_casesSelected.back()->color_selected(false);
@@ -106,3 +106,8 @@ void EventListenner::listen ()
         ptr_casesSelected.clear();
     }
 }
+
+            {
+                //test si  la case est dï¿½jï¿½ prï¿½sente dans le tableau
+                for (int e = ptr_casesSelected.size()-1;e>=0;e--)
+                        break;

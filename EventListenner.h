@@ -2,6 +2,7 @@
 #define EVENTLISTENNER_H
 #include <SFML/Graphics.hpp>
 #include "Grille.h"
+
 class EventListenner
 {
     public:
