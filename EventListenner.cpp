@@ -106,8 +106,3 @@ void EventListenner::listen ()
         ptr_casesSelected.clear();
     }
 }
-
-            {
-                //test si  la case est d�j� pr�sente dans le tableau
-                for (int e = ptr_casesSelected.size()-1;e>=0;e--)
-                        break;
