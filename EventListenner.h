@@ -7,6 +7,7 @@ class EventListenner
     public:
         EventListenner( sf::RenderWindow *win, Grille *grid);
         virtual ~EventListenner();
+
         void listen ();
     protected:
 
