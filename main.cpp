@@ -34,7 +34,7 @@ int main()
         }
 
         // Clear screen
-        app.clear(sf::Color(224, 224, 224));
+        app.clear(sf::Color(242, 223, 202));
 
         // Draw the sprite
         ma_grille->draw_cases(app);
