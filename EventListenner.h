@@ -1,12 +1,13 @@
 #ifndef EVENTLISTENNER_H
 #define EVENTLISTENNER_H
 #include <SFML/Graphics.hpp>
-#include "Grille.h"
+#include "Button.h"
+#include "Action.h"
 
 class EventListenner
 {
     public:
-        EventListenner( sf::RenderWindow *win, Grille *grid);
+        EventListenner( sf::RenderWindow *win, Grille *grid, Button* but_start);
         virtual ~EventListenner();
 
         void listen ();
@@ -16,7 +17,9 @@ class EventListenner
         sf::RenderWindow *win;
         vector<Case*>ptr_casesSelected;
         Grille *grid;
-        bool isLeftPressed;
+        Button* but_start;
+        bool isLeftPressed, isButtonPressed;
+        Action* action;
 };
 
 #endif // EVENTLISTENNER_H

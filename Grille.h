@@ -14,6 +14,7 @@ class Grille
         void draw_cases(RenderWindow &win);
         NumGenerator* get_numG();
         void update_score(int valeur);
+        void reset();
     protected:
     private:
         vector<Case*> cases;

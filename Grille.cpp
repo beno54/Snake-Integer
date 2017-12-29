@@ -16,7 +16,7 @@ Grille::Grille(Vector2f posi, int taille)
         cout << "Police de texte non chargee." << endl;
     }
 
-    case_score = new Case(Vector2f(800, 200), taille_case, font, 0, 30);
+    case_score = new Case(Vector2f(800, 350), taille_case, font, 0, 30);
 
     for (int i = 0; i < 25; i++)
     {
@@ -115,5 +115,14 @@ NumGenerator* Grille::get_numG()
 void Grille::update_score(int valeur)
 {
     case_score->update_value(valeur);
+}
+
+void Grille::reset()
+{
+    for (int i = 0; i < 25; i++)
+    {
+        cases[i]->set_value(numG->nexNum());
+    }
+    case_score->set_value(0);
 }
 
