@@ -39,7 +39,7 @@ Grille::~Grille()
 }
 
 //on renvoie la case pointée par la souris
-Case* Grille::get_Case(Vector2f posi)
+Case* Grille::get_Case_pointed(Vector2f posi)
 {
     int i = 0 ;
     for (; i < cases.size();i++)
@@ -54,7 +54,7 @@ Case* Grille::get_Case(Vector2f posi)
 }
 
 //on renvoie la case pointée par la souris, en regardant uniquement les voisins de la dernière case sélectionnée
-Case* Grille::get_Case(Vector2f posi,Case *caseSelected)
+Case* Grille::get_neighbourOfCase_pointed(Vector2f posi,Case *caseSelected)
 {
     int i  = (caseSelected->get_id()) ;
     vector<int> idVoisin;
@@ -126,3 +126,11 @@ void Grille::reset()
     case_score->set_value(0);
 }
 
+vector<Case*> Grille::get_Cases()
+{
+    return cases ;
+}
+Case* Grille::get_Case_score()
+{
+    return case_score ;
+}

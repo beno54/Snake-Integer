@@ -6,19 +6,20 @@ Constructeur qui re�oit la grille de jeu et la fen�tre en entr�e.
 Cet objet sert � g�rer les �v�nement d� � la souris sur les diff�rents
 objets pr�sents dans la fen�tres
 */
-EventListenner::EventListenner(sf::RenderWindow *win, Grille *grid, Button* but_start)
+EventListenner::EventListenner(sf::RenderWindow *win, Grille *grid, Button* but_start,const char* ProfilName)
 {
     this->grid = grid;
     this->win = win;
     this->but_start = but_start;
     this->isLeftPressed = false ;
     this->isButtonPressed = false;
-    this->action = new Action(grid);
+    this->action = new Action(grid,ProfilName);
 }
 
 EventListenner::~EventListenner()
 {
-    //dtor
+    //delete pointeurs d OBJETS (pas de variable) créés dans cette classe
+    delete (action);
 }
 
 /*
@@ -50,7 +51,7 @@ void EventListenner::listen ()
             //Ajout de la case point�e par la souris dans le tableau s'il est vide
             if (!ptr_casesSelected.size())
             {
-                casePointed = grid->get_Case(Vector2f(localPosition));
+                casePointed = grid->get_Case_pointed(Vector2f(localPosition));
                 if (casePointed)
                 {
                     ptr_casesSelected.push_back(casePointed);
@@ -60,7 +61,7 @@ void EventListenner::listen ()
             //Ajout de la case point�e par la souris dans le tableau s'il n'est PAS vide
             else
             {
-                casePointed = grid->get_Case(Vector2f(localPosition),ptr_casesSelected.back());
+                casePointed = grid->get_neighbourOfCase_pointed(Vector2f(localPosition),ptr_casesSelected.back());
                 //Peut �tre qu'une case est point�e, mais si elle n'est pas voisine de la derni�re case
                 // pr�sente dans le tableau de cases s�lectionn�es, alors la fonction ne retournera rien et
                 // casePointed sera null
@@ -108,7 +109,13 @@ void EventListenner::listen ()
 
             if (ptr_casesSelected.size() > 1)
             {
+                //log avant action d'écraser la grille
+                action->log_data(ptr_casesSelected);
                 action->compute_score(ptr_casesSelected);
+                if (action->get_groups_in_grid()==0)
+                {
+                    cout << " GAME OVER " << endl ;
+                }
             }
             else
             {

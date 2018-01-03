@@ -1,13 +1,15 @@
 #include "EventListenner.h"  // Inclut SFML/Graphics
 #include "Grille.h"
 #include "Button.h"
-
+#include "string.h"
 int main (int argc, char *argv[])
 {
     // Create the main window
     sf::RenderWindow app(sf::VideoMode(1200, 800), "SFML window");
-    app.setFramerateLimit(60);
+    app.setFramerateLimit(20);
     sf::Font font;
+
+    string ProfilName = string("./Logs/") + "ProfilLogs.csv" ;
 
     try
     {
@@ -21,7 +23,7 @@ int main (int argc, char *argv[])
     //on crée la grille et le EventListener
     Grille* ma_grille = new Grille(Vector2f (250, 100), 450);
     Button* but_start = new Button(100, Vector2f (800, 100), font, ma_grille);
-    EventListenner Listenner (&app,ma_grille, but_start);
+    EventListenner* Listenner = new  EventListenner(&app,ma_grille, but_start,(ProfilName).c_str());
 
 	// Start the game loop
     while (app.isOpen())
@@ -29,7 +31,7 @@ int main (int argc, char *argv[])
         sf::Event event;
 
         //on détecte le clique de souris et on fait les actions correspondantes
-        Listenner.listen();
+        Listenner->listen();
 
         while (app.pollEvent(event))
         {
@@ -51,6 +53,8 @@ int main (int argc, char *argv[])
 
     //delete ma_grille;
     delete (ma_grille);
+    delete (but_start);
+    delete (Listenner);
 
     return EXIT_SUCCESS;
 }

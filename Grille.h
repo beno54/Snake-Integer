@@ -9,8 +9,10 @@ class Grille
     public:
         Grille(Vector2f posi, int taille);
         virtual ~Grille();
-        Case* get_Case(Vector2f posi);
-        Case* get_Case(Vector2f posi,Case *caseSelected);
+        Case* get_Case_pointed(Vector2f posi);
+        Case* get_neighbourOfCase_pointed(Vector2f posi,Case *caseSelected);
+        vector<Case*> get_Cases();
+        Case* get_Case_score();
         void draw_cases(RenderWindow &win);
         NumGenerator* get_numG();
         void update_score(int valeur);
