@@ -20,7 +20,7 @@ int main (int argc, char *argv[])
         cout << "Police de texte non chargee." << endl;
     }
 
-    //on crée la grille et le EventListener
+    //on crï¿½e la grille et le EventListener
     Grille* ma_grille = new Grille(Vector2f (250, 100), 450);
     Button* but_start = new Button(100, Vector2f (800, 100), font, ma_grille);
     EventListenner* Listenner = new  EventListenner(&app,ma_grille, but_start,(ProfilName).c_str());
@@ -30,7 +30,7 @@ int main (int argc, char *argv[])
     {
         sf::Event event;
 
-        //on détecte le clique de souris et on fait les actions correspondantes
+        //on dï¿½tecte le clique de souris et on fait les actions correspondantes
         Listenner->listen();
 
         while (app.pollEvent(event))
