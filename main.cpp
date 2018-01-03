@@ -2,7 +2,7 @@
 #include "Grille.h"
 #include "Button.h"
 
-int main()
+int main (int argc, char *argv[])
 {
     // Create the main window
     sf::RenderWindow app(sf::VideoMode(1200, 800), "SFML window");
