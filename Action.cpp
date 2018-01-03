@@ -107,7 +107,7 @@ void Action::log_data(vector<Case*> cases_selected)
      LogFile << ";" ;
 
      //Log Nombres de groupements de même valeur
-     LogFile << get_groups_in_grid() << endl ;
+     LogFile << get_groups_in_grid();
      cout << "nb groupe " <<  get_groups_in_grid()<< endl ;
 
      //Log fin de log

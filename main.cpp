@@ -2,14 +2,25 @@
 #include "Grille.h"
 #include "Button.h"
 #include "string.h"
-int main (int argc, char *argv[])
+int main (int argc, char* argv[])
 {
     // Create the main window
     sf::RenderWindow app(sf::VideoMode(1200, 800), "SFML window");
     app.setFramerateLimit(20);
     sf::Font font;
 
-    string ProfilName = string("./Logs/") + "ProfilLogs.csv" ;
+    cout << argc << endl;
+
+    string ProfilName;
+    if (argc > 1)
+    {
+        ProfilName = string("./Logs/") + string(argv[1]) + ".csv";
+        cout << ProfilName << endl;
+    }
+    else
+    {
+        ProfilName = string("./Logs/") + "ProfilLogs.csv";
+    }
 
     try
     {
@@ -23,6 +34,7 @@ int main (int argc, char *argv[])
     //on cr�e la grille et le EventListener
     Grille* ma_grille = new Grille(Vector2f (250, 100), 450);
     Button* but_start = new Button(100, Vector2f (800, 100), font, ma_grille);
+    cout << (ProfilName).c_str() << endl;
     EventListenner* Listenner = new  EventListenner(&app,ma_grille, but_start,(ProfilName).c_str());
 
 	// Start the game loop
