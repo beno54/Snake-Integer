@@ -6,6 +6,14 @@ Action::Action(Grille *grid, const char* ProfilName)
     this->grid = grid;
     //ouverture des fichiers profils durant l'exécution du programme
     LogFile.open (ProfilName,ios::app);
+    if (LogFile)
+    {
+        cout << "Ouverture reussie" <<endl ;
+    }
+    else
+    {
+        cout << "Ouverture failed" <<endl ;
+    }
     cout << "Ouverture du fichier de logs" <<endl ;
 }
 
