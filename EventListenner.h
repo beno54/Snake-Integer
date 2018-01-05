@@ -7,7 +7,7 @@
 class EventListenner
 {
     public:
-        EventListenner(sf::RenderWindow *win, Grille *grid, Button* but_start,const char* ProfilName);
+        EventListenner(sf::RenderWindow *win, Grille *grid, Button* but_start,string ProfilName);
         virtual ~EventListenner();
         void listen ();
     protected:
