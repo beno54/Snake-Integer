@@ -17,6 +17,8 @@ class Case
         virtual ~Case();
         int get_value();
         int get_id();
+        int get_idGroup();
+        void set_idGroup(int newValue);
         Text get_text();
         RectangleShape get_background();
         void set_value(int new_value);
@@ -27,11 +29,10 @@ class Case
 
     protected:
         Vector2f get_posi();
-        int valeur, taille;
+        int valeur, taille, idGroup;
         Vector2f posi_centre;
         Text text;
         RectangleShape background;
-
     private:
         int id ;
 };

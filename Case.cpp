@@ -61,6 +61,16 @@ Vector2f Case::get_posi()
     return posi_centre;
 }
 
+int Case::get_idGroup()
+{
+    return idGroup;
+}
+
+void Case::set_idGroup(int newValue)
+{
+    idGroup = newValue;
+}
+
 //on incrémente la valeur de la case, en changeant aussi le texte correspondant et le background
 void Case::update_value(int new_value)
 {
