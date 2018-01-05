@@ -5,7 +5,7 @@ Action::Action(Grille *grid, string ProfilName)
     //ctor
     this->grid = grid;
     nbTurnPlayed =0 ;
-    //ouverture des fichiers profils durant l'exécution du programme
+    //ouverture des fichiers profils durant l'exï¿½cution du programme
     logFile.open (("./Logs/"+ProfilName).c_str(),ios::app);
     scoreFile.open ( ("./Logs/Score_"+ProfilName).c_str(),ios::app);
 
@@ -23,7 +23,7 @@ Action::~Action()
 {
     //dtor
 
-    //fermeture des fichiers de profils à la fermeture
+    //fermeture des fichiers de profils ï¿½ la fermeture
     logFile.close();
     cout << "Fermeture du fichier de logs" <<endl ;
 }
@@ -80,7 +80,7 @@ void Action::log_data(vector<Case*> cases_selected)
     logFile << maxvalue ;
     logFile << ";" ;
 
-    //Logs Cases sélectionnées
+    //Logs Cases sï¿½lectionnï¿½es
     for (int e=0;e<cases_selected.size();e++)
     {
         caseSelectOrNot[cases_selected[e]->get_id()-1]=1;
@@ -106,19 +106,19 @@ void Action::log_data(vector<Case*> cases_selected)
         logFile << ";" ;
      }
 
-     //Log de valeur sélectionnée
+     //Log de valeur sï¿½lectionnï¿½e
      logFile << cases_selected[0]->get_value() ;
      logFile << ";" ;
 
-     //Log de nombre de cases sélectionnées
+     //Log de nombre de cases sï¿½lectionnï¿½es
      logFile << cases_selected.size() ;
      logFile << ";" ;
 
-     //Log valeur ajoutée au score = nb case sélectionnée * valeur sélecitonnée
+     //Log valeur ajoutï¿½e au score = nb case sï¿½lectionnï¿½e * valeur sï¿½lecitonnï¿½e
      logFile << cases_selected.size()* cases_selected[0]->get_value() ;
      logFile << ";" ;
 
-     //Log Nombres de groupements de même valeur
+     //Log Nombres de groupements de mï¿½me valeur
      logFile << get_groups_in_grid();
      cout << "nb groupe " <<  get_groups_in_grid()<< endl ;
 
@@ -128,7 +128,7 @@ void Action::log_data(vector<Case*> cases_selected)
 }
 
 /*
-renvoie le nombre de possibilités restantes !
+renvoie le nombre de possibilitï¿½s restantes !
 */
 int Action::get_groups_in_grid()
 {
@@ -154,7 +154,7 @@ int Action::get_groups_in_grid()
     return NbPossiblite ;
 }
 /*
-Compte le nombre de groupes (associes à chaques cases son groupe)
+Compte le nombre de groupes (associes ï¿½ chaques cases son groupe)
 Compare avec le voisin du bas et celui de droite
 */
 int* Action::get_tab_groups_in_grid()
@@ -169,7 +169,7 @@ for (int e = 0 ; e < 25 ; e++)
     {
     if (TabIdGroup[e]==0)TabIdGroup[e]= Nbgroup++;
 
-    //Test si il y a voisin à droite et si la même valeur
+    //Test si il y a voisin ï¿½ droite et si la mï¿½me valeur
     if ( ((e+1)%5 !=0) && Cases[e]->get_value() == Cases[e+1]->get_value() &&  TabIdGroup[e]!= TabIdGroup[e+1])
         if (TabIdGroup[e+1] != 0 )
         {
@@ -178,7 +178,7 @@ for (int e = 0 ; e < 25 ; e++)
         }
         else TabIdGroup[e+1]=TabIdGroup[e];
 
-    //Test si il y a voisin en bas et si la même valeur
+    //Test si il y a voisin en bas et si la mï¿½me valeur
     if ( !((e+1)>20) && Cases[e]->get_value() == Cases[e+5]->get_value() &&  TabIdGroup[e]!= TabIdGroup[e+5])
          if (TabIdGroup[e+5] != 0 )
         {
@@ -207,7 +207,7 @@ void Action::log_score()
 {
     if (scoreFile )
     {
-        //Uodate du moment courant + Log score avant GAME OVER + nb tour joué
+        //Uodate du moment courant + Log score avant GAME OVER + nb tour jouï¿½
         char timeToLog [256];
         timenow = time(0);
         strcpy(timeToLog,ctime(&timenow));
