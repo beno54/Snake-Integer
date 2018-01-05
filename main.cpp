@@ -9,17 +9,14 @@ int main (int argc, char* argv[])
     app.setFramerateLimit(20);
     sf::Font font;
 
-    cout << argc << endl;
-
     string ProfilName;
     if (argc > 1)
     {
-        ProfilName = string("./Logs/") + string(argv[1]) + ".csv";
-        cout << ProfilName << endl;
+        ProfilName =  string(argv[1]) + ".csv";
     }
     else
     {
-        ProfilName = string("./Logs/") + "ProfilLogs.csv";
+        ProfilName = "ProfilLogs.csv";
     }
 
     try
@@ -35,7 +32,7 @@ int main (int argc, char* argv[])
     Grille* ma_grille = new Grille(Vector2f (250, 100), 450);
     Button* but_start = new Button(100, Vector2f (800, 100), font, ma_grille);
     cout << (ProfilName).c_str() << endl;
-    EventListenner* Listenner = new  EventListenner(&app,ma_grille, but_start,(ProfilName).c_str());
+    EventListenner* Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);
 
 	// Start the game loop
     while (app.isOpen())

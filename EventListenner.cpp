@@ -6,7 +6,7 @@ Constructeur qui re�oit la grille de jeu et la fen�tre en entr�e.
 Cet objet sert � g�rer les �v�nement d� � la souris sur les diff�rents
 objets pr�sents dans la fen�tres
 */
-EventListenner::EventListenner(sf::RenderWindow *win, Grille *grid, Button* but_start,const char* ProfilName)
+EventListenner::EventListenner(sf::RenderWindow *win, Grille *grid, Button* but_start,string ProfilName)
 {
     this->grid = grid;
     this->win = win;
@@ -112,9 +112,18 @@ void EventListenner::listen ()
                 //log avant action d'écraser la grille
                 action->log_data(ptr_casesSelected);
                 action->compute_score(ptr_casesSelected);
+                action->set_nbTurnPlayed();
+                int *tab = action->get_tab_groups_in_grid();
+                for (int j = 0 ; j <25 ;j++)
+                {
+                    cout<< tab[j]<< " " ;
+                    if (((j+1)%5)==0) cout<< "ezr" <<endl;
+                }
                 if (action->get_groups_in_grid()==0)
                 {
                     cout << " GAME OVER " << endl ;
+                    action->log_score();
+                    action->reinitialize_nbTurnPlayed();
                 }
             }
             else

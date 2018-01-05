@@ -1,20 +1,22 @@
 #include "Action.h"
-
-Action::Action(Grille *grid, const char* ProfilName)
+#include <string.h >
+Action::Action(Grille *grid, string ProfilName)
 {
     //ctor
     this->grid = grid;
+    nbTurnPlayed =0 ;
     //ouverture des fichiers profils durant l'exécution du programme
-    LogFile.open (ProfilName,ios::app);
-    if (LogFile)
+    logFile.open (("./Logs/"+ProfilName).c_str(),ios::app);
+    scoreFile.open ( ("./Logs/Score_"+ProfilName).c_str(),ios::app);
+
+    if (logFile )
     {
-        cout << "Ouverture reussie" <<endl ;
+        cout << "Ouverture du fichier de logs" <<endl ;
     }
     else
     {
         cout << "Ouverture failed" <<endl ;
     }
-    cout << "Ouverture du fichier de logs" <<endl ;
 }
 
 Action::~Action()
@@ -22,9 +24,11 @@ Action::~Action()
     //dtor
 
     //fermeture des fichiers de profils à la fermeture
-    LogFile.close();
+    logFile.close();
     cout << "Fermeture du fichier de logs" <<endl ;
 }
+
+
 
 void Action::compute_score(vector<Case*> cases_selected)
 {
@@ -57,24 +61,24 @@ void Action::log_data(vector<Case*> cases_selected)
         //calcul moyenne
         GridAverage += currentvalue ;
         //Logs Grid
-        LogFile << currentvalue ;
-        LogFile << ";" ;
+        logFile << currentvalue ;
+        logFile << ";" ;
     }
 
     //calcul moyenne
     GridAverage /= 25 ;
 
     //Log  moyenne de la grille
-    LogFile << GridAverage ;
-    LogFile << ";" ;
+    logFile << GridAverage ;
+    logFile << ";" ;
 
     //Log score grille courrante
-    LogFile << grid->get_Case_score()->get_value() ;
-    LogFile << ";" ;
+    logFile << grid->get_Case_score()->get_value() ;
+    logFile << ";" ;
 
     //Logs Valeur max
-    LogFile << maxvalue ;
-    LogFile << ";" ;
+    logFile << maxvalue ;
+    logFile << ";" ;
 
     //Logs Cases sélectionnées
     for (int e=0;e<cases_selected.size();e++)
@@ -84,8 +88,8 @@ void Action::log_data(vector<Case*> cases_selected)
 
     for (int e=0;e<25;e++)
     {
-        LogFile << caseSelectOrNot[e] ;
-        LogFile << ";" ;
+        logFile << caseSelectOrNot[e] ;
+        logFile << ";" ;
     }
 
      //Log case en fin de tableau ou non
@@ -93,34 +97,34 @@ void Action::log_data(vector<Case*> cases_selected)
      {
         if ((cases_selected[cases_selected.size()-1]->get_id()-1) == e)
         {
-            LogFile << 1;
+            logFile << 1;
         }
         else
         {
-            LogFile << 0 ;
+            logFile << 0 ;
         }
-        LogFile << ";" ;
+        logFile << ";" ;
      }
 
      //Log de valeur sélectionnée
-     LogFile << cases_selected[0]->get_value() ;
-     LogFile << ";" ;
+     logFile << cases_selected[0]->get_value() ;
+     logFile << ";" ;
 
      //Log de nombre de cases sélectionnées
-     LogFile << cases_selected.size() ;
-     LogFile << ";" ;
+     logFile << cases_selected.size() ;
+     logFile << ";" ;
 
      //Log valeur ajoutée au score = nb case sélectionnée * valeur sélecitonnée
-     LogFile << cases_selected.size()* cases_selected[0]->get_value() ;
-     LogFile << ";" ;
+     logFile << cases_selected.size()* cases_selected[0]->get_value() ;
+     logFile << ";" ;
 
      //Log Nombres de groupements de même valeur
-     LogFile << get_groups_in_grid();
+     logFile << get_groups_in_grid();
      cout << "nb groupe " <<  get_groups_in_grid()<< endl ;
 
      //Log fin de log
-     LogFile << std::endl ;
-     cout << "Ecriture dans fichier de logs" <<endl ;
+     logFile << std::endl ;
+     //cout << "Ecriture dans fichier de logs" <<endl ;
 }
 
 /*
@@ -130,6 +134,7 @@ int Action::get_groups_in_grid()
 {
 
     int *TabIdGroup = get_tab_groups_in_grid();
+
     int NbPossiblite = 0;
 
     int nb_group = 0 ;
@@ -154,32 +159,65 @@ Compare avec le voisin du bas et celui de droite
 */
 int* Action::get_tab_groups_in_grid()
 {
-    vector<Case*>  Cases = grid->get_Cases();
-    int Nbgroup = 1 ;
-    int *TabIdGroup= new int [25];
-    for (int e = 0 ; e < 25 ; e++){TabIdGroup[e]=0;}
 
-    for (int e = 0 ; e < 25 ; e++)
+vector<Case*>  Cases = grid->get_Cases();
+int Nbgroup = 1 ;
+int *TabIdGroup= new int [25];
+for (int e = 0 ; e < 25 ; e++){TabIdGroup[e]=0;}
+
+for (int e = 0 ; e < 25 ; e++)
     {
-        if (TabIdGroup[e]==0)TabIdGroup[e]= Nbgroup++;
+    if (TabIdGroup[e]==0)TabIdGroup[e]= Nbgroup++;
 
-        //Test si il y a voisin à droite et si la même valeur
-        if ( ((e+1)%5 !=0) && Cases[e]->get_value() == Cases[e+1]->get_value() &&  TabIdGroup[e]!= TabIdGroup[e+1])
-            if (TabIdGroup[e+1] != 0 )
-            {
-                Nbgroup--;
-                TabIdGroup[e]=TabIdGroup[e+1];
-            }
-            else TabIdGroup[e+1]=TabIdGroup[e];
+    //Test si il y a voisin à droite et si la même valeur
+    if ( ((e+1)%5 !=0) && Cases[e]->get_value() == Cases[e+1]->get_value() &&  TabIdGroup[e]!= TabIdGroup[e+1])
+        if (TabIdGroup[e+1] != 0 )
+        {
+            Nbgroup--;
+            TabIdGroup[e]=TabIdGroup[e+1];
+        }
+        else TabIdGroup[e+1]=TabIdGroup[e];
 
-        //Test si il y a voisin en bas et si la même valeur
-        if ( !((e+1)>20) && Cases[e]->get_value() == Cases[e+5]->get_value() &&  TabIdGroup[e]!= TabIdGroup[e+5])
-             if (TabIdGroup[e+5] != 0 )
-            {
-                Nbgroup--;
-                TabIdGroup[e]=TabIdGroup[e+5];
-            }
-            else TabIdGroup[e+5]=TabIdGroup[e];
+    //Test si il y a voisin en bas et si la même valeur
+    if ( !((e+1)>20) && Cases[e]->get_value() == Cases[e+5]->get_value() &&  TabIdGroup[e]!= TabIdGroup[e+5])
+         if (TabIdGroup[e+5] != 0 )
+        {
+            Nbgroup--;
+            TabIdGroup[e]=TabIdGroup[e+5];
+        }
+        else TabIdGroup[e+5]=TabIdGroup[e];
     }
-    return  TabIdGroup ;
+return  TabIdGroup ;
+}
+
+
+int Action::get_nbTurnPlayed()
+{
+    return nbTurnPlayed ;
+}
+void Action::reinitialize_nbTurnPlayed()
+{
+    nbTurnPlayed = 0 ;
+}
+void Action::set_nbTurnPlayed()
+{
+    nbTurnPlayed ++;
+}
+void Action::log_score()
+{
+    if (scoreFile )
+    {
+        //Uodate du moment courant + Log score avant GAME OVER + nb tour joué
+        char timeToLog [256];
+        timenow = time(0);
+        strcpy(timeToLog,ctime(&timenow));
+        timeToLog[strlen(timeToLog)-1]='\0';
+        scoreFile << timeToLog<< ";" << grid->get_Case_score()->get_value() << ";" << nbTurnPlayed << ";" <<std::endl ;
+        scoreFile.close();
+    }
+    else
+    {
+        cout << "Ouverture failed" <<endl ;
+    }
+
 }
