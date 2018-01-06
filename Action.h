@@ -16,8 +16,7 @@ class Action
         void log_data(vector<Case*> cases_selected);
         void log_score();
         int get_groups_in_grid();
-        //int *get_tab_groups_in_grid();
-//        vector< vector<Case*> > get_tab_groups_in_grid();
+        vector< vector<Case*> > get_tab_groups_in_grid();
         int get_nbTurnPlayed();
         void set_nbTurnPlayed();
         void reinitialize_nbTurnPlayed();

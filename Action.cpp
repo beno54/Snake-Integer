@@ -130,22 +130,23 @@ void Action::log_data(vector<Case*> cases_selected)
 /*
 renvoie le nombre de possibilit�s restantes !
 */
-//int Action::get_groups_in_grid()
-//{
-//    int *TabIdGroup = get_tab_groups_in_grid();
-//
-//    int NbPossiblite = 0;
-////    vector< vector<Case*> > tab_group = get_tab_groups_in_grid();
-//
-////    for (int i = 0; i < tab_group.size(); i ++)
-////    {
-////        if (tab_group[i].size() > 1)
-////        {
-////            NbPossiblite ++;
-////        }
-////    }
-//
-//
+int Action::get_groups_in_grid()
+{
+    int NbPossiblite = 0;
+    vector< vector<Case*> > tab_group = get_tab_groups_in_grid();
+
+
+    for (int i = 0; i < tab_group.size(); i ++)
+    {
+        if (tab_group[i].size() > 1)
+        {
+            NbPossiblite ++;
+        }
+    }
+
+    return NbPossiblite ;
+
+
 //    int nb_group = 0 ;
 //    for (int e = 0 ; e < 25 ; e++)
 //    {
@@ -160,168 +161,216 @@ renvoie le nombre de possibilit�s restantes !
 //        }
 //        if (cpt > 1) NbPossiblite++;
 //    }
-//    return NbPossiblite ;
-//}
+}
 /*
 Compte le nombre de groupes (associes � chaques cases son groupe)
 Compare avec le voisin du bas et celui de droite
 */
 
-int Action::get_groups_in_grid()
-{
-    vector<Case*>  Cases = grid->get_Cases();
-    int Nbgroup = 0 ;
-
-    vector<int> tab_group;
-    for (int i = 0; i < 40; i++)
-    {
-        tab_group.push_back(0);
-    }
-
-    for (int e = 0 ; e < 25 ; e++){Cases[e]->set_idGroup(0);}
-    for (int e = 0 ; e < 25 ; e++)
-    {
-        if ((e+1)%5 !=0)
-        {
-            if (Cases[e]->get_value() == Cases[e+1]->get_value())
-            {
-                if (Cases[e+1]->get_idGroup())
-                {
-                    Cases[e]->set_idGroup(Cases[e+1]->get_idGroup());
-//                    int compteur = 1;
-//                    if (Cases[e+1+compteur]->get_value() == Cases[e]->get_value() && (e+1+compteur)%5!=0)
-//                    {
-//                        compteur ++;
-//                    }
-//                    while(compteur > 0)
-//                    {
-//                        Cases[e+compteur-1]->set_idGroup(Cases[e+compteur]->get_idGroup());
-//                        compteur --;
-//                    }
-                }
-                else
-                    if (!Cases[e]->get_idGroup())
-                    {
-                        Nbgroup++;
-                        Cases[e]->set_idGroup(Nbgroup);
-                        Cases[e+1]->set_idGroup(Nbgroup);
-                    }
-                    else
-                    {
-                        Cases[e+1]->set_idGroup(Cases[e]->get_idGroup());
-                    }
-            }
-            else
-            {
-                //cas premiere case
-                if (!Cases[e]->get_idGroup())
-                {
-                    Nbgroup ++;
-                    Cases[e]->set_idGroup(Nbgroup);
-                }
-                //on check si voisin pas deja dans un groupe
-                if (!Cases[e+1]->get_idGroup())
-                {
-                    Nbgroup ++;
-                    Cases[e+1]->set_idGroup(Nbgroup);
-                    //cout << "voisin droite" << (e+1) << "prends groupe" << Cases[e+1]->get_idGroup() << endl;
-                }
-            }
-        }
-        if (((e+1)<20))
-        {
-            if (Cases[e]->get_value() == Cases[e+5]->get_value())
-            {
-                if (Cases[e+5]->get_idGroup())
-                {
-                    Cases[e]->set_idGroup(Cases[e+5]->get_idGroup());
-                }
-                else
-                    if (!Cases[e]->get_idGroup())
-                    {
-                        Cases[e]->set_idGroup(++Nbgroup);
-                        Cases[e+5]->set_idGroup(Nbgroup);
-                    }
-                    else
-                    {
-                        Cases[e+5]->set_idGroup(Cases[e]->get_idGroup());
-                        //cout << "voisin bas" << (e+1) << "prends groupe" << Cases[e]->get_idGroup() << endl;
-                    }
-            }
-            else
-            {
-                Cases[e+5]->set_idGroup(++Nbgroup);
-            }
-        }
-    }
-
-    for (int i = 0; i < 25; i++)
-    {
-        tab_group[(Cases[i]->get_idGroup())-1]++;
-    }
-
-    int compteur_grp_deleted = 0;
-    for (int i = 0; i < 40; i++)
-    {
-        if (tab_group[i] <= 1)
-        {
-            tab_group.erase (tab_group.begin()+i-compteur_grp_deleted);
-            compteur_grp_deleted ++;
-        }
-    }
-
-    return tab_group.size();
-}
-
-//vector< vector<Case*> > Action::get_tab_groups_in_grid()
+//int Action::get_groups_in_grid()
 //{
-//    vector< vector<Case*> > tab_group;
 //    vector<Case*>  Cases = grid->get_Cases();
-//    int Nbgroup = 1 ;
+//    int Nbgroup = 0 ;
+//
+//    vector<int> tab_group;
+//    for (int i = 0; i < 40; i++)
+//    {
+//        tab_group.push_back(0);
+//    }
 //
 //    for (int e = 0 ; e < 25 ; e++){Cases[e]->set_idGroup(0);}
-//
 //    for (int e = 0 ; e < 25 ; e++)
 //    {
-//        if (Cases[e]->get_idGroup()==0)
+//        if ((e+1)%5 !=0)
 //        {
-//            vector<Case*> group;
-//            group.push_back(Cases[e]);
-//            Cases[e]->set_idGroup(Nbgroup++);
-//            tab_group.push_back(group);
-//            cout << tab_group.size() << endl;
+//            if (Cases[e]->get_value() == Cases[e+1]->get_value())
+//            {
+//                if (Cases[e+1]->get_idGroup())
+//                {
+//                    Cases[e]->set_idGroup(Cases[e+1]->get_idGroup());
+////                    int compteur = 1;
+////                    if (Cases[e+1+compteur]->get_value() == Cases[e]->get_value() && (e+1+compteur)%5!=0)
+////                    {
+////                        compteur ++;
+////                    }
+////                    while(compteur > 0)
+////                    {
+////                        Cases[e+compteur-1]->set_idGroup(Cases[e+compteur]->get_idGroup());
+////                        compteur --;
+////                    }
+//                }
+//                else
+//                    if (!Cases[e]->get_idGroup())
+//                    {
+//                        Nbgroup++;
+//                        Cases[e]->set_idGroup(Nbgroup);
+//                        Cases[e+1]->set_idGroup(Nbgroup);
+//                    }
+//                    else
+//                    {
+//                        Cases[e+1]->set_idGroup(Cases[e]->get_idGroup());
+//                    }
+//            }
+//            else
+//            {
+//                //cas premiere case
+//                if (!Cases[e]->get_idGroup())
+//                {
+//                    Nbgroup ++;
+//                    Cases[e]->set_idGroup(Nbgroup);
+//                }
+//                //on check si voisin pas deja dans un groupe
+//                if (!Cases[e+1]->get_idGroup())
+//                {
+//                    Nbgroup ++;
+//                    Cases[e+1]->set_idGroup(Nbgroup);
+//                    //cout << "voisin droite" << (e+1) << "prends groupe" << Cases[e+1]->get_idGroup() << endl;
+//                }
+//            }
 //        }
-//
-//        //Test si il y a voisin � droite et si la m�me valeur
-//        if ( ((e+1)%5 !=0) && Cases[e]->get_value() == Cases[e+1]->get_value() &&  Cases[e]->get_idGroup()!= Cases[e+1]->get_idGroup())
-//            if (Cases[e+1]->get_idGroup() != 0 )
+//        if (((e+1)<20))
+//        {
+//            if (Cases[e]->get_value() == Cases[e+5]->get_value())
 //            {
-//                tab_group.pop_back();
-//                Nbgroup--;
-//                Cases[e]->set_idGroup(Cases[e+1]->get_value());
+//                if (Cases[e+5]->get_idGroup())
+//                {
+//                    Cases[e]->set_idGroup(Cases[e+5]->get_idGroup());
+//                }
+//                else
+//                    if (!Cases[e]->get_idGroup())
+//                    {
+//                        Cases[e]->set_idGroup(++Nbgroup);
+//                        Cases[e+5]->set_idGroup(Nbgroup);
+//                    }
+//                    else
+//                    {
+//                        Cases[e+5]->set_idGroup(Cases[e]->get_idGroup());
+//                        //cout << "voisin bas" << (e+1) << "prends groupe" << Cases[e]->get_idGroup() << endl;
+//                    }
 //            }
 //            else
 //            {
-//                Cases[e+1]->set_idGroup(Cases[e]->get_value());
-//                tab_group[Cases[e]->get_idGroup()-1].push_back(Cases[e+1]);
+//                Cases[e+5]->set_idGroup(++Nbgroup);
 //            }
-//
-//        //Test si il y a voisin en bas et si la m�me valeur
-//        if ( !((e+1)>20) && Cases[e]->get_value() == Cases[e+5]->get_value() &&  Cases[e]->get_idGroup()!= Cases[e+5]->get_idGroup())
-//            if (Cases[e+5]->get_idGroup() != 0 )
-//            {
-//                tab_group.pop_back();
-//                Nbgroup--;
-//                Cases[e]->set_idGroup(Cases[e+5]->get_value());
-//            }
-//            else
-//            {
-//                Cases[e+5]->set_idGroup(Cases[e]->get_value());
-//                tab_group[Cases[e]->get_idGroup()-1].push_back(Cases[e+5]);
-//            }
+//        }
 //    }
-//    return  tab_group ;
+//
+//    for (int i = 0; i < 25; i++)
+//    {
+//        tab_group[(Cases[i]->get_idGroup())-1]++;
+//    }
+//
+//    int compteur_grp_deleted = 0;
+//    for (int i = 0; i < 40; i++)
+//    {
+//        if (tab_group[i] <= 1)
+//        {
+//            tab_group.erase (tab_group.begin()+i-compteur_grp_deleted);
+//            compteur_grp_deleted ++;
+//        }
+//    }
+//
+//    return tab_group.size();
 //}
+
+vector< vector<Case*> > Action::get_tab_groups_in_grid()
+{
+    vector< vector<Case*> > tab_group;
+    vector<Case*>  allCases = grid->get_Cases();
+    Case* case_courante;
+    int idGroup = 0;
+    int compteur_cases_left = 25;
+
+    grid->reset_AllidGroup();
+
+    while (compteur_cases_left != 0)
+    {
+        //cout << "\nDebut groupe" << idGroup  << endl;
+        idGroup ++;
+        vector<Case*>  Sous_Cases_to_Test;
+        vector<Case*>  new_groupe_cases;
+
+        int i = 0;
+        bool finded = false;
+        //on ajoute dans tab group
+        while(i < 25 && !finded)
+        {
+            if (allCases[i]->get_idGroup() == 0)
+            {
+                //ajout la 1ere case
+                Sous_Cases_to_Test.push_back(allCases[i]);
+                //cout << "ajout case" << allCases[i]->get_id()  << endl;
+                allCases[i]->set_idGroup(idGroup);
+
+
+                new_groupe_cases.push_back(allCases[i]);
+                compteur_cases_left--;
+
+                finded = true;
+            }
+            i++;
+        }
+
+
+        while (Sous_Cases_to_Test.size() != 0)
+        {
+            Case* case_courante = Sous_Cases_to_Test.front();
+            int id_courant = case_courante->get_id();
+
+            //voisin de droite ?
+            if (id_courant%5 != 0 && allCases[id_courant]->get_idGroup() == 0 && case_courante->get_value() == allCases[id_courant]->get_value())
+            {
+                //ok donc rajout
+                allCases[id_courant]->set_idGroup(idGroup);
+                Sous_Cases_to_Test.push_back(allCases[id_courant]);
+                compteur_cases_left--;
+            }
+
+            //voisin de gauche ?
+            if (id_courant%5 != 1 && allCases[id_courant-2]->get_idGroup() == 0 && case_courante->get_value() == allCases[id_courant-2]->get_value())
+            {
+                //ok donc rajout
+                allCases[id_courant-2]->set_idGroup(idGroup);
+                Sous_Cases_to_Test.push_back(allCases[id_courant-2]);
+                //cases_to_Test.erase (cases_to_Test.begin()+((id_courant-2)-compteur_grp_deleted));
+                compteur_cases_left--;
+            }
+
+            //voisin du haut ?
+            if (id_courant > 5 && allCases[id_courant-6]->get_idGroup() == 0 && case_courante->get_value() == allCases[id_courant-6]->get_value())
+            {
+                //ok donc rajout
+                allCases[id_courant-6]->set_idGroup(idGroup);
+                Sous_Cases_to_Test.push_back(allCases[id_courant-6]);
+                //cases_to_Test.erase (cases_to_Test.begin()+((id_courant-6)-compteur_grp_deleted));
+                compteur_cases_left--;
+            }
+
+            //voisin du bas ?
+            if (id_courant <= 20 && allCases[id_courant+4]->get_idGroup() == 0 && case_courante->get_value() == allCases[id_courant+4]->get_value())
+            {
+                //ok donc rajout
+                allCases[id_courant+4]->set_idGroup(idGroup);
+                Sous_Cases_to_Test.push_back(allCases[id_courant+4]);
+                //cases_to_Test.erase (cases_to_Test.begin()+((id_courant+4)-compteur_grp_deleted));
+                compteur_cases_left--;
+            }
+
+            Sous_Cases_to_Test.erase(Sous_Cases_to_Test.begin());
+
+            if (Sous_Cases_to_Test.size() != 0)
+            {
+                //on rajoute le suivant
+                new_groupe_cases.push_back(Sous_Cases_to_Test.front());
+                //cout << "ajout case" << Sous_Cases_to_Test.front()->get_id()  << endl;
+            }
+        }
+
+        tab_group.push_back(new_groupe_cases);
+    }
+
+    return  tab_group ;
+}
 
 
 int Action::get_nbTurnPlayed()

@@ -17,6 +17,7 @@ class Grille
         NumGenerator* get_numG();
         void update_score(int valeur);
         void reset();
+        void reset_AllidGroup();
     protected:
     private:
         vector<Case*> cases;

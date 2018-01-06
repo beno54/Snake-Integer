@@ -134,3 +134,11 @@ Case* Grille::get_Case_score()
 {
     return case_score ;
 }
+
+void Grille::reset_AllidGroup()
+{
+    for (int i = 0; i < 25; i++)
+    {
+        cases[i]->set_idGroup(0);
+    }
+}

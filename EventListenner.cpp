@@ -113,15 +113,16 @@ void EventListenner::listen ()
                 action->log_data(ptr_casesSelected);
                 action->compute_score(ptr_casesSelected);
                 action->set_nbTurnPlayed();
-                vector<Case*>ptr_cases = grid->get_Cases();
-                for (int j = 0 ; j <25 ;j++)
-                {
-                    cout <<  setw(5) << ptr_cases[j]->get_idGroup() << " ";
-                    if ((j+1)%5==0)
-                    {
-                        cout << endl;
-                    }
-                }
+//                vector<Case*>ptr_cases = grid->get_Cases();
+//                for (int j = 0 ; j <25 ;j++)
+//                {
+//                    cout <<  setw(5) << ptr_cases[j]->get_idGroup() << " ";
+//                    if ((j+1)%5==0)
+//                    {
+//                        cout << endl;
+//                    }
+//                }
+                action->get_tab_groups_in_grid();
                 if (action->get_groups_in_grid()==0)
                 {
                     cout << " GAME OVER " << endl ;
