@@ -8,8 +8,8 @@ Action::Action(Grille *grid, string ProfilName)
     //ouverture des fichiers profils durant l'ex�cution du programme
     logFile.open (("./Logs/"+ProfilName).c_str(),ios::app);
     scoreFile.open ( ("./Logs/Score_"+ProfilName).c_str(),ios::app);
-
-    if (logFile )
+    tmpFile.open ("./Logs/TmpfileLog",ios::app);
+    if (logFile && tmpFile)
     {
         cout << "Ouverture du fichier de logs" <<endl ;
     }
@@ -24,8 +24,10 @@ Action::~Action()
     //dtor
 
     //fermeture des fichiers de profils � la fermeture
+    scoreFile.close();
     logFile.close();
-    cout << "Fermeture du fichier de logs" <<endl ;
+    tmpFile.close();
+    remove("./Logs/TmpfileLog");
 }
 
 
@@ -61,24 +63,24 @@ void Action::log_data(vector<Case*> cases_selected)
         //calcul moyenne
         GridAverage += currentvalue ;
         //Logs Grid
-        logFile << currentvalue ;
-        logFile << ";" ;
+        tmpFile << currentvalue ;
+        tmpFile << ";" ;
     }
 
     //calcul moyenne
     GridAverage /= 25 ;
 
     //Log  moyenne de la grille
-    logFile << GridAverage ;
-    logFile << ";" ;
+    tmpFile << GridAverage ;
+    tmpFile << ";" ;
 
     //Log score grille courrante
-    logFile << grid->get_Case_score()->get_value() ;
-    logFile << ";" ;
+    tmpFile << grid->get_Case_score()->get_value() ;
+    tmpFile << ";" ;
 
     //Logs Valeur max
-    logFile << maxvalue ;
-    logFile << ";" ;
+    tmpFile << maxvalue ;
+    tmpFile << ";" ;
 
     //Logs Cases s�lectionn�es
     for (int e=0;e<cases_selected.size();e++)
@@ -88,8 +90,8 @@ void Action::log_data(vector<Case*> cases_selected)
 
     for (int e=0;e<25;e++)
     {
-        logFile << caseSelectOrNot[e] ;
-        logFile << ";" ;
+        tmpFile << caseSelectOrNot[e] ;
+        tmpFile << ";" ;
     }
 
      //Log case en fin de tableau ou non
@@ -97,33 +99,33 @@ void Action::log_data(vector<Case*> cases_selected)
      {
         if ((cases_selected[cases_selected.size()-1]->get_id()-1) == e)
         {
-            logFile << 1;
+            tmpFile << 1;
         }
         else
         {
-            logFile << 0 ;
+            tmpFile << 0 ;
         }
-        logFile << ";" ;
+        tmpFile << ";" ;
      }
 
      //Log de valeur s�lectionn�e
-     logFile << cases_selected[0]->get_value() ;
-     logFile << ";" ;
+     tmpFile << cases_selected[0]->get_value() ;
+     tmpFile << ";" ;
 
      //Log de nombre de cases s�lectionn�es
-     logFile << cases_selected.size() ;
-     logFile << ";" ;
+     tmpFile << cases_selected.size() ;
+     tmpFile << ";" ;
 
      //Log valeur ajout�e au score = nb case s�lectionn�e * valeur s�lecitonn�e
-     logFile << cases_selected.size()* cases_selected[0]->get_value() ;
-     logFile << ";" ;
+     tmpFile << cases_selected.size()* cases_selected[0]->get_value() ;
+     tmpFile << ";" ;
 
      //Log Nombres de groupements de m�me valeur
-     logFile << get_groups_in_grid();
+     tmpFile << get_groups_in_grid();
      cout << "nb groupe " <<  get_groups_in_grid()<< endl ;
 
      //Log fin de log
-     logFile << std::endl ;
+     tmpFile << std::endl ;
      //cout << "Ecriture dans fichier de logs" <<endl ;
 }
 
@@ -387,6 +389,21 @@ void Action::set_nbTurnPlayed()
 }
 void Action::log_score()
 {
+    //on copie le contenu du fichiuer temporaire dans le fichier de log
+    //ferme le fichier en écriture
+    tmpFile.close();
+    //ouvre le fichier en lecture
+    ifstream tmpFile_reader("./Logs/TmpfileLog",std::ifstream::in);
+    string line;
+    while (getline(tmpFile_reader,line))
+    {
+        logFile << line;
+        logFile << std::endl ;
+    }
+
+    //réouvre le fichier en écriture
+    tmpFile_reader.close();
+
     if (scoreFile )
     {
         //Uodate du moment courant + Log score avant GAME OVER + nb tour jou�
@@ -395,11 +412,16 @@ void Action::log_score()
         strcpy(timeToLog,ctime(&timenow));
         timeToLog[strlen(timeToLog)-1]='\0';
         scoreFile << timeToLog<< ";" << grid->get_Case_score()->get_value() << ";" << nbTurnPlayed << ";" <<std::endl ;
-        scoreFile.close();
     }
     else
     {
         cout << "Ouverture failed" <<endl ;
     }
 
+}
+
+void Action::reinitialize_tmpFile()
+{
+    if (tmpFile)tmpFile.close();
+    tmpFile.open ("./Logs/TmpfileLog",ios::trunc);
 }

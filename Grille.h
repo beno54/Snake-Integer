@@ -18,6 +18,7 @@ class Grille
         void update_score(int valeur);
         void reset();
         void reset_AllidGroup();
+        void set_isOver(bool resultat);
     protected:
     private:
         vector<Case*> cases;
@@ -26,6 +27,8 @@ class Grille
         Vector2f posi;
         NumGenerator* numG;
         Case* case_score;
+        Text gameOver;
+        bool isOver ;
 };
 
 #endif // GRILLE_H

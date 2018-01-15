@@ -101,6 +101,9 @@ void EventListenner::listen ()
         if (but_start->get_background().getGlobalBounds().contains(Vector2f(localPosition)) && isButtonPressed)
         {
             grid->reset();
+            action->reinitialize_nbTurnPlayed();
+            action->reinitialize_tmpFile();
+            grid->set_isOver(false);
             isButtonPressed = false;
         }
         else if (ptr_casesSelected.size() != 0)
@@ -113,19 +116,11 @@ void EventListenner::listen ()
                 action->log_data(ptr_casesSelected);
                 action->compute_score(ptr_casesSelected);
                 action->set_nbTurnPlayed();
-//                vector<Case*>ptr_cases = grid->get_Cases();
-//                for (int j = 0 ; j <25 ;j++)
-//                {
-//                    cout <<  setw(5) << ptr_cases[j]->get_idGroup() << " ";
-//                    if ((j+1)%5==0)
-//                    {
-//                        cout << endl;
-//                    }
-//                }
-                action->get_tab_groups_in_grid();
+
                 if (action->get_groups_in_grid()==0)
                 {
                     cout << " GAME OVER " << endl ;
+                    grid->set_isOver(true);
                     action->log_score();
                     action->reinitialize_nbTurnPlayed();
                 }

@@ -20,10 +20,11 @@ class Action
         int get_nbTurnPlayed();
         void set_nbTurnPlayed();
         void reinitialize_nbTurnPlayed();
+        void reinitialize_tmpFile();
     protected:
     private:
         Grille *grid;
-        ofstream logFile, scoreFile ;
+        ofstream logFile, scoreFile, tmpFile ;
         int nbTurnPlayed;
         time_t timenow ;
 };

@@ -7,7 +7,7 @@ Grille::Grille(Vector2f posi, int taille)
     Vector2f posi_case = posi;
     this->taille = taille;
     int taille_case = taille/5;
-
+    isOver = false;
     //on initie le numGénérator qui va générer les nombres aléatoires
     numG = new NumGenerator();
 
@@ -25,6 +25,21 @@ Grille::Grille(Vector2f posi, int taille)
         Case* new_case = new Case(posi_case, taille_case, font, numG->nexNum(),(i+1));
         cases.push_back(new_case);
     }
+
+    //Gameover message
+    gameOver.setFont(font);
+
+    //conversion int to string
+    gameOver.setString("GAME OVER");
+    gameOver.setCharacterSize(64);
+    //on met l'origine au centre de la case
+
+    sf::FloatRect textRect = gameOver.getLocalBounds();
+
+    gameOver.setPosition(sf::Vector2f(posi.x + taille/2.0f, posi.y + taille/2.0f));
+    gameOver.setOrigin(textRect.left + textRect.width/2.0f,
+               textRect.top  + textRect.height/2.0f);
+    gameOver.setColor(Color::Red);
 }
 
 // on supprime tous les objets dynamiques contenu dans la grille
@@ -103,6 +118,10 @@ void Grille::draw_cases(RenderWindow &win)
     }
     win.draw(case_score->get_background());
     win.draw(case_score->get_text());
+    if (isOver)
+    {
+        win.draw(gameOver);
+    }
 }
 
 //on renvoie le numGenerator pour obtenir les nombre aléatoires
@@ -141,4 +160,9 @@ void Grille::reset_AllidGroup()
     {
         cases[i]->set_idGroup(0);
     }
+}
+
+void Grille::set_isOver(bool resultat)
+{
+    isOver = resultat;
 }
