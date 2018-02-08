@@ -17,6 +17,8 @@ Action::Action(Grille *grid, string ProfilName)
     {
         cout << "Ouverture failed" <<endl ;
     }
+    calcul_groups_in_grid();
+    compute_NbPossibilities_in_grid();
 }
 
 Action::~Action()
@@ -44,6 +46,9 @@ void Action::compute_score(vector<Case*> cases_selected)
     }
     cases_selected.back()->set_value(score);
     grid->update_score(score);
+    calcul_groups_in_grid();
+    compute_NbPossibilities_in_grid();
+
 }
 
 void Action::log_data(vector<Case*> cases_selected)
@@ -121,161 +126,40 @@ void Action::log_data(vector<Case*> cases_selected)
      tmpFile << ";" ;
 
      //Log Nombres de groupements de m�me valeur
-     tmpFile << get_groups_in_grid();
-     cout << "nb groupe " <<  get_groups_in_grid()<< endl ;
-
+     tmpFile << nbPossibilities;
+     cout << nbPossibilities << endl ;
      //Log fin de log
      tmpFile << std::endl ;
      //cout << "Ecriture dans fichier de logs" <<endl ;
 }
+void Action::compute_NbPossibilities_in_grid()
+{
+    nbPossibilities = 0;
 
+    for (int i = 0; i < groups_in_grid.size(); i ++)
+    {
+        if (groups_in_grid[i].size() > 1)
+        {
+            nbPossibilities ++;
+        }
+    }
+}
 /*
 renvoie le nombre de possibilit�s restantes !
 */
-int Action::get_groups_in_grid()
+int Action::get_NbpPossibilities_in_grid()
 {
-    int NbPossiblite = 0;
-    vector< vector<Case*> > tab_group = get_tab_groups_in_grid();
-
-
-    for (int i = 0; i < tab_group.size(); i ++)
-    {
-        if (tab_group[i].size() > 1)
-        {
-            NbPossiblite ++;
-        }
-    }
-
-    return NbPossiblite ;
-
-
-//    int nb_group = 0 ;
-//    for (int e = 0 ; e < 25 ; e++)
-//    {
-//       if (TabIdGroup[e]> nb_group) nb_group = TabIdGroup[e];
-//    }
-//    for (int e = 0 ; e < nb_group ; e++)
-//    {
-//        int cpt = 0 ;
-//        for (int i = 0 ; i < 25 ; i++)
-//        {
-//           if (TabIdGroup[i] == e) cpt ++ ;
-//        }
-//        if (cpt > 1) NbPossiblite++;
-//    }
+    return nbPossibilities ;
 }
-/*
-Compte le nombre de groupes (associes � chaques cases son groupe)
-Compare avec le voisin du bas et celui de droite
-*/
 
-//int Action::get_groups_in_grid()
-//{
-//    vector<Case*>  Cases = grid->get_Cases();
-//    int Nbgroup = 0 ;
-//
-//    vector<int> tab_group;
-//    for (int i = 0; i < 40; i++)
-//    {
-//        tab_group.push_back(0);
-//    }
-//
-//    for (int e = 0 ; e < 25 ; e++){Cases[e]->set_idGroup(0);}
-//    for (int e = 0 ; e < 25 ; e++)
-//    {
-//        if ((e+1)%5 !=0)
-//        {
-//            if (Cases[e]->get_value() == Cases[e+1]->get_value())
-//            {
-//                if (Cases[e+1]->get_idGroup())
-//                {
-//                    Cases[e]->set_idGroup(Cases[e+1]->get_idGroup());
-////                    int compteur = 1;
-////                    if (Cases[e+1+compteur]->get_value() == Cases[e]->get_value() && (e+1+compteur)%5!=0)
-////                    {
-////                        compteur ++;
-////                    }
-////                    while(compteur > 0)
-////                    {
-////                        Cases[e+compteur-1]->set_idGroup(Cases[e+compteur]->get_idGroup());
-////                        compteur --;
-////                    }
-//                }
-//                else
-//                    if (!Cases[e]->get_idGroup())
-//                    {
-//                        Nbgroup++;
-//                        Cases[e]->set_idGroup(Nbgroup);
-//                        Cases[e+1]->set_idGroup(Nbgroup);
-//                    }
-//                    else
-//                    {
-//                        Cases[e+1]->set_idGroup(Cases[e]->get_idGroup());
-//                    }
-//            }
-//            else
-//            {
-//                //cas premiere case
-//                if (!Cases[e]->get_idGroup())
-//                {
-//                    Nbgroup ++;
-//                    Cases[e]->set_idGroup(Nbgroup);
-//                }
-//                //on check si voisin pas deja dans un groupe
-//                if (!Cases[e+1]->get_idGroup())
-//                {
-//                    Nbgroup ++;
-//                    Cases[e+1]->set_idGroup(Nbgroup);
-//                    //cout << "voisin droite" << (e+1) << "prends groupe" << Cases[e+1]->get_idGroup() << endl;
-//                }
-//            }
-//        }
-//        if (((e+1)<20))
-//        {
-//            if (Cases[e]->get_value() == Cases[e+5]->get_value())
-//            {
-//                if (Cases[e+5]->get_idGroup())
-//                {
-//                    Cases[e]->set_idGroup(Cases[e+5]->get_idGroup());
-//                }
-//                else
-//                    if (!Cases[e]->get_idGroup())
-//                    {
-//                        Cases[e]->set_idGroup(++Nbgroup);
-//                        Cases[e+5]->set_idGroup(Nbgroup);
-//                    }
-//                    else
-//                    {
-//                        Cases[e+5]->set_idGroup(Cases[e]->get_idGroup());
-//                        //cout << "voisin bas" << (e+1) << "prends groupe" << Cases[e]->get_idGroup() << endl;
-//                    }
-//            }
-//            else
-//            {
-//                Cases[e+5]->set_idGroup(++Nbgroup);
-//            }
-//        }
-//    }
-//
-//    for (int i = 0; i < 25; i++)
-//    {
-//        tab_group[(Cases[i]->get_idGroup())-1]++;
-//    }
-//
-//    int compteur_grp_deleted = 0;
-//    for (int i = 0; i < 40; i++)
-//    {
-//        if (tab_group[i] <= 1)
-//        {
-//            tab_group.erase (tab_group.begin()+i-compteur_grp_deleted);
-//            compteur_grp_deleted ++;
-//        }
-//    }
-//
-//    return tab_group.size();
-//}
+vector< vector<Case*> > Action::get_tab_groups_in_grid ()
+{
+    return groups_in_grid ;
+}
 
-vector< vector<Case*> > Action::get_tab_groups_in_grid()
+void Action::calcul_groups_in_grid()
+
+
 {
     vector< vector<Case*> > tab_group;
     vector<Case*>  allCases = grid->get_Cases();
@@ -371,7 +255,7 @@ vector< vector<Case*> > Action::get_tab_groups_in_grid()
         tab_group.push_back(new_groupe_cases);
     }
 
-    return  tab_group ;
+    groups_in_grid = tab_group ;
 }
 
 
@@ -424,4 +308,9 @@ void Action::reinitialize_tmpFile()
 {
     if (tmpFile)tmpFile.close();
     tmpFile.open ("./Logs/TmpfileLog",ios::trunc);
+}
+//test si les cases en entrées sont dans le meme groupe
+bool Action::test_case_selected(vector<Case*> cases_selected)
+{
+    return false;
 }
