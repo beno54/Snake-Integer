@@ -1,8 +1,9 @@
 #include "Grille.h"
 
 //on initie la grille, les cases et le score.
-Grille::Grille(Vector2f posi, int taille)
+Grille::Grille(Vector2f posi, int taille, RenderWindow* win)
 {
+    window = win;
     this->posi = posi;
     Vector2f posi_case = posi;
     this->taille = taille;
@@ -109,18 +110,18 @@ Case* Grille::get_neighbourOfCase_pointed(Vector2f posi,Case *caseSelected)
 }
 
 //on dessine les cases (texte + background) et le score
-void Grille::draw_cases(RenderWindow &win)
+void Grille::draw_cases()
 {
     for (int i = 0; i < cases.size(); i ++)
     {
-        win.draw((cases[i]->get_background()));
-        win.draw((cases[i]->get_text()));
+        window->draw((cases[i]->get_background()));
+        window->draw((cases[i]->get_text()));
     }
-    win.draw(case_score->get_background());
-    win.draw(case_score->get_text());
+    window->draw(case_score->get_background());
+    window->draw(case_score->get_text());
     if (isOver)
     {
-        win.draw(gameOver);
+        window->draw(gameOver);
     }
 }
 
@@ -166,3 +167,45 @@ void Grille::set_isOver(bool resultat)
 {
     isOver = resultat;
 }
+
+bool Grille::get_isOver()
+{
+    return isOver;
+}
+
+vector<Case*> Grille::get_voisins(Case* case_courante)
+{
+    int id_courante = case_courante->get_id();
+    vector<Case*> voisins;
+
+    //voisin de droite ?
+    if (id_courante%5 != 0 && case_courante->get_value() == cases[id_courante]->get_value())
+    {
+        //ok donc rajout
+        voisins.push_back(cases[id_courante]);
+    }
+
+    //voisin de gauche ?
+    if (id_courante%5 != 1 && case_courante->get_value() == cases[id_courante-2]->get_value())
+    {
+        //ok donc rajout
+        voisins.push_back(cases[id_courante-2]);
+    }
+
+    //voisin du haut ?
+    if (id_courante > 5 && case_courante->get_value() == cases[id_courante-6]->get_value())
+    {
+        //ok donc rajout
+        voisins.push_back(cases[id_courante-6]);
+    }
+
+    //voisin du bas ?
+    if (id_courante <= 20 && case_courante->get_value() == cases[id_courante+4]->get_value())
+    {
+        //ok donc rajout
+        voisins.push_back(cases[id_courante+4]);
+    }
+
+    return voisins;
+}
+

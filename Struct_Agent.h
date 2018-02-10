@@ -1,17 +1,18 @@
 #ifndef STRUCT_AGENT_H
 #define STRUCT_AGENT_H
-#include "Grille.h"
+#include "Action.h"
 
 class Struct_Agent
 {
     public:
-        Struct_Agent();
+        Struct_Agent(Grille* senseurs, int nb_game2Play);
         virtual ~Struct_Agent();
-        virtual vector<Case*> compute_decision (Grille senseurs) = 0;
+        virtual void compute_decision () = 0;
     protected:
-
+        Action* action;
+        Grille* senseurs;
+        int nb_game2Play;
     private:
-
 };
 
 #endif // STRUCT_AGENT_H

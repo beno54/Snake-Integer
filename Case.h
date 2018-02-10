@@ -26,7 +26,7 @@ class Case
         void update_value(int new_value);
         void draw();
         void color_selected(bool isSelected);
-
+        void color_selected(float i);
 
     protected:
         Vector2f get_posi();

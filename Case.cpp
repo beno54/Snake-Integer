@@ -111,6 +111,12 @@ void Case::color_selected(bool isSelected)
     }
 }
 
+//on (dé)selectionne une case, en changeant sa couleur (rouge = selected) en fct de l'indice
+void Case::color_selected(float i)
+{
+    background.setFillColor(sf::Color((int)(205*i)+50, 0, 0));
+}
+
 int Case::get_id()
 {
     return id ;

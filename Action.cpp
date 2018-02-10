@@ -38,6 +38,8 @@ void Action::compute_score(vector<Case*> cases_selected)
 {
     int score = 0;
 
+    log_data(cases_selected);
+
     for (int e = 0;e<cases_selected.size();e++)
     {
         cases_selected[e]->color_selected(false);
@@ -49,6 +51,14 @@ void Action::compute_score(vector<Case*> cases_selected)
     calcul_groups_in_grid();
     compute_NbPossibilities_in_grid();
 
+    nbTurnPlayed ++;
+    if (nbPossibilities==0)
+    {
+        cout << " GAME OVER " << endl ;
+        grid->set_isOver(true);
+        log_score();
+        reinitialize_nbTurnPlayed();
+    }
 }
 
 void Action::log_data(vector<Case*> cases_selected)
@@ -127,7 +137,7 @@ void Action::log_data(vector<Case*> cases_selected)
 
      //Log Nombres de groupements de m�me valeur
      tmpFile << nbPossibilities;
-     cout << nbPossibilities << endl ;
+     //cout << nbPossibilities << endl ;
      //Log fin de log
      tmpFile << std::endl ;
      //cout << "Ecriture dans fichier de logs" <<endl ;
@@ -138,11 +148,13 @@ void Action::compute_NbPossibilities_in_grid()
 
     for (int i = 0; i < groups_in_grid.size(); i ++)
     {
-        if (groups_in_grid[i].size() > 1)
+        if (groups_in_grid[i].size() == 1)
         {
-            nbPossibilities ++;
+            groups_in_grid.erase(groups_in_grid.begin()+i);
+            i --;
         }
     }
+    nbPossibilities = groups_in_grid.size();
 }
 /*
 renvoie le nombre de possibilit�s restantes !
@@ -158,8 +170,6 @@ vector< vector<Case*> > Action::get_tab_groups_in_grid ()
 }
 
 void Action::calcul_groups_in_grid()
-
-
 {
     vector< vector<Case*> > tab_group;
     vector<Case*>  allCases = grid->get_Cases();
@@ -312,5 +322,47 @@ void Action::reinitialize_tmpFile()
 //test si les cases en entrées sont dans le meme groupe
 bool Action::test_case_selected(vector<Case*> cases_selected)
 {
-    return false;
+    bool action_good = true;
+    int i = 0;
+    int group_id = cases_selected[0]->get_idGroup();
+    i ++;
+    //on ajoute dans tab group
+    while(i < cases_selected.size() && action_good)
+    {
+        if (cases_selected[i]->get_idGroup() != group_id)
+        {
+            action_good = false;
+        }
+        i++;
+    }
+    return action_good;
 }
+
+void Action::affiche_cases_selected(vector<Case*> cases_selected, int time_sleep)
+{
+    for (int i = 0; i < cases_selected.size(); i ++)
+    {
+        float f = (float)i/(float)cases_selected.size();
+        cases_selected[i]->color_selected(f);
+    }
+    grid->draw_cases();
+    Sleep(time_sleep);
+
+    for (int i = 0; i < cases_selected.size(); i ++)
+    {
+        cases_selected[i]->color_selected(false);
+    }
+}
+
+//On reset les senseurs et recalcule les nouvelles possibilités
+void Action::reset()
+{
+    grid->reset();
+    reinitialize_nbTurnPlayed();
+    reinitialize_tmpFile();
+    grid->set_isOver(false);
+
+    calcul_groups_in_grid();
+    compute_NbPossibilities_in_grid();
+}
+

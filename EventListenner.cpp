@@ -113,17 +113,8 @@ void EventListenner::listen ()
             if (ptr_casesSelected.size() > 1)
             {
                 //log avant action d'écraser la grille
-                action->log_data(ptr_casesSelected);
                 action->compute_score(ptr_casesSelected);
-                action->set_nbTurnPlayed();
 
-                if (action->get_NbpPossibilities_in_grid()==0)
-                {
-                    cout << " GAME OVER " << endl ;
-                    grid->set_isOver(true);
-                    action->log_score();
-                    action->reinitialize_nbTurnPlayed();
-                }
             }
             else
             {

@@ -1,5 +1,5 @@
 #include "EventListenner.h"  // Inclut SFML/Graphics
-#include "Grille.h"
+#include "Agent1_Logical.h"
 #include "Button.h"
 #include "string.h"
 int main (int argc, char* argv[])
@@ -29,18 +29,37 @@ int main (int argc, char* argv[])
     }
 
     //on cr�e la grille et le EventListener
-    Grille* ma_grille = new Grille(Vector2f (250, 100), 450);
+    Grille* ma_grille = new Grille(Vector2f (250, 100), 450, &app);
     Button* but_start = new Button(100, Vector2f (800, 100), font, ma_grille);
     cout << (ProfilName).c_str() << endl;
     EventListenner* Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);
+    Agent1_Logical* agent1 = new Agent1_Logical(ma_grille, 100);
+
+    // Clear screen
+    app.clear(sf::Color(242, 223, 202));
+
+    // Draw the grille + cases + score
+    ma_grille->draw_cases();
+    but_start->draw(app);
+    // Update the window
+    app.display();
 
 	// Start the game loop
-    while (app.isOpen())
+    while (app.isOpen() && agent1->has_games2Play())
     {
         sf::Event event;
 
+        // Clear screen
+        app.clear(sf::Color(242, 223, 202));
+
+        // Draw the grille + cases + score
+        ma_grille->draw_cases();
+        but_start->draw(app);
+
         //on d�tecte le clique de souris et on fait les actions correspondantes
-        Listenner->listen();
+        //Listenner->listen();
+
+        agent1->compute_decision();
 
         while (app.pollEvent(event))
         {
@@ -49,15 +68,10 @@ int main (int argc, char* argv[])
                 app.close();
         }
 
-        // Clear screen
-        app.clear(sf::Color(242, 223, 202));
-
-        // Draw the grille + cases + score
-        ma_grille->draw_cases(app);
-        but_start->draw(app);
 
         // Update the window
         app.display();
+
     }
 
     //delete ma_grille;

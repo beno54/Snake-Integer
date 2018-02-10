@@ -6,6 +6,9 @@
 #include <fstream>
 #include <string>
 #include <ctime>
+#include <thread>
+#include <chrono>
+#include <windows.h>
 
 class Action
 {
@@ -27,8 +30,8 @@ class Action
         int get_NbpPossibilities_in_grid();
         vector< vector<Case*> > get_tab_groups_in_grid();
         bool test_case_selected(vector<Case*> cases_selected) ;
-
-
+        void affiche_cases_selected(vector<Case*> cases_selected, int time_sleep);
+        void reset();
     protected:
     private:
         Grille *grid;

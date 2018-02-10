@@ -7,18 +7,20 @@
 class Grille
 {
     public:
-        Grille(Vector2f posi, int taille);
+        Grille(Vector2f posi, int taille, RenderWindow* win);
         virtual ~Grille();
         Case* get_Case_pointed(Vector2f posi);
         Case* get_neighbourOfCase_pointed(Vector2f posi,Case *caseSelected);
         vector<Case*> get_Cases();
         Case* get_Case_score();
-        void draw_cases(RenderWindow &win);
+        void draw_cases();
         NumGenerator* get_numG();
         void update_score(int valeur);
         void reset();
         void reset_AllidGroup();
         void set_isOver(bool resultat);
+        bool get_isOver();
+        vector<Case*> get_voisins(Case* case_courante);
     protected:
     private:
         vector<Case*> cases;
@@ -29,6 +31,7 @@ class Grille
         Case* case_score;
         Text gameOver;
         bool isOver ;
+        RenderWindow* window;
 };
 
 #endif // GRILLE_H
