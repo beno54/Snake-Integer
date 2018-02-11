@@ -22,7 +22,7 @@ void Agent1_Logical::compute_decision()
         //cout << all_possibilities.size() << endl;
 
         int choix = rand() % all_possibilities.size();
-        action->affiche_cases_selected(all_possibilities[choix], 0);
+        action->affiche_cases_selected(all_possibilities[choix], 1000);
         action->compute_score(all_possibilities[choix]);
 
 //        int choix = rand() % tab_group.size();
@@ -40,17 +40,25 @@ void Agent1_Logical::compute_possibilitiesInGrps()
 {
     all_possibilities.clear();
     //cout << "all_possibilities = " << all_possibilities.size() << endl;
-    vector< vector<Case*> > tab_group = action->get_tab_groups_in_grid();
+    vector<Case*>  tab_group = senseurs->get_Cases();
 
     for (int i = 0; i < tab_group.size(); i ++)
     {
-        for (int j = 0; j < tab_group[i].size(); j ++)
-        {
             vector<Case*> racine;
-            racine.push_back(tab_group[i][j]);
+            racine.push_back(tab_group[i]);
             deep_course(racine);
-        }
     }
+
+    cout << "Possibilites : " << action->get_nbTurnPlayed() << endl ;
+    for (int z = 0; z < all_possibilities.size(); z ++)
+    {
+        for (int e = 0; e < all_possibilities[z].size(); e ++)
+        {
+            cout << all_possibilities[z][e]->get_id() << " ";
+        }
+        cout << endl;
+    }
+
 }
 
 void Agent1_Logical::deep_course(vector<Case*> v_casesCourante)
@@ -75,14 +83,8 @@ void Agent1_Logical::deep_course(vector<Case*> v_casesCourante)
     for (int k = 0; k < voisins.size(); k ++)
     {
         vector_chemin.push_back(voisins[k]);
-        all_possibilities.push_back(vector_chemin);
-//        cout << "new chemin: " << endl;
-//        for (int z = 0; z < vector_chemin.size(); z ++)
-//        {
-//            cout << vector_chemin[z]->get_id() << "-";
-//        }
-//        cout << endl;
 
+        all_possibilities.push_back(vector_chemin);
         deep_course(vector_chemin);
         vector_chemin.pop_back();
     }
