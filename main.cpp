@@ -38,7 +38,7 @@ int main (int argc, char* argv[])
     Button* but_start = new Button(100, Vector2f (800, 100), font, ma_grille);
     cout << (ProfilName).c_str() << endl;
     EventListenner* Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);
-    Agent1_Logical* agent1 = new Agent1_Logical(ma_grille, 3);
+    Agent1_Logical* agent1 = new Agent1_Logical(ma_grille, 20);
 
 
     // Clear screen
