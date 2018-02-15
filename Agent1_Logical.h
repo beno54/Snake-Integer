@@ -10,10 +10,16 @@ class Agent1_Logical: public Struct_Agent
         void compute_decision ();
         void compute_possibilitiesInGrps();
         bool has_games2Play();
+        void deep_course(vector<Case*> v_casesCourante);
+        void compute_possibilities_cost();
+        vector< int >  compute_destination_reward();
+        vector< float >  compute_random_reward();
+
     protected:
     private:
-        void deep_course(vector<Case*> v_casesCourante);
+
         vector< vector<Case*> > all_possibilities;
+        vector< vector<Case*> > all_possibilities_cost;
 };
 
 #endif // AGENT1_LOGICAL_H

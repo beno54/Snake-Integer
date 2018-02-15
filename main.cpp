@@ -38,7 +38,7 @@ int main (int argc, char* argv[])
     Button* but_start = new Button(100, Vector2f (800, 100), font, ma_grille);
     cout << (ProfilName).c_str() << endl;
     EventListenner* Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);
-    Agent1_Logical* agent1 = new Agent1_Logical(ma_grille, 5);
+    Agent1_Logical* agent1 = new Agent1_Logical(ma_grille, 3);
 
 
     // Clear screen
@@ -55,7 +55,7 @@ int main (int argc, char* argv[])
     {
         sf::Event event;
 
-        // Clear screen
+      //   Clear screen
         app.clear(sf::Color(242, 223, 202));
 
         // Draw the grille + cases + score

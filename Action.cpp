@@ -32,8 +32,6 @@ Action::~Action()
     remove("./Logs/TmpfileLog");
 }
 
-
-
 void Action::compute_score(vector<Case*> cases_selected)
 {
     int score = 0;

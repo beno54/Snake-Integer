@@ -209,3 +209,38 @@ vector<Case*> Grille::get_voisins(Case* case_courante)
     return voisins;
 }
 
+vector<Case*> Grille::get_all_voisins(Case* case_courante)
+{
+    int id_courante = case_courante->get_id();
+    vector<Case*> voisins;
+
+    //voisin de droite ?
+    if (id_courante%5 != 0 )
+    {
+        //ok donc rajout
+        voisins.push_back(cases[id_courante]);
+    }
+
+    //voisin de gauche ?
+    if (id_courante%5 != 1 )
+    {
+        //ok donc rajout
+        voisins.push_back(cases[id_courante-2]);
+    }
+
+    //voisin du haut ?
+    if (id_courante > 5 )
+    {
+        //ok donc rajout
+        voisins.push_back(cases[id_courante-6]);
+    }
+
+    //voisin du bas ?
+    if (id_courante <= 20)
+    {
+        //ok donc rajout
+        voisins.push_back(cases[id_courante+4]);
+    }
+
+    return voisins;
+}

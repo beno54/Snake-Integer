@@ -21,6 +21,7 @@ class Grille
         void set_isOver(bool resultat);
         bool get_isOver();
         vector<Case*> get_voisins(Case* case_courante);
+        vector<Case*> get_all_voisins(Case* case_courante);
     protected:
     private:
         vector<Case*> cases;
