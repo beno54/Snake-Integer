@@ -5,16 +5,18 @@
 class Agent1_Logical: public Struct_Agent
 {
     public:
-        Agent1_Logical(Grille* senseurs, int nb_game2Play);
+        Agent1_Logical(Grille* senseurs, int nb_game2Play, int decision_delay);
         virtual ~Agent1_Logical();
         void compute_decision ();
         void compute_possibilitiesInGrps();
         bool has_games2Play();
         void deep_course(vector<Case*> v_casesCourante);
-        void compute_possibilities_cost();
+        int compute_possibilities_cost();
         vector< float >  compute_destination_reward();
         vector< float >  compute_random_reward();
-        vector< int >compute_destination_base6_reward();
+        vector< int > compute_destination_base6_reward();
+        vector< int > compute_destination_4_reward();
+        vector< int > compute_position_reward();
 
     protected:
     private:

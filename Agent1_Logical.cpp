@@ -1,6 +1,6 @@
 #include "Agent1_Logical.h"
 
-Agent1_Logical::Agent1_Logical(Grille* senseurs, int nb_game2Play): Struct_Agent(senseurs, nb_game2Play)
+Agent1_Logical::Agent1_Logical(Grille* senseurs, int nb_game2Play, int decision_delay): Struct_Agent(senseurs, nb_game2Play, decision_delay)
 {
     //ctor
     srand (time(NULL));
@@ -17,32 +17,17 @@ void Agent1_Logical::compute_decision()
 {
     if (!senseurs->get_isOver())
     {
-        compute_possibilitiesInGrps();
-        vector<float> nbvoisinssamevalue = compute_destination_reward();
-        vector<float> randomscore = compute_random_reward ();
-        vector<int> score_base6 = compute_destination_base6_reward ();
+        int choix = 0 ;
 
-        vector<float> rewards;
-        for (int z = 0; z < all_possibilities.size(); z ++)
-        {
-            float reward = nbvoisinssamevalue[z] + randomscore[z] + score_base6[z];
-            rewards.push_back(reward);
-            //cout << "same value: " << nbvoisinssamevalue[z] << ", random: " << randomscore[z] << ", total :" << rewards[z] << endl;
-        }
-        float reward_best = 0;
-        int choix = 0;
-        for (int z = 0; z < rewards.size(); z ++)
-        {
-            if (reward_best < rewards[z])
-            {
-                reward_best = rewards[z];
-                choix = z;
-            }
-        }
-        cout << "the best is " << reward_best << endl;
-        action->affiche_cases_selected(all_possibilities[choix], 0);
+        compute_possibilitiesInGrps();
+        choix = compute_possibilities_cost();
+        action->affiche_cases_selected(all_possibilities[choix], decision_delay);
         action->compute_score(all_possibilities[choix]);
-        //cout << all_possibilities.size() << endl;
+
+
+
+
+//cout << all_possibilities.size() << endl;
 
 //        int choix = rand() % all_possibilities.size();
 //        action->affiche_cases_selected(all_possibilities[choix], 3000);
@@ -64,7 +49,6 @@ void Agent1_Logical::compute_decision()
 void Agent1_Logical::compute_possibilitiesInGrps()
 {
     all_possibilities.clear();
-    //cout << "all_possibilities = " << all_possibilities.size() << endl;
     vector<Case*>  tab_group = senseurs->get_Cases();
 
     for (int i = 0; i < tab_group.size(); i ++)
@@ -125,7 +109,6 @@ bool Agent1_Logical::has_games2Play()
     return monbool;
 }
 
-
 vector< float >  Agent1_Logical::compute_destination_reward()
 {
     vector< float > destination_reward;
@@ -147,15 +130,13 @@ vector< float >  Agent1_Logical::compute_destination_reward()
     return destination_reward;
 }
 
-vector< float >   Agent1_Logical::compute_random_reward()
+vector< float >  Agent1_Logical::compute_random_reward()
 {
     vector< float > random_reward;
 
     for (int z = 0; z < all_possibilities.size(); z ++)
     {
-          float nb_1 = 0;
-          float nb_2 = 0 ;
-          float nb_3 = 0 ;
+
         vector<Case*> voisins;
          for (int x = 0; x < (all_possibilities[z].size()-1); x ++)
         {
@@ -181,17 +162,13 @@ vector< float >   Agent1_Logical::compute_random_reward()
             voisins.insert(voisins.end(),voisin_case.begin(),voisin_case.end());
         }
         float Nb_voisins = voisins.size()*1.0f;
-        for (int z = 0; z < voisins.size(); z ++)
+        float  nb = 0 ;
+        for (int e = 0; e < voisins.size(); e ++)
         {
-            if (voisins[z]->get_value() == 1)nb_1++;
-            else if (voisins[z]->get_value() == 2)nb_2++;
-            else if (voisins[z]->get_value() == 3)nb_3++;
+            if ((voisins[e]->get_value() == 1)||(voisins[e]->get_value() == 2)||(voisins[e]->get_value() == 3))nb ++;
         }
-//        cout << "voisin size: " << voisins.size() << endl;
-//        cout << nb_1 << nb_2 << nb_3 << endl;
-//        cout << (nb_1/Nb_voisins) << "  " << (nb_2/Nb_voisins) << "  " << (nb_3/Nb_voisins) << endl;
-        float reward = (nb_1/Nb_voisins)+(nb_2/Nb_voisins)+(nb_3/Nb_voisins) ;
-//        cout << reward << endl;
+
+        float reward = float(nb/Nb_voisins) ;
         random_reward.push_back(reward);
     }
 
@@ -212,6 +189,7 @@ vector< int >  Agent1_Logical::compute_destination_base6_reward()
             {
                 reward = 1;
             }
+
             number = number/2;
         }
         destination_base6_reward.push_back(reward);
@@ -219,7 +197,81 @@ vector< int >  Agent1_Logical::compute_destination_base6_reward()
     return destination_base6_reward;
 }
 
-void Agent1_Logical::compute_possibilities_cost()
+vector< int >  Agent1_Logical::compute_destination_4_reward()
 {
-
+    vector< int > destination_4_reward;
+    float reward ;
+    for (int z = 0; z < all_possibilities.size(); z ++)
+    {
+        reward = 0;
+        int number = (all_possibilities[z].front()->get_value())*(all_possibilities[z].size());
+        if (number == 4)
+        {
+                reward = 1;
+        }
+        destination_4_reward.push_back(reward);
+    }
+    return destination_4_reward;
 }
+
+vector< int >  Agent1_Logical::compute_position_reward()
+{
+    vector< int > position_reward;
+    float reward ;
+    for (int z = 0; z < all_possibilities.size(); z ++)
+    {
+        int nb_voisins_tot = senseurs->get_all_voisins(all_possibilities[z].back()).size();
+        reward = 0 ;
+
+        switch (nb_voisins_tot)
+        {
+            case '2' : reward = 1 ; break ;
+            case '3' : reward = 0.5 ; break ;
+        }
+
+        position_reward.push_back(reward);
+    }
+    return position_reward;
+}
+
+
+int Agent1_Logical::compute_possibilities_cost()
+{
+    vector<float> nbvoisinssamevalue = compute_destination_reward();
+    vector<float> randomscore = compute_random_reward ();
+    vector<int> score_base6 = compute_destination_base6_reward ();
+    vector<int> score_4 = compute_destination_4_reward();
+    vector<int> position_reward = compute_position_reward();
+    int choix = 0;
+    float reward_best = 0;
+    float reward  = 0 ;
+
+    for (int z = 0; z < all_possibilities.size(); z ++)
+    {
+        if (score_base6[z])
+        {
+           reward=1*score_base6[z]+0.8*nbvoisinssamevalue[z]+0.4*randomscore[z]+2*position_reward[z];
+        }
+        else
+            {
+                reward = 0.6*nbvoisinssamevalue[z]+0.5*score_4[z]+0.4*randomscore[z]+2*position_reward[z];
+            }
+
+        if (reward_best < reward)
+        {
+            reward_best = reward;
+            choix = z;
+        }
+        cout << endl ;
+        cout << "the best is            : " << reward_best                  << endl;
+        cout << "NB VOISINS SAME VALUE  : " << nbvoisinssamevalue[choix]    << endl;
+        cout << "NB 1-3 VOISINS         : " << randomscore[choix]           << endl;
+        cout << "BASE 6                 : " << score_base6[choix]           << endl;
+        cout << "POSITION REWARD        : " << position_reward[choix]       << endl;
+
+        //cout << "same value: " << nbvoisinssamevalue[z] << ", random: " << randomscore[z] << ", total :" << rewards[z] << endl;
+    }
+    return choix ;
+}
+
+

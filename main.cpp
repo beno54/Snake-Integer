@@ -2,6 +2,12 @@
 #include "Agent1_Logical.h"
 #include "Button.h"
 #include "string.h"
+
+#define AFFICHAGE
+#define DECISION_DELAY_MS 500
+#define NB_GAME 100
+
+
 int main (int argc, char* argv[])
 {
     // Create the main window
@@ -38,30 +44,38 @@ int main (int argc, char* argv[])
     Button* but_start = new Button(100, Vector2f (800, 100), font, ma_grille);
     cout << (ProfilName).c_str() << endl;
     EventListenner* Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);
-    Agent1_Logical* agent1 = new Agent1_Logical(ma_grille, 20);
+    //Grille + Nb parties à jouer + delay entre chaques choix
+#ifdef DECISION_DELAY_MS
+    Agent1_Logical* agent1 = new Agent1_Logical(ma_grille, NB_GAME, DECISION_DELAY_MS);
+#else
+    Agent1_Logical* agent1 = new Agent1_Logical(ma_grille, NB_GAME, 0);
+#endif
 
-
+#ifdef AFFICHAGE
     // Clear screen
     app.clear(sf::Color(242, 223, 202));
 
     // Draw the grille + cases + score
+
     ma_grille->draw_cases();
     but_start->draw(app);
+
     // Update the window
     app.display();
+#endif
 
 	// Start the game loop
     while (app.isOpen() && agent1->has_games2Play())
     {
         sf::Event event;
-
+#ifdef AFFICHAGE
       //   Clear screen
         app.clear(sf::Color(242, 223, 202));
 
         // Draw the grille + cases + score
         ma_grille->draw_cases();
         but_start->draw(app);
-
+#endif
         //on d�tecte le clique de souris et on fait les actions correspondantes
         //Listenner->listen();
 
@@ -71,9 +85,6 @@ int main (int argc, char* argv[])
             case 1 : agent1->compute_decision();break;
         }
 
-        //agent1->compute_decision();
-
-
         while (app.pollEvent(event))
         {
             // Close window : exit
@@ -81,10 +92,10 @@ int main (int argc, char* argv[])
                 app.close();
         }
 
-
+#ifdef AFFICHAGE
         // Update the window
         app.display();
-
+#endif
     }
 
     //delete ma_grille;
