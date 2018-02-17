@@ -20,6 +20,7 @@ class Grille
         void reset_AllidGroup();
         void set_isOver(bool resultat);
         bool get_isOver();
+        float get_mean();
         vector<Case*> get_voisins(Case* case_courante);
         vector<Case*> get_all_voisins(Case* case_courante);
     protected:

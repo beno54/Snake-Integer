@@ -172,7 +172,15 @@ bool Grille::get_isOver()
 {
     return isOver;
 }
-
+float Grille::get_mean()
+{
+    int mean = 0;
+    for (int z = 0 ; z < cases.size() ; z ++)
+    {
+        mean += cases[z]->get_value();
+    }
+    return mean /= 25 ;
+}
 vector<Case*> Grille::get_voisins(Case* case_courante)
 {
     int id_courante = case_courante->get_id();
