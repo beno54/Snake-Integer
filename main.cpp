@@ -5,7 +5,7 @@
 
 //#define AFFICHAGE
 //#define DECISION_DELAY_MS 500
-#define NB_GAME 2000
+#define NB_GAME 4000
 
 
 int main (int argc, char* argv[])

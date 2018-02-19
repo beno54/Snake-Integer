@@ -14,7 +14,7 @@ class Agent1_Logical: public Struct_Agent
         int compute_possibilities_cost();
         void compute_destination_reward();
         vector< float >  compute_random_reward();
-        vector< int > compute_destination_base6_reward();
+        vector< int > compute_destination_base3_reward();
         vector< int > compute_destination_4_reward();
         vector< int > compute_position_reward();
 
@@ -25,6 +25,7 @@ class Agent1_Logical: public Struct_Agent
         vector< vector<Case*> > all_possibilities_cost;
         vector< float > destination_reward_same_value;
         vector< float > destination_reward_multiple_value;
+        vector< float > destination_reward_double_value;
 };
 
 #endif // AGENT1_LOGICAL_H
