@@ -12,7 +12,7 @@ class Agent1_Logical: public Struct_Agent
         bool has_games2Play();
         void deep_course(vector<Case*> v_casesCourante);
         int compute_possibilities_cost();
-        vector< float >  compute_destination_reward();
+        void compute_destination_reward();
         vector< float >  compute_random_reward();
         vector< int > compute_destination_base6_reward();
         vector< int > compute_destination_4_reward();
@@ -23,6 +23,8 @@ class Agent1_Logical: public Struct_Agent
 
         vector< vector<Case*> > all_possibilities;
         vector< vector<Case*> > all_possibilities_cost;
+        vector< float > destination_reward_same_value;
+        vector< float > destination_reward_multiple_value;
 };
 
 #endif // AGENT1_LOGICAL_H

@@ -53,11 +53,12 @@ void Agent1_Logical::compute_possibilitiesInGrps()
 
     for (int i = 0; i < tab_group.size(); i ++)
     {
+
             vector<Case*> racine;
             racine.push_back(tab_group[i]);
             deep_course(racine);
     }
-
+     //  cout<< all_possibilities.size()<<endl;
 //    cout << "Possibilites : " << action->get_nbTurnPlayed() << endl ;
 //    for (int z = 0; z < all_possibilities.size(); z ++)
 //    {
@@ -109,25 +110,54 @@ bool Agent1_Logical::has_games2Play()
     return monbool;
 }
 
-vector< float >  Agent1_Logical::compute_destination_reward()
+void  Agent1_Logical::compute_destination_reward()
 {
-    vector< float > destination_reward;
-
+    destination_reward_same_value.clear();
+    destination_reward_multiple_value.clear();
+    int destvalue  ;
     for (int z = 0; z < all_possibilities.size(); z ++)
     {
         vector<Case*> voisins = senseurs->get_all_voisins( all_possibilities[z].back());
-        float reward = 0;
-        for (int x = 0; x < voisins.size(); x ++)
+
+        //retire voisins présent dans le chemin
+
+        for (int i =0; i < all_possibilities[z].size(); i++)
         {
-            if (voisins[x]->get_value() == (all_possibilities[z].size()*all_possibilities[z].back()->get_value()))
+            for (int e =0; e < voisins.size(); e++)
             {
-                 reward++;
+                if(voisins[e]->get_id() == all_possibilities[z][i]->get_id())
+                {
+                    voisins.erase(voisins.begin()+ e);
+                    e--;
+                }
             }
         }
+
+        float reward = 0;
+        float reward_multiple = 0 ;
+
+
+        for (int x = 0; x < voisins.size(); x ++)
+        {
+            destvalue = (all_possibilities[z].size())*(all_possibilities[z].back())->get_value();
+
+            if (voisins[x]->get_value() == destvalue )
+            {
+                reward++;
+            }
+            else
+            if( (voisins[x]->get_value() % destvalue) == 0 )
+            {
+                reward_multiple++;
+            }
+
+        }
         //coefficient entre 1 et 3
-        destination_reward.push_back(reward/3.0f);
+
+        destination_reward_same_value.push_back(reward/3.0f);
+        destination_reward_multiple_value.push_back(reward_multiple/3.0f);
     }
-    return destination_reward;
+
 }
 
 vector< float >  Agent1_Logical::compute_random_reward()
@@ -236,13 +266,12 @@ vector< int >  Agent1_Logical::compute_position_reward()
     return position_reward;
 }
 
-
 int Agent1_Logical::compute_possibilities_cost()
 {
-    vector<float> nbvoisinssamevalue = compute_destination_reward();
+    compute_destination_reward();
     vector<float> randomscore = compute_random_reward ();
     vector<int> score_base6 = compute_destination_base6_reward ();
-    vector<int> score_4 = compute_destination_4_reward();
+    //vector<int> score_4 = compute_destination_4_reward();
     vector<int> position_reward = compute_position_reward();
     int choix = 0;
     float reward_best = 0;
@@ -252,31 +281,46 @@ int Agent1_Logical::compute_possibilities_cost()
     {
         float taille = all_possibilities[z].size();
         float destvalue = taille * all_possibilities[z][0]->get_value();
-        reward = 1*nbvoisinssamevalue[z]+1*randomscore[z]+1*position_reward[z] + senseurs->get_mean()/destvalue;
-        if (score_base6[z])
-        {
-           reward += 4*score_base6[z];
-        }
-        else
-            {
-                reward += 1*score_4[z];
-            }
+        //reward = 1*destination_reward_same_value[z]+1*randomscore[z]+1*position_reward[z] + senseurs->get_mean()/destvalue;
+       // reward = 0.25*destination_reward_same_value[z]+0.1*randomscore[z]+0.3*score_base6[z]+0.15*destination_reward_multiple_value[z]+0.2*position_reward[z] ;
+        //reward = score_base6[z]*(0.5*destination_reward_same_value[z] +destination_reward_multiple_value[z]*1) ;
+        //VERSION 1
+        //reward = 1*destination_reward_same_value[z]+1*randomscore[z]+1*score_base6[z];
+        //VERSION 2
+        //reward = 1*destination_reward_multiple_value[z]+1*randomscore[z]+1*score_base6[z];
+        //VERSION 3
+        //  reward = 1*destination_reward_same_value[z]+1*randomscore[z]+1*score_base6[z]+1*destination_reward_multiple_value[z]+1*position_reward[z] ;
+        //VERSION 4
+        //  reward = 0.3*score_base6[z]+0.25*destination_reward_same_value[z]+0.2*destination_reward_multiple_value[z]+0.15*position_reward[z]+0.1*randomscore[z] ;
+        //VERSION 5
+          reward = 0.3*score_base6[z]+0.2*destination_reward_same_value[z]+0.15*destination_reward_multiple_value[z]+0.15*position_reward[z]+0.1*randomscore[z] ;
+
+//        if (score_base6[z])
+//        {
+//           reward += 1*score_base6[z];
+//        }
+//        else
+//            {
+//                reward += 1*score_4[z];
+//            }
+
 
         if (reward_best < reward)
         {
             reward_best = reward;
             choix = z;
         }
-        //cout << "same value: " << nbvoisinssamevalue[z] << ", random: " << randomscore[z] << ", total :" << rewards[z] << endl;
+        //coutdestination_reward_same_value << "same value: " << nbvoisinssamevalue[z] << ", random: " << randomscore[z] << ", total :" << rewards[z] << endl;
     }
-   /* cout << endl ;
-    cout << "the best is            : " << reward_best                           << endl;
-    cout << "NB VOISINS SAME VALUE  : " << nbvoisinssamevalue[choix]             << endl;
-    cout << "NB 1-3 VOISINS         : " << randomscore[choix]                    << endl;
-    cout << "BASE 6                 : " << score_base6[choix]                    << endl;
-    cout << "POSITION REWARD        : " << position_reward[choix]                << endl;
-    cout << "MEAN RATION            : " << senseurs->get_mean()/(all_possibilities[choix].size() *all_possibilities[choix][0]->get_value())        << endl;
-    */return choix ;
+    //cout << endl ;
+    //cout << "the best is                     : " << reward_best                                  << endl;
+    //cout << "NB VOISINS MULTIPLE  VALUE      : " << destination_reward_multiple_value[choix]     << endl;
+    //cout << "NB VOISINS  SAME VALUE          : " << destination_reward_same_value[choix]         << endl;
+    //cout << "NB 1-3 VOISINS         : " << randomscore[choix]                    << endl;
+    //cout << "BASE 6                          : " << score_base6[choix]                           << endl;
+   // cout << "POSITION REWARD                 : " << position_reward[choix]                       << endl;
+  //  cout << "MEAN RATION            : " << senseurs->get_mean()/(all_possibilities[choix].size() *all_possibilities[choix][0]->get_value())        << endl;
+    return choix ;
 }
 
 
