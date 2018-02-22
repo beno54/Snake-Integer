@@ -1,6 +1,6 @@
 #include "Action.h"
 #include <string.h >
-Action::Action(Grille *grid, string ProfilName, int playerId)
+Action::Action(Grille *grid, string ProfilName)
 {
     //ctor
     this->grid = grid;
@@ -9,7 +9,6 @@ Action::Action(Grille *grid, string ProfilName, int playerId)
     logFile.open (("./Logs/"+ProfilName).c_str(),ios::app);
     scoreFile.open ( ("./Logs/Score_"+ProfilName).c_str(),ios::app);
     tmpFile.open ("./Logs/TmpfileLog",ios::app);
-    idPlayer = playerId
     if (logFile && tmpFile)
     {
         cout << "Ouverture du fichier de logs" <<endl ;
@@ -37,7 +36,7 @@ void Action::compute_score(vector<Case*> cases_selected)
 {
     int score = 0;
 
-    log_data(cases_selected,NULL);
+    //log_data(cases_selected,NULL);
 
     for (int e = 0;e<cases_selected.size();e++)
     {
@@ -55,8 +54,8 @@ void Action::compute_score(vector<Case*> cases_selected)
     {
         cout << " GAME OVER : " <<  grid->get_Case_score()->get_value() << endl ;
         grid->set_isOver(true);
-        log_score();
-        reinitialize_nbTurnPlayed();
+        //log_score();
+        //reinitialize_nbTurnPlayed();
     }
 }
 
@@ -139,15 +138,101 @@ void Action::log_data(vector<Case*> cases_selected)
      //cout << nbPossibilities << endl ;
      //Log fin de log
 
-     //SI AGENT
-     if (idPlayer == 1)
-    {
-
-    }
-
-     tmpFile << std::endl ;
+    tmpFile << std::endl ;
      //cout << "Ecriture dans fichier de logs" <<endl ;
 }
+
+void Action::log_data(vector<Case*> cases_selected, vector<float> additionnal_data)
+{
+    vector<Case*>  Cases = grid->get_Cases();
+    double GridAverage = 0;
+    int maxvalue = 0;
+    int caseSelectOrNot[25]={0};
+
+    for (int i=0;i<25;i++)
+    {
+        int currentvalue = Cases[i]->get_value();
+
+        //test max value
+        if (currentvalue>maxvalue) maxvalue = currentvalue;
+
+        //calcul moyenne
+        GridAverage += currentvalue ;
+        //Logs Grid
+        tmpFile << currentvalue ;
+        tmpFile << ";" ;
+    }
+
+    //calcul moyenne
+    GridAverage /= 25 ;
+
+    //Log  moyenne de la grille
+    tmpFile << GridAverage ;
+    tmpFile << ";" ;
+
+    //Log score grille courrante
+    tmpFile << grid->get_Case_score()->get_value() ;
+    tmpFile << ";" ;
+
+    //Logs Valeur max
+    tmpFile << maxvalue ;
+    tmpFile << ";" ;
+
+    //Logs Cases s�lectionn�es
+    for (int e=0;e<cases_selected.size();e++)
+    {
+        caseSelectOrNot[cases_selected[e]->get_id()-1]=1;
+    }
+
+    for (int e=0;e<25;e++)
+    {
+        tmpFile << caseSelectOrNot[e] ;
+        tmpFile << ";" ;
+    }
+
+     //Log case en fin de tableau ou non
+     for (int e=0;e<25;e++)
+     {
+        if ((cases_selected[cases_selected.size()-1]->get_id()-1) == e)
+        {
+            tmpFile << 1;
+        }
+        else
+        {
+            tmpFile << 0 ;
+        }
+        tmpFile << ";" ;
+     }
+
+     //Log de valeur s�lectionn�e
+     tmpFile << cases_selected[0]->get_value() ;
+     tmpFile << ";" ;
+
+     //Log de nombre de cases s�lectionn�es
+     tmpFile << cases_selected.size() ;
+     tmpFile << ";" ;
+
+     //Log valeur ajout�e au score = nb case s�lectionn�e * valeur s�lecitonn�e
+     tmpFile << cases_selected.size()* cases_selected[0]->get_value() ;
+     tmpFile << ";" ;
+
+     //Log Nombres de groupements de m�me valeur
+     tmpFile << nbPossibilities;
+     //cout << nbPossibilities << endl ;
+     //Log fin de log
+
+     //add additionnal data from agents
+     for (int i = 0; i < additionnal_data.size(); i ++)
+     {
+         //Log de valeur s�lectionn�e
+         tmpFile << additionnal_data[i] ;
+         tmpFile << ";" ;
+     }
+
+    tmpFile << std::endl ;
+     //cout << "Ecriture dans fichier de logs" <<endl ;
+}
+
 void Action::compute_NbPossibilities_in_grid()
 {
     nbPossibilities = 0;
@@ -304,39 +389,6 @@ void Action::log_score()
     //réouvre le fichier en écriture
     tmpFile_reader.close();
 
-    if (scoreFile )
-    {
-        //Uodate du moment courant + Log score avant GAME OVER + nb tour jou�
-        char timeToLog [256];
-        timenow = time(0);
-        strcpy(timeToLog,ctime(&timenow));
-        timeToLog[strlen(timeToLog)-1]='\0';
-        scoreFile << timeToLog<< ";" << grid->get_Case_score()->get_value() << ";" << nbTurnPlayed << ";" <<std::endl ;
-    }
-    else
-    {
-        cout << "Ouverture failed" <<endl ;
-    }
-
-}
-void Action::log_score(string filename)
-{
-    //on copie le contenu du fichiuer temporaire dans le fichier de log
-    //ferme le fichier en écriture
-    tmpFile.close();
-    //ouvre le fichier en lecture
-    ifstream tmpFile_reader("./Logs/TmpfileLog",std::ifstream::in);
-    ifstream tmpFile_reader2(filename,std::ifstream::in);
-    string line,line2;
-    while (getline(tmpFile_reader,line) && getline(tmpFile_reader2,line2)
-    {
-        logFile << line << line2;
-        logFile << std::endl ;
-    }
-
-    //réouvre le fichier en écriture
-    tmpFile_reader.close();
-    tmpFile_reader2.close();
     if (scoreFile )
     {
         //Uodate du moment courant + Log score avant GAME OVER + nb tour jou�

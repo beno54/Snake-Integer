@@ -11,20 +11,20 @@ class Agent1_Logical: public Struct_Agent
         void compute_possibilitiesInGrps();
         bool has_games2Play();
         void deep_course(vector<Case*> v_casesCourante);
-        int compute_possibilities_cost();
+        void compute_possibilities_cost(int option);
         void compute_destination_reward();
         void compute_random_reward();
         void compute_destination_base3_reward();
         void compute_destination_4_reward();
         void compute_position_reward();
 
-        void get_destination_reward_same_value();
-        void get_destination_reward_multiple_value();
-        void get_destination_reward_double_value();
-        void get_random_reward();
-        void get_destination_base3_reward();
-        void get_destination_4_reward();
-        void get_position_reward();
+        float get_destination_reward_same_value();
+        float get_destination_reward_multiple_value();
+        float get_destination_reward_double_value();
+        float get_random_reward();
+        float get_destination_base3_reward();
+        float get_destination_4_reward();
+        float get_position_reward();
 
     protected:
     private:
@@ -35,9 +35,10 @@ class Agent1_Logical: public Struct_Agent
         vector< float > destination_reward_multiple_value;
         vector< float > destination_reward_double_value;
         vector< float > random_reward;
-        vector< int > destination_base3_reward;
-        vector< int > destination_4_reward;
-        vector< int > position_reward;
+        vector< float > destination_base3_reward;
+        vector< float > destination_4_reward;
+        vector< float > position_reward;
+        vector<float> additionnal_data;
         int choix;
 };
 

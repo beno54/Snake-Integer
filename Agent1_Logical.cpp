@@ -20,9 +20,17 @@ void Agent1_Logical::compute_decision()
         int choix = 0 ;
 
         compute_possibilitiesInGrps();
-        choix = compute_possibilities_cost();
-        action->affiche_cases_selected(all_possibilities[choix], decision_delay);
-        action->compute_score(all_possibilities[choix]);
+        compute_possibilities_cost(1);
+
+        if (action->test_case_selected(all_possibilities[choix]) == true)
+        {
+            action->affiche_cases_selected(all_possibilities[choix], decision_delay);
+
+            action->log_data(all_possibilities[choix], additionnal_data);
+
+            action->compute_score(all_possibilities[choix]);
+        }
+
 
 //cout << all_possibilities.size() << endl;
 
@@ -38,7 +46,7 @@ void Agent1_Logical::compute_decision()
     }
     else
     {
-        action->LogAddInfo();
+        action->log_score();
         action->reset();
         nb_game2Play --;
     }
@@ -221,7 +229,7 @@ void Agent1_Logical::compute_destination_base3_reward()
             {
                 reward = 1;
             }
-
+            //cout << "current number :" << number;
             number = number/2;
         }
         destination_base3_reward.push_back(reward);
@@ -265,92 +273,131 @@ void  Agent1_Logical::compute_position_reward()
     }
 }
 
-void Agent1_Logical::compute_possibilities_cost()
+void Agent1_Logical::compute_possibilities_cost(int option)
 {
-    compute_destination_reward();
-    vector<float> randomscore = compute_random_reward ();
-    vector<int> score_base3 = compute_destination_base3_reward ();
-    //vector<int> score_4 = compute_destination_4_reward();
-    vector<int> position_reward = compute_position_reward();
+    additionnal_data.clear();
+
     choix = 0;
     float reward_best = 0;
     float reward  = 0 ;
 
-    for (int z = 0; z < all_possibilities.size(); z ++)
+    switch(option)
     {
-        float taille = all_possibilities[z].size();
-        float destvalue = taille * all_possibilities[z][0]->get_value();
-        //reward = 1*destination_reward_same_value[z]+1*randomscore[z]+1*position_reward[z] + senseurs->get_mean()/destvalue;
-       // reward = 0.25*destination_reward_same_value[z]+0.1*randomscore[z]+0.3*score_base6[z]+0.15*destination_reward_multiple_value[z]+0.2*position_reward[z] ;
-        //reward = score_base6[z]*(0.5*destination_reward_same_value[z] +destination_reward_multiple_value[z]*1) ;
-        //VERSION 1
-        //reward = 1*destination_reward_same_value[z]+1*randomscore[z]+1*score_base6[z];
-        //VERSION 2
-        //reward = 1*destination_reward_multiple_value[z]+1*randomscore[z]+1*score_base6[z];
-        //VERSION 3
-        //  reward = 1*destination_reward_same_value[z]+1*randomscore[z]+1*score_base6[z]+1*destination_reward_multiple_value[z]+1*position_reward[z] ;
-        //VERSION 4
-        //  reward = 0.3*score_base6[z]+0.25*destination_reward_same_value[z]+0.2*destination_reward_multiple_value[z]+0.15*position_reward[z]+0.1*randomscore[z] ;
-        //VERSION 5
-          reward = 0.2*score_base3[z]+0.35*destination_reward_same_value[z]+0.25*destination_reward_multiple_value[z]+0.15*position_reward[z]+0.1*randomscore[z] ;
-          //  reward = destination_reward_double_value[z]+score_base6[z];
+        case 1:
+            compute_destination_reward();
+            compute_random_reward();
+            compute_destination_base3_reward();
+            //compute_destination_4_reward();
+            compute_position_reward();
 
-//        if (score_base6[z])
-//        {
-//           reward += 1*score_base6[z];
-//        }
-//        else
-//            {
-//                reward += 1*score_4[z];
-//            }
-
-
-        if (reward_best < reward)
-        {
-            reward_best = reward;
-            choix = z;
-        }
-        //coutdestination_reward_same_value << "same value: " << nbvoisinssamevalue[z] << ", random: " << randomscore[z] << ", total :" << rewards[z] << endl;
+            for (int z = 0; z < all_possibilities.size(); z ++)
+            {
+                //reward = 0.2*destination_base3_reward[z]+0.35*destination_reward_same_value[z]+0.25*destination_reward_multiple_value[z]+0.15*position_reward[z]+0.1*random_reward[z] ;
+                reward = destination_base3_reward[z];
+                if (reward_best < reward)
+                {
+                    reward_best = reward;
+                    choix = z;
+                }
+                //coutdestination_reward_same_value << "same value: " << nbvoisinssamevalue[z] << ", random: " << randomscore[z] << ", total :" << rewards[z] << endl;
+            }
+            additionnal_data.push_back(destination_reward_same_value[choix]);
+            additionnal_data.push_back(destination_reward_multiple_value[choix]);
+            //additionnal_data.push_back(destination_reward_double_value[choix]);
+            additionnal_data.push_back(random_reward[choix]);
+            additionnal_data.push_back(destination_base3_reward[choix]);
+            //additionnal_data.push_back((destination_4_reward[choix]);
+            additionnal_data.push_back(position_reward[choix]);
+            additionnal_data.push_back(reward_best);
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
     }
-    //cout << endl ;
-    //cout << "the best is                     : " << reward_best                                  << endl;
-    //cout << "NB VOISINS MULTIPLE  VALUE      : " << destination_reward_multiple_value[choix]     << endl;
-    //cout << "NB VOISINS  SAME VALUE          : " << destination_reward_same_value[choix]         << endl;
-    //cout << "NB 1-3 VOISINS         : " << randomscore[choix]                    << endl;
-    //cout << "BASE 6                          : " << score_base6[choix]                           << endl;
-   // cout << "POSITION REWARD                 : " << position_reward[choix]                       << endl;
-  //  cout << "MEAN RATION            : " << senseurs->get_mean()/(all_possibilities[choix].size() *all_possibilities[choix][0]->get_value())        << endl;
-   // cout << destination_reward_double_value[choix] << endl ;
-   // cout << score_base6[choix] << endl ;
+
+
+
+
+//    for (int z = 0; z < all_possibilities.size(); z ++)
+//    {
+////        float taille = all_possibilities[z].size();
+////        float destvalue = taille * all_possibilities[z][0]->get_value();
+//        //reward = 1*destination_reward_same_value[z]+1*randomscore[z]+1*position_reward[z] + senseurs->get_mean()/destvalue;
+//       // reward = 0.25*destination_reward_same_value[z]+0.1*randomscore[z]+0.3*score_base6[z]+0.15*destination_reward_multiple_value[z]+0.2*position_reward[z] ;
+//        //reward = score_base6[z]*(0.5*destination_reward_same_value[z] +destination_reward_multiple_value[z]*1) ;
+//        //VERSION 1
+//        //reward = 1*destination_reward_same_value[z]+1*randomscore[z]+1*score_base6[z];
+//        //VERSION 2
+//        //reward = 1*destination_reward_multiple_value[z]+1*randomscore[z]+1*score_base6[z];
+//        //VERSION 3
+//        //  reward = 1*destination_reward_same_value[z]+1*randomscore[z]+1*score_base6[z]+1*destination_reward_multiple_value[z]+1*position_reward[z] ;
+//        //VERSION 4
+//        //  reward = 0.3*score_base6[z]+0.25*destination_reward_same_value[z]+0.2*destination_reward_multiple_value[z]+0.15*position_reward[z]+0.1*randomscore[z] ;
+//        //VERSION 5
+//          reward = 0.2*score_base3[z]+0.35*destination_reward_same_value[z]+0.25*destination_reward_multiple_value[z]+0.15*position_reward[z]+0.1*randomscore[z] ;
+//          //  reward = destination_reward_double_value[z]+score_base6[z];
+//
+////        if (score_base6[z])
+////        {
+////           reward += 1*score_base6[z];
+////        }
+////        else
+////            {
+////                reward += 1*score_4[z];
+////            }
+//
+//
+//        if (reward_best < reward)
+//        {
+//            reward_best = reward;
+//            choix = z;
+//        }
+//        //coutdestination_reward_same_value << "same value: " << nbvoisinssamevalue[z] << ", random: " << randomscore[z] << ", total :" << rewards[z] << endl;
+//    }
+    cout << endl ;
+    cout << "the best is                     : " << reward_best                                  << endl;
+    cout << "NB VOISINS MULTIPLE  VALUE      : " << destination_reward_multiple_value[choix]     << endl;
+    cout << "NB VOISINS  SAME VALUE          : " << destination_reward_same_value[choix]         << endl;
+    cout << "NB 1-3 VOISINS                  : " << random_reward[choix]                         << endl;
+    cout << "BASE 3                          : " << destination_base3_reward[choix]              << endl;
+    cout << "POSITION REWARD                 : " << position_reward[choix]                       << endl;
+    cout << "MEAN RATION                     : " << senseurs->get_mean()/(all_possibilities[choix].size() *all_possibilities[choix][0]->get_value())        << endl;
+    cout << destination_reward_double_value[choix] << endl ;
+    //cout << score_base6[choix] << endl ;
 
 }
 
 
-void get_destination_reward_same_value()
+float Agent1_Logical::get_destination_reward_same_value()
 {
     return destination_reward_same_value[choix];
 }
-void get_destination_reward_multiple_value()
+float Agent1_Logical::get_destination_reward_multiple_value()
 {
     return destination_reward_multiple_value[choix];
 }
-void get_destination_reward_double_value()
+float Agent1_Logical::get_destination_reward_double_value()
 {
     return destination_reward_double_value[choix];
 }
-void get_random_reward()
+float Agent1_Logical::get_random_reward()
 {
     return random_reward[choix];
 }
-void destination_base3_reward()
+float Agent1_Logical::get_destination_base3_reward()
 {
     return destination_base3_reward[choix];
 }
-void get_destination_4_reward()
+float Agent1_Logical::get_destination_4_reward()
 {
     return destination_4_reward[choix];
 }
-void get_position_reward()
+float Agent1_Logical::get_position_reward()
 {
     return position_reward[choix];
 }

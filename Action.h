@@ -17,8 +17,9 @@ class Action
         virtual ~Action();
         void compute_score(vector<Case*> cases_selected);
         void log_data(vector<Case*> cases_selected);
+        void log_data(vector<Case*> cases_selected, vector<float> additionnal_data);
         void log_score();
-        void log_score(string filename);
+        //void log_score(vector<float> additionnal_data);
 
         int get_nbTurnPlayed();
         void set_nbTurnPlayed();
@@ -38,7 +39,6 @@ class Action
         ofstream logFile, scoreFile, tmpFile ;
         int nbTurnPlayed,nbPossibilities;
         time_t timenow ;
-        int idPlayer;
         vector< vector<Case*> > groups_in_grid;
 
 };

@@ -3,9 +3,9 @@
 #include "Button.h"
 #include "string.h"
 
-//#define AFFICHAGE
-//#define DECISION_DELAY_MS 500
-#define NB_GAME 4000
+#define AFFICHAGE
+#define DECISION_DELAY_MS 1000
+#define NB_GAME 2
 
 
 int main (int argc, char* argv[])

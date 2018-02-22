@@ -34,7 +34,6 @@ Lancement de l'�coute des �v�nements :
 */
 void EventListenner::listen ()
 {
-
     if (Mouse::isButtonPressed(Mouse::Left))
     {
         bool CaseExist = false ;
@@ -100,10 +99,7 @@ void EventListenner::listen ()
         Vector2i localPosition = Mouse::getPosition(*win);
         if (but_start->get_background().getGlobalBounds().contains(Vector2f(localPosition)) && isButtonPressed)
         {
-            grid->reset();
-            action->reinitialize_nbTurnPlayed();
-            action->reinitialize_tmpFile();
-            grid->set_isOver(false);
+            action->reset();
             isButtonPressed = false;
         }
         else if (ptr_casesSelected.size() != 0)
@@ -113,8 +109,12 @@ void EventListenner::listen ()
             if (ptr_casesSelected.size() > 1)
             {
                 //log avant action d'écraser la grille
+                action->log_data(ptr_casesSelected);
                 action->compute_score(ptr_casesSelected);
-
+                if (grid->get_isOver())
+                {
+                    action->log_score();
+                }
             }
             else
             {
