@@ -1,6 +1,6 @@
 #include "Action.h"
 #include <string.h >
-Action::Action(Grille *grid, string ProfilName)
+Action::Action(Grille *grid, string ProfilName, int playerId)
 {
     //ctor
     this->grid = grid;
@@ -9,6 +9,7 @@ Action::Action(Grille *grid, string ProfilName)
     logFile.open (("./Logs/"+ProfilName).c_str(),ios::app);
     scoreFile.open ( ("./Logs/Score_"+ProfilName).c_str(),ios::app);
     tmpFile.open ("./Logs/TmpfileLog",ios::app);
+    idPlayer = playerId
     if (logFile && tmpFile)
     {
         cout << "Ouverture du fichier de logs" <<endl ;
@@ -36,7 +37,7 @@ void Action::compute_score(vector<Case*> cases_selected)
 {
     int score = 0;
 
-    log_data(cases_selected);
+    log_data(cases_selected,NULL);
 
     for (int e = 0;e<cases_selected.size();e++)
     {
@@ -137,6 +138,13 @@ void Action::log_data(vector<Case*> cases_selected)
      tmpFile << nbPossibilities;
      //cout << nbPossibilities << endl ;
      //Log fin de log
+
+     //SI AGENT
+     if (idPlayer == 1)
+    {
+
+    }
+
      tmpFile << std::endl ;
      //cout << "Ecriture dans fichier de logs" <<endl ;
 }
@@ -311,7 +319,39 @@ void Action::log_score()
     }
 
 }
+void Action::log_score(string filename)
+{
+    //on copie le contenu du fichiuer temporaire dans le fichier de log
+    //ferme le fichier en écriture
+    tmpFile.close();
+    //ouvre le fichier en lecture
+    ifstream tmpFile_reader("./Logs/TmpfileLog",std::ifstream::in);
+    ifstream tmpFile_reader2(filename,std::ifstream::in);
+    string line,line2;
+    while (getline(tmpFile_reader,line) && getline(tmpFile_reader2,line2)
+    {
+        logFile << line << line2;
+        logFile << std::endl ;
+    }
 
+    //réouvre le fichier en écriture
+    tmpFile_reader.close();
+    tmpFile_reader2.close();
+    if (scoreFile )
+    {
+        //Uodate du moment courant + Log score avant GAME OVER + nb tour jou�
+        char timeToLog [256];
+        timenow = time(0);
+        strcpy(timeToLog,ctime(&timenow));
+        timeToLog[strlen(timeToLog)-1]='\0';
+        scoreFile << timeToLog<< ";" << grid->get_Case_score()->get_value() << ";" << nbTurnPlayed << ";" <<std::endl ;
+    }
+    else
+    {
+        cout << "Ouverture failed" <<endl ;
+    }
+
+}
 void Action::reinitialize_tmpFile()
 {
     if (tmpFile)tmpFile.close();

@@ -13,10 +13,18 @@ class Agent1_Logical: public Struct_Agent
         void deep_course(vector<Case*> v_casesCourante);
         int compute_possibilities_cost();
         void compute_destination_reward();
-        vector< float >  compute_random_reward();
-        vector< int > compute_destination_base3_reward();
-        vector< int > compute_destination_4_reward();
-        vector< int > compute_position_reward();
+        void compute_random_reward();
+        void compute_destination_base3_reward();
+        void compute_destination_4_reward();
+        void compute_position_reward();
+
+        void get_destination_reward_same_value();
+        void get_destination_reward_multiple_value();
+        void get_destination_reward_double_value();
+        void get_random_reward();
+        void get_destination_base3_reward();
+        void get_destination_4_reward();
+        void get_position_reward();
 
     protected:
     private:
@@ -26,6 +34,11 @@ class Agent1_Logical: public Struct_Agent
         vector< float > destination_reward_same_value;
         vector< float > destination_reward_multiple_value;
         vector< float > destination_reward_double_value;
+        vector< float > random_reward;
+        vector< int > destination_base3_reward;
+        vector< int > destination_4_reward;
+        vector< int > position_reward;
+        int choix;
 };
 
 #endif // AGENT1_LOGICAL_H

@@ -24,9 +24,6 @@ void Agent1_Logical::compute_decision()
         action->affiche_cases_selected(all_possibilities[choix], decision_delay);
         action->compute_score(all_possibilities[choix]);
 
-
-
-
 //cout << all_possibilities.size() << endl;
 
 //        int choix = rand() % all_possibilities.size();
@@ -41,6 +38,7 @@ void Agent1_Logical::compute_decision()
     }
     else
     {
+        action->LogAddInfo();
         action->reset();
         nb_game2Play --;
     }
@@ -166,9 +164,9 @@ void  Agent1_Logical::compute_destination_reward()
 
 }
 
-vector< float >  Agent1_Logical::compute_random_reward()
+void Agent1_Logical::compute_random_reward()
 {
-    vector< float > random_reward;
+    random_reward.clear();
 
     for (int z = 0; z < all_possibilities.size(); z ++)
     {
@@ -207,13 +205,11 @@ vector< float >  Agent1_Logical::compute_random_reward()
         float reward = float(nb/Nb_voisins) ;
         random_reward.push_back(reward);
     }
-
-    return random_reward;
 }
 
-vector< int >  Agent1_Logical::compute_destination_base3_reward()
+void Agent1_Logical::compute_destination_base3_reward()
 {
-    vector< int > destination_base3_reward;
+    destination_base3_reward.clear();
 
     for (int z = 0; z < all_possibilities.size(); z ++)
     {
@@ -230,12 +226,11 @@ vector< int >  Agent1_Logical::compute_destination_base3_reward()
         }
         destination_base3_reward.push_back(reward);
     }
-    return destination_base3_reward;
 }
 
-vector< int >  Agent1_Logical::compute_destination_4_reward()
+void  Agent1_Logical::compute_destination_4_reward()
 {
-    vector< int > destination_4_reward;
+    destination_4_reward.clear();
     float reward ;
     for (int z = 0; z < all_possibilities.size(); z ++)
     {
@@ -247,14 +242,13 @@ vector< int >  Agent1_Logical::compute_destination_4_reward()
         }
         destination_4_reward.push_back(reward);
     }
-    return destination_4_reward;
 }
 
-vector< int >  Agent1_Logical::compute_position_reward()
+void  Agent1_Logical::compute_position_reward()
 {
     vector<Case*> cases = senseurs->get_Cases();
 
-    vector< int > position_reward;
+    position_reward.clear();
     float reward ;
     for (int z = 0; z < all_possibilities.size(); z ++)
     {
@@ -269,17 +263,16 @@ vector< int >  Agent1_Logical::compute_position_reward()
        // cout << "reward : " << reward << endl ;
         position_reward.push_back(reward);
     }
-    return position_reward;
 }
 
-int Agent1_Logical::compute_possibilities_cost()
+void Agent1_Logical::compute_possibilities_cost()
 {
     compute_destination_reward();
     vector<float> randomscore = compute_random_reward ();
     vector<int> score_base3 = compute_destination_base3_reward ();
     //vector<int> score_4 = compute_destination_4_reward();
     vector<int> position_reward = compute_position_reward();
-    int choix = 0;
+    choix = 0;
     float reward_best = 0;
     float reward  = 0 ;
 
@@ -329,8 +322,35 @@ int Agent1_Logical::compute_possibilities_cost()
   //  cout << "MEAN RATION            : " << senseurs->get_mean()/(all_possibilities[choix].size() *all_possibilities[choix][0]->get_value())        << endl;
    // cout << destination_reward_double_value[choix] << endl ;
    // cout << score_base6[choix] << endl ;
-    return choix ;
 
 }
 
 
+void get_destination_reward_same_value()
+{
+    return destination_reward_same_value[choix];
+}
+void get_destination_reward_multiple_value()
+{
+    return destination_reward_multiple_value[choix];
+}
+void get_destination_reward_double_value()
+{
+    return destination_reward_double_value[choix];
+}
+void get_random_reward()
+{
+    return random_reward[choix];
+}
+void destination_base3_reward()
+{
+    return destination_base3_reward[choix];
+}
+void get_destination_4_reward()
+{
+    return destination_4_reward[choix];
+}
+void get_position_reward()
+{
+    return position_reward[choix];
+}
