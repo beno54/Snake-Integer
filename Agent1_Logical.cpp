@@ -291,8 +291,8 @@ void Agent1_Logical::compute_possibilities_cost(int option)
             for (int z = 0; z < all_possibilities.size(); z ++)
             {
 
-                //reward = 0.2*destination_base3_reward[z]+0.35*destination_reward_same_value[z]+0.25*destination_reward_multiple_value[z]+0.15*position_reward[z]+0.1*random_reward[z] ;
-                reward = destination_reward_same_value[z];
+                reward = 0.2*destination_base3_reward[z]+0.35*destination_reward_same_value[z]+0.25*destination_reward_multiple_value[z]+0.15*position_reward[z]+0.1*random_reward[z] ;
+
                 if (reward_best < reward)
                 {
                     reward_best = reward;
@@ -300,7 +300,7 @@ void Agent1_Logical::compute_possibilities_cost(int option)
                 }
                 //coutdestination_reward_same_value << "same value: " << nbvoisinssamevalue[z] << ", random: " << randomscore[z] << ", total :" << rewards[z] << endl;
             }
-            cout << all_possibilities[choix].back()->get_id() << " : " <<  all_possibilities[choix].back()->get_value() << " :" << reward << endl;
+            //cout << all_possibilities[choix].back()->get_id() << " : " <<  all_possibilities[choix].back()->get_value() << " :" << reward << endl;
 
             additionnal_data.push_back(destination_reward_same_value[choix]);
             additionnal_data.push_back(destination_reward_multiple_value[choix]);
