@@ -3,9 +3,9 @@
 #include "Button.h"
 #include "string.h"
 
-//#define AFFICHAGE
-//#define DECISION_DELAY_MS 100
-#define NB_GAME 10
+
+
+
 
 
 int main (int argc, char* argv[])
@@ -19,21 +19,38 @@ int main (int argc, char* argv[])
     vector<float> seeds;
     Grille* ma_grille;
 
+    //veriables propre à l'agent
+    int affichage = 1 ;
+    int nb_game = 1000;
+    int ms_delay = 1000; // ms
+
     string ProfilName;
     if (argc > 1)
     {
         ProfilName =  string(argv[1]) + ".csv";
+        cout << ProfilName << endl;
         if (argc > 2)
         {
             option_lancement = atoi(argv[2]);
+            cout << "option = " << option_lancement << endl;
+            if (option_lancement>1)
+            {
+                affichage = atoi(argv[3]);
+                cout << "affichage = " << affichage << endl;
+                ms_delay  = atoi(argv[4]);
+                cout << "ms_delay = " << ms_delay << endl;
+                nb_game   = atoi(argv[5]);
+                cout << "nb_game = " << nb_game << endl;
 
-            cout << "option= " << option_lancement << endl;
+                if (affichage ==0) ms_delay = 0 ;
+            }
         }
-        if (argc > 5)
+        if (argc > 6)
         {
-            seeds.push_back(atof(argv[3]));
-            seeds.push_back(atof(argv[4]));
-            seeds.push_back(atof(argv[5]));
+            cout << "haaaaaahjauhdfuhfeuhé" << endl;
+            seeds.push_back(atof(argv[6]));
+            seeds.push_back(atof(argv[7]));
+            seeds.push_back(atof(argv[8]));
 
             cout << "seed1= " << seeds[0] << "seed2= " << seeds[1] << "seed3= " << seeds[2] << endl;
         }
@@ -53,7 +70,7 @@ int main (int argc, char* argv[])
     }
 
     //on cr�e la grille et le EventListener
-    if (argc > 5)
+    if (argc > 6)
     {
         ma_grille = new Grille(Vector2f (250, 100), 450, &app, seeds);
     }
@@ -69,23 +86,9 @@ int main (int argc, char* argv[])
     Button* but_start = new Button(100, Vector2f (800, 100), font, ma_grille);
     switch (option_lancement)
     {
-        case 0 :    Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);
-
-                    break;
-        case 1 ... 4 :
-            #ifdef DECISION_DELAY_MS
-                agent1 = new Agent1_Logical(ma_grille, NB_GAME, DECISION_DELAY_MS);
-            #else
-                 agent1 = new Agent1_Logical(ma_grille, NB_GAME, 0);
-            #endif
-            break;
-        default :
-            #ifdef DECISION_DELAY_MS
-                agent1 = new Agent1_Logical(ma_grille, NB_GAME, DECISION_DELAY_MS);
-            #else
-                 agent1 = new Agent1_Logical(ma_grille, NB_GAME, 0);
-            #endif
-            break;
+        case 0 :        Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);break;
+        case 1 ... 4 :  agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay); break;
+        default :       agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay); break;
     }
 
 
@@ -94,31 +97,34 @@ int main (int argc, char* argv[])
     //Grille + Nb parties à jouer + delay entre chaques choix
 
 
-#ifdef AFFICHAGE
-    // Clear screen
-    app.clear(sf::Color(242, 223, 202));
+    if (affichage)
+    {
 
-    // Draw the grille + cases + score
+        // Clear screen
+        app.clear(sf::Color(242, 223, 202));
 
-    ma_grille->draw_cases();
-    but_start->draw(app);
+        // Draw the grille + cases + score
 
-    // Update the window
-    app.display();
-#endif
+        ma_grille->draw_cases();
+        but_start->draw(app);
+
+        // Update the window
+        app.display();
+    }
 
 	// Start the game loop
     while (app.isOpen() && agent1->has_games2Play())
     {
         sf::Event event;
-#ifdef AFFICHAGE
-      //   Clear screen
-        app.clear(sf::Color(242, 223, 202));
+        if (affichage)
+        {
+            //   Clear screen
+            app.clear(sf::Color(242, 223, 202));
 
-        // Draw the grille + cases + score
-        ma_grille->draw_cases();
-        but_start->draw(app);
-#endif
+            // Draw the grille + cases + score
+            ma_grille->draw_cases();
+            but_start->draw(app);
+        }
         //on d�tecte le clique de souris et on fait les actions correspondantes
         //Listenner->listen();
 
@@ -138,10 +144,11 @@ int main (int argc, char* argv[])
                 app.close();
         }
 
-#ifdef AFFICHAGE
-        // Update the window
-        app.display();
-#endif
+        if (affichage)
+        {
+            // Update the window
+            app.display();
+        }
     }
 
     //delete ma_grille;
