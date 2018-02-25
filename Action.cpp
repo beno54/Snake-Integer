@@ -42,7 +42,11 @@ Action::~Action()
     scoreFile.close();
     logFile.close();
     tmpFile.close();
-    remove("./Logs/TmpfileLog");
+     if( remove("../../Logs/TmpfileLog")!= 0 )
+    perror( "Tmp Error deleting file" );
+  else
+    puts( "Tmp File successfully deleted" );
+
 }
 
 void Action::compute_score(vector<Case*> cases_selected)
@@ -392,7 +396,7 @@ void Action::log_score()
     //ferme le fichier en écriture
     tmpFile.close();
     //ouvre le fichier en lecture
-    ifstream tmpFile_reader("./Logs/TmpfileLog",std::ifstream::in);
+    ifstream tmpFile_reader("../../Logs/TmpfileLog",std::ifstream::in);
     string line;
     while (getline(tmpFile_reader,line))
     {

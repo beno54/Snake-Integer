@@ -8,7 +8,7 @@ class Agent1_Logical: public Struct_Agent
         Agent1_Logical(Grille* senseurs, int nb_game2Play, int decision_delay);
         virtual ~Agent1_Logical();
         void compute_decision (int mode);
-        void compute_possibilitiesInGrps();
+        void compute_all_possibilities();
         bool has_games2Play();
         void deep_course(vector<Case*> v_casesCourante);
         void compute_possibilities_cost(int option);

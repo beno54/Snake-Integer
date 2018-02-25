@@ -3,18 +3,19 @@
 #include "Button.h"
 #include "string.h"
 
-#define AFFICHAGE
-#define DECISION_DELAY_MS 100
-#define NB_GAME 2
+//#define AFFICHAGE
+//#define DECISION_DELAY_MS 100
+#define NB_GAME 100
 
 
 int main (int argc, char* argv[])
 {
     // Create the main window
-    sf::RenderWindow app(sf::VideoMode(1200, 800), "SFML window");
+    sf::RenderWindow app(sf::VideoMode(1200, 800), "SNAKE INTEGER");
     app.setFramerateLimit(20);
     sf::Font font;
-    int option_lancement = 0 ;
+    //default value to launch game. 0 is human, 1 is agent 1
+    int option_lancement = 1 ;
     vector<float> seeds;
     Grille* ma_grille;
 
@@ -71,16 +72,20 @@ int main (int argc, char* argv[])
         case 0 :    Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);
 
                     break;
-        case 1 :
+        case 1 ... 4 :
             #ifdef DECISION_DELAY_MS
                 agent1 = new Agent1_Logical(ma_grille, NB_GAME, DECISION_DELAY_MS);
             #else
                  agent1 = new Agent1_Logical(ma_grille, NB_GAME, 0);
             #endif
             break;
-        default :   Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);
-
-                    break;
+        default :
+            #ifdef DECISION_DELAY_MS
+                agent1 = new Agent1_Logical(ma_grille, NB_GAME, DECISION_DELAY_MS);
+            #else
+                 agent1 = new Agent1_Logical(ma_grille, NB_GAME, 0);
+            #endif
+            break;
     }
 
 
@@ -121,7 +126,9 @@ int main (int argc, char* argv[])
         {
             case 0 : Listenner->listen();break;
             case 1 : agent1->compute_decision(1);break;
-            default : Listenner->listen();break;
+            case 2 : agent1->compute_decision(2);break;
+            case 3 : agent1->compute_decision(3);break;
+            case 4 : agent1->compute_decision(4);break;
         }
 
         while (app.pollEvent(event))
@@ -140,7 +147,13 @@ int main (int argc, char* argv[])
     //delete ma_grille;
     delete (ma_grille);
     delete (but_start);
-    delete (Listenner);
+
+    switch (option_lancement)
+        {
+            case 0 : delete (Listenner);;break;
+            case 1 ... 4 : delete (agent1);break;
+        }
+
 
     return EXIT_SUCCESS;
 }
