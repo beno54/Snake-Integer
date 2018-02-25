@@ -77,7 +77,7 @@ void Action::log_data(vector<Case*> cases_selected)
         GridAverage += currentvalue ;
         //Logs Grid
         tmpFile << currentvalue ;
-        tmpFile << ";" ;
+        tmpFile << "," ;
     }
 
     //calcul moyenne
@@ -85,15 +85,15 @@ void Action::log_data(vector<Case*> cases_selected)
 
     //Log  moyenne de la grille
     tmpFile << GridAverage ;
-    tmpFile << ";" ;
+    tmpFile << "," ;
 
     //Log score grille courrante
     tmpFile << grid->get_Case_score()->get_value() ;
-    tmpFile << ";" ;
+    tmpFile << "," ;
 
     //Logs Valeur max
     tmpFile << maxvalue ;
-    tmpFile << ";" ;
+    tmpFile << "," ;
 
     //Logs Cases s�lectionn�es
     for (int e=0;e<cases_selected.size();e++)
@@ -104,7 +104,7 @@ void Action::log_data(vector<Case*> cases_selected)
     for (int e=0;e<25;e++)
     {
         tmpFile << caseSelectOrNot[e] ;
-        tmpFile << ";" ;
+        tmpFile << "," ;
     }
 
      //Log case en fin de tableau ou non
@@ -118,20 +118,20 @@ void Action::log_data(vector<Case*> cases_selected)
         {
             tmpFile << 0 ;
         }
-        tmpFile << ";" ;
+        tmpFile << "," ;
      }
 
      //Log de valeur s�lectionn�e
      tmpFile << cases_selected[0]->get_value() ;
-     tmpFile << ";" ;
+     tmpFile << "," ;
 
      //Log de nombre de cases s�lectionn�es
      tmpFile << cases_selected.size() ;
-     tmpFile << ";" ;
+     tmpFile << "," ;
 
      //Log valeur ajout�e au score = nb case s�lectionn�e * valeur s�lecitonn�e
      tmpFile << cases_selected.size()* cases_selected[0]->get_value() ;
-     tmpFile << ";" ;
+     tmpFile << "," ;
 
      //Log Nombres de groupements de m�me valeur
      tmpFile << nbPossibilities;
@@ -160,7 +160,7 @@ void Action::log_data(vector<Case*> cases_selected, vector<float> additionnal_da
         GridAverage += currentvalue ;
         //Logs Grid
         tmpFile << currentvalue ;
-        tmpFile << ";" ;
+        tmpFile << "," ;
     }
 
     //calcul moyenne
@@ -168,15 +168,15 @@ void Action::log_data(vector<Case*> cases_selected, vector<float> additionnal_da
 
     //Log  moyenne de la grille
     tmpFile << GridAverage ;
-    tmpFile << ";" ;
+    tmpFile << "," ;
 
     //Log score grille courrante
     tmpFile << grid->get_Case_score()->get_value() ;
-    tmpFile << ";" ;
+    tmpFile << "," ;
 
     //Logs Valeur max
     tmpFile << maxvalue ;
-    tmpFile << ";" ;
+    tmpFile << "," ;
 
     //Logs Cases s�lectionn�es
     for (int e=0;e<cases_selected.size();e++)
@@ -187,7 +187,7 @@ void Action::log_data(vector<Case*> cases_selected, vector<float> additionnal_da
     for (int e=0;e<25;e++)
     {
         tmpFile << caseSelectOrNot[e] ;
-        tmpFile << ";" ;
+        tmpFile << "," ;
     }
 
      //Log case en fin de tableau ou non
@@ -201,23 +201,24 @@ void Action::log_data(vector<Case*> cases_selected, vector<float> additionnal_da
         {
             tmpFile << 0 ;
         }
-        tmpFile << ";" ;
+        tmpFile << "," ;
      }
 
      //Log de valeur s�lectionn�e
      tmpFile << cases_selected[0]->get_value() ;
-     tmpFile << ";" ;
+     tmpFile << "," ;
 
      //Log de nombre de cases s�lectionn�es
      tmpFile << cases_selected.size() ;
-     tmpFile << ";" ;
+     tmpFile << "," ;
 
      //Log valeur ajout�e au score = nb case s�lectionn�e * valeur s�lecitonn�e
      tmpFile << cases_selected.size()* cases_selected[0]->get_value() ;
-     tmpFile << ";" ;
+     tmpFile << "," ;
 
      //Log Nombres de groupements de m�me valeur
      tmpFile << nbPossibilities;
+     tmpFile << "," ;
      //cout << nbPossibilities << endl ;
      //Log fin de log
 
@@ -226,7 +227,7 @@ void Action::log_data(vector<Case*> cases_selected, vector<float> additionnal_da
      {
          //Log de valeur s�lectionn�e
          tmpFile << additionnal_data[i] ;
-         tmpFile << ";" ;
+         tmpFile << "," ;
      }
 
     tmpFile << std::endl ;

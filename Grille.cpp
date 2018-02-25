@@ -43,6 +43,49 @@ Grille::Grille(Vector2f posi, int taille, RenderWindow* win)
     gameOver.setColor(Color::Red);
 }
 
+Grille::Grille(Vector2f posi, int taille, RenderWindow* win, vector<float> seeds)
+{
+    window = win;
+    this->posi = posi;
+    Vector2f posi_case = posi;
+    this->taille = taille;
+    int taille_case = taille/5;
+    isOver = false;
+    //on initie le numGénérator qui va générer les nombres aléatoires
+    numG = new NumGenerator(seeds[0], seeds[1], seeds[2]);
+
+
+    if (!font.loadFromFile("text/calibri.ttf"))
+    {
+        cout << "Police de texte non chargee." << endl;
+    }
+
+    case_score = new Case(Vector2f(800, 350), taille_case, font, 0, 30);
+
+    for (int i = 0; i < 25; i++)
+    {
+        posi_case.x = posi.x + (i%5)*taille_case;
+        posi_case.y = posi.y + (i/5)*taille_case;
+        Case* new_case = new Case(posi_case, taille_case, font, numG->nexNum(),(i+1));
+        cases.push_back(new_case);
+    }
+
+    //Gameover message
+    gameOver.setFont(font);
+
+    //conversion int to string
+    gameOver.setString("GAME OVER");
+    gameOver.setCharacterSize(64);
+    //on met l'origine au centre de la case
+
+    sf::FloatRect textRect = gameOver.getLocalBounds();
+
+    gameOver.setPosition(sf::Vector2f(posi.x + taille/2.0f, posi.y + taille/2.0f));
+    gameOver.setOrigin(textRect.left + textRect.width/2.0f,
+               textRect.top  + textRect.height/2.0f);
+    gameOver.setColor(Color::Red);
+}
+
 // on supprime tous les objets dynamiques contenu dans la grille
 Grille::~Grille()
 {

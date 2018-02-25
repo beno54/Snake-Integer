@@ -8,6 +8,7 @@ class Grille
 {
     public:
         Grille(Vector2f posi, int taille, RenderWindow* win);
+        Grille(Vector2f posi, int taille, RenderWindow* win, vector<float> seeds);
         virtual ~Grille();
         Case* get_Case_pointed(Vector2f posi);
         Case* get_neighbourOfCase_pointed(Vector2f posi,Case *caseSelected);

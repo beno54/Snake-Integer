@@ -9,7 +9,34 @@ NumGenerator::NumGenerator()
     seed1 = 1 + rand() % 9999999 ;
     seed2 = 1 + rand() % 9999999 ;
     seed3 = 1 + rand() % 9999999 ;
+//    seed1 = 22495;
+//    seed2 = 23073;
+//    seed3 = 10585;
+
+    cout << "Seed 1 : " << seed1 << endl;
+    cout << "Seed 2 : " << seed2 << endl;
+    cout << "Seed 3 : " << seed3 << endl;
 }
+
+NumGenerator::NumGenerator(float seed1, float seed2, float seed3)
+{
+    srand (time(NULL));
+//    seed1 = 1 + rand() % 9999999 ;
+//    seed2 = 1 + rand() % 9999999 ;
+//    seed3 = 1 + rand() % 9999999 ;
+    if (seed1 == 0.0f)seed1 ++;
+    if (seed2 == 0.0f)seed2 ++;
+    if (seed3 == 0.0f)seed3 ++;
+
+    this->seed1 = seed1;
+    this->seed2 = seed2;
+    this->seed3 = seed3;
+
+    cout << "Seed 1 : " << seed1 << endl;
+    cout << "Seed 2 : " << seed2 << endl;
+    cout << "Seed 3 : " << seed3 << endl;
+}
+
 
 NumGenerator::~NumGenerator()
 {

@@ -13,12 +13,12 @@ Agent1_Logical::~Agent1_Logical()
     //dtor
 }
 
-void Agent1_Logical::compute_decision()
+void Agent1_Logical::compute_decision(int mode)
 {
     if (!senseurs->get_isOver())
     {
         compute_possibilitiesInGrps();
-        compute_possibilities_cost(1);
+        compute_possibilities_cost(mode);
 
         if (action->test_case_selected(all_possibilities[choix]) == true)
         {
@@ -86,7 +86,7 @@ void Agent1_Logical::deep_course(vector<Case*> v_casesCourante)
         {
             if (voisins[k]->get_id() == vector_chemin[z]->get_id())
             {
-                //on retire les voisins déjà présents dans le vector_casesCourante et on ajuste l'indice du vector voisins
+                //on retire les voisins dï¿½jï¿½ prï¿½sents dans le vector_casesCourante et on ajuste l'indice du vector voisins
                 voisins.erase(voisins.begin()+k);
                 z = 26;
                 k --;
@@ -125,7 +125,7 @@ void  Agent1_Logical::compute_destination_reward()
     {
         vector<Case*> voisins = senseurs->get_all_voisins( all_possibilities[z].back());
 
-        //retire voisins présent dans le chemin
+        //retire voisins prï¿½sent dans le chemin
 
         for (int i =0; i < all_possibilities[z].size(); i++)
         {
@@ -227,7 +227,6 @@ void Agent1_Logical::compute_destination_base3_reward()
             {
                 reward = 1;
             }
-            //cout << "current number :" << number;
             number = number/2;
         }
         destination_base3_reward.push_back(reward);
@@ -290,7 +289,6 @@ void Agent1_Logical::compute_possibilities_cost(int option)
 
             for (int z = 0; z < all_possibilities.size(); z ++)
             {
-
                 reward = 0.2*destination_base3_reward[z]+0.35*destination_reward_same_value[z]+0.25*destination_reward_multiple_value[z]+0.15*position_reward[z]+0.1*random_reward[z] ;
 
                 if (reward_best < reward)
@@ -360,6 +358,16 @@ void Agent1_Logical::compute_possibilities_cost(int option)
 //        }
 //        //coutdestination_reward_same_value << "same value: " << nbvoisinssamevalue[z] << ", random: " << randomscore[z] << ", total :" << rewards[z] << endl;
 //    }
+    cout << endl ;
+    cout << "the best is                     : " << reward_best                                  << endl;
+    cout << "NB VOISINS MULTIPLE  VALUE      : " << destination_reward_multiple_value[choix]     << endl;
+    cout << "NB VOISINS  SAME VALUE          : " << destination_reward_same_value[choix]         << endl;
+    cout << "NB 1-3 VOISINS                  : " << random_reward[choix]                         << endl;
+    cout << "BASE 3                          : " << destination_base3_reward[choix]              << endl;
+    cout << "POSITION REWARD                 : " << position_reward[choix]                       << endl;
+    cout << "MEAN RATION                     : " << senseurs->get_mean()/(all_possibilities[choix].size() *all_possibilities[choix][0]->get_value())        << endl;
+    cout << destination_reward_double_value[choix] << endl ;
+    //cout << score_base6[choix] << endl ;
 
 
 
@@ -394,3 +402,15 @@ float Agent1_Logical::get_position_reward()
 {
     return position_reward[choix];
 }
+
+
+//    cout << endl ;
+//    cout << "the best is                     : " << reward_best                                  << endl;
+//    cout << "NB VOISINS MULTIPLE  VALUE      : " << destination_reward_multiple_value[choix]     << endl;
+//    cout << "NB VOISINS  SAME VALUE          : " << destination_reward_same_value[choix]         << endl;
+//    cout << "NB 1-3 VOISINS                  : " << random_reward[choix]                         << endl;
+//    cout << "BASE 3                          : " << destination_base3_reward[choix]              << endl;
+//    cout << "POSITION REWARD                 : " << position_reward[choix]                       << endl;
+//    cout << "MEAN RATION                     : " << senseurs->get_mean()/(all_possibilities[choix].size() *all_possibilities[choix][0]->get_value())        << endl;
+//    cout << destination_reward_double_value[choix] << endl ;
+    //cout << score_base6[choix] << endl ;
