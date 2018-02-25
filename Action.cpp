@@ -6,9 +6,20 @@ Action::Action(Grille *grid, string ProfilName)
     this->grid = grid;
     nbTurnPlayed =0 ;
     //ouverture des fichiers profils durant l'ex�cution du programme
-    logFile.open (("./Logs/"+ProfilName).c_str(),ios::app);
-    scoreFile.open ( ("./Logs/Score_"+ProfilName).c_str(),ios::app);
-    tmpFile.open ("./Logs/TmpfileLog",ios::app);
+
+
+
+    try {
+        cout << "../../Logs/"+ProfilName << endl ;
+        logFile.open (("../../Logs/"+ProfilName).c_str(),ios::app);
+        scoreFile.open ( ("../../Logs/Score_"+ProfilName).c_str(),ios::app);
+        tmpFile.open ("../../Logs/TmpfileLog",ios::app);
+    }
+    catch (std::ios_base::failure& e)
+    {
+      std::cerr << e.what() << '\n';
+    }
+
     if (logFile && tmpFile)
     {
         cout << "Ouverture du fichier de logs" <<endl ;
@@ -16,7 +27,9 @@ Action::Action(Grille *grid, string ProfilName)
     else
     {
         cout << "Ouverture failed" <<endl ;
+        cerr << "\nError: " << strerror(errno);
     }
+
     calcul_groups_in_grid();
     compute_NbPossibilities_in_grid();
 }

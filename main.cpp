@@ -14,7 +14,7 @@ int main (int argc, char* argv[])
     sf::RenderWindow app(sf::VideoMode(1200, 800), "SFML window");
     app.setFramerateLimit(20);
     sf::Font font;
-    int option_lancement = 1 ;
+    int option_lancement = 0 ;
     vector<float> seeds;
     Grille* ma_grille;
 
@@ -61,17 +61,33 @@ int main (int argc, char* argv[])
         ma_grille = new Grille(Vector2f (250, 100), 450, &app);
     }
 
-    cout << "profil= " << ProfilName << "bonsoir" << endl;
 
+
+    EventListenner* Listenner;
+    Agent1_Logical* agent1;
     Button* but_start = new Button(100, Vector2f (800, 100), font, ma_grille);
+    switch (option_lancement)
+    {
+        case 0 :    Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);
+
+                    break;
+        case 1 :
+            #ifdef DECISION_DELAY_MS
+                agent1 = new Agent1_Logical(ma_grille, NB_GAME, DECISION_DELAY_MS);
+            #else
+                 agent1 = new Agent1_Logical(ma_grille, NB_GAME, 0);
+            #endif
+            break;
+        default :   Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);
+
+                    break;
+    }
+
+
     cout << (ProfilName).c_str() << endl;
-    EventListenner* Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);
+
     //Grille + Nb parties à jouer + delay entre chaques choix
-#ifdef DECISION_DELAY_MS
-    Agent1_Logical* agent1 = new Agent1_Logical(ma_grille, NB_GAME, DECISION_DELAY_MS);
-#else
-    Agent1_Logical* agent1 = new Agent1_Logical(ma_grille, NB_GAME, 0);
-#endif
+
 
 #ifdef AFFICHAGE
     // Clear screen
@@ -105,7 +121,7 @@ int main (int argc, char* argv[])
         {
             case 0 : Listenner->listen();break;
             case 1 : agent1->compute_decision(1);break;
-            default : agent1->compute_decision(1);break;
+            default : Listenner->listen();break;
         }
 
         while (app.pollEvent(event))
