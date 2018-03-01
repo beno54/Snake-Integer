@@ -21,8 +21,8 @@ int main (int argc, char* argv[])
 
     //veriables propre à l'agent
     int affichage = 1 ;
-    int nb_game = 1000;
-    int ms_delay = 1000; // ms
+    int nb_game = 1;
+    int ms_delay = 100; // ms
 
     string ProfilName;
     if (argc > 1)
@@ -33,7 +33,7 @@ int main (int argc, char* argv[])
         {
             option_lancement = atoi(argv[2]);
             cout << "option = " << option_lancement << endl;
-            if (option_lancement>1)
+            if (option_lancement>0)
             {
                 affichage = atoi(argv[3]);
                 cout << "affichage = " << affichage << endl;
@@ -113,7 +113,7 @@ int main (int argc, char* argv[])
     }
 
 	// Start the game loop
-    while (app.isOpen() && agent1->has_games2Play())
+    while (app.isOpen() && (agent1->has_games2Play() || option_lancement == 0))
     {
         sf::Event event;
         if (affichage)
