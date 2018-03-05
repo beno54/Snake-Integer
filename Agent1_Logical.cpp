@@ -1,11 +1,10 @@
 #include "Agent1_Logical.h"
 
-Agent1_Logical::Agent1_Logical(Grille* senseurs, int nb_game2Play, int decision_delay): Struct_Agent(senseurs, nb_game2Play, decision_delay)
+Agent1_Logical::Agent1_Logical(Grille* senseurs, int nb_game2Play, int decision_delay,string ProfilName): Struct_Agent(senseurs, nb_game2Play, decision_delay, ProfilName)
 {
     //ctor
     srand (time(NULL));
-    string profil = "agent1.csv";
-    action = new Action(senseurs, profil);
+    action = new Action(senseurs, ProfilName);
 }
 
 Agent1_Logical::~Agent1_Logical()
@@ -243,7 +242,7 @@ void  Agent1_Logical::compute_position_reward()
 
 
 /*FONCTIONS  DE PRISE DE DECISION*/
-void Agent1_Logical::compute_decision(int mode)
+void Agent1_Logical::compute_decision(int mode,bool affichage)
 {
     if (!senseurs->get_isOver())
     {
@@ -252,7 +251,10 @@ void Agent1_Logical::compute_decision(int mode)
 
         if (action->test_case_selected(all_possibilities[choix]) == true)
         {
-            action->affiche_cases_selected(all_possibilities[choix], decision_delay);
+            if (affichage == true)
+            {
+                action->affiche_cases_selected(all_possibilities[choix], decision_delay);
+            }
 
             action->log_data(all_possibilities[choix], additionnal_data);
 
@@ -294,7 +296,7 @@ void Agent1_Logical::compute_possibilities_cost(int mode)
         case 2:
             for (int z = 0; z < all_possibilities.size(); z ++)
             {
-                reward = destination_base3_reward[z]+destination_4_reward[z]+destination_reward_double_value[z]+destination_reward_same_value[z]+destination_reward_multiple_value[z]+position_reward[z]+random_reward[z] ;
+                reward = destination_base3_reward[z]+destination_4_reward[z]+destination_reward_same_value[z]+destination_reward_multiple_value[z]+position_reward[z]+random_reward[z] ;
 
                 if (reward_best < reward)
                 {

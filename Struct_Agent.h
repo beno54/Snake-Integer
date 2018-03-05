@@ -5,14 +5,15 @@
 class Struct_Agent
 {
     public:
-        Struct_Agent(Grille* senseurs, int nb_game2Play, int decision_delay);
+        Struct_Agent(Grille* senseurs, int nb_game2Play, int decision_delay,string ProfilName);
         virtual ~Struct_Agent();
-        virtual void compute_decision (int mode) = 0;
+        virtual void compute_decision (int mode,bool affichage) = 0;
     protected:
         Action* action;
         Grille* senseurs;
         int nb_game2Play;
         int decision_delay;
+        string ProfilName;
     private:
 };
 

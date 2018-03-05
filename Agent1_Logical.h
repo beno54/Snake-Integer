@@ -5,9 +5,9 @@
 class Agent1_Logical: public Struct_Agent
 {
     public:
-        Agent1_Logical(Grille* senseurs, int nb_game2Play, int decision_delay);
+        Agent1_Logical(Grille* senseurs, int nb_game2Play, int decision_delay,string ProfilName);
         virtual ~Agent1_Logical();
-        void compute_decision (int mode);
+        void compute_decision (int mode,bool affichage);
         void compute_all_possibilities();
         bool has_games2Play();
         void deep_course(vector<Case*> v_casesCourante);

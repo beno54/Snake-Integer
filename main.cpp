@@ -15,14 +15,14 @@ int main (int argc, char* argv[])
     app.setFramerateLimit(20);
     sf::Font font;
     //default value to launch game. 0 is human, 1 is agent 1
-    int option_lancement = 1 ;
+    int option_lancement = 3;
     vector<float> seeds;
     Grille* ma_grille;
 
     //veriables propre à l'agent
     int affichage = 1 ;
     int nb_game = 1;
-    int ms_delay = 100; // ms
+    int ms_delay = 809; // ms
 
     string ProfilName;
     if (argc > 1)
@@ -87,8 +87,8 @@ int main (int argc, char* argv[])
     switch (option_lancement)
     {
         case 0 :        Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);break;
-        case 1 ... 4 :  agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay); break;
-        default :       agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay); break;
+        case 1 ... 4 :  agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay,ProfilName); break;
+        default :       agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay,ProfilName); break;
     }
 
 
@@ -131,10 +131,10 @@ int main (int argc, char* argv[])
         switch (option_lancement)
         {
             case 0 : Listenner->listen();break;
-            case 1 : agent1->compute_decision(1);break;
-            case 2 : agent1->compute_decision(2);break;
-            case 3 : agent1->compute_decision(3);break;
-            case 4 : agent1->compute_decision(4);break;
+            case 1 : agent1->compute_decision(1,affichage);break;
+            case 2 : agent1->compute_decision(2,affichage);break;
+            case 3 : agent1->compute_decision(3,affichage);break;
+            case 4 : agent1->compute_decision(4,affichage);break;
         }
 
         while (app.pollEvent(event))
