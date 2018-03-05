@@ -427,7 +427,7 @@ void Action::log_score()
 void Action::reinitialize_tmpFile()
 {
     if (tmpFile)tmpFile.close();
-    tmpFile.open ("./Logs/TmpfileLog",ios::trunc);
+    tmpFile.open ("../../Logs/TmpfileLog",ios::trunc);
 }
 //test si les cases en entrées sont dans le meme groupe
 bool Action::test_case_selected(vector<Case*> cases_selected)
