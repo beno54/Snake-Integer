@@ -240,13 +240,15 @@ void Action::log_data(vector<Case*> cases_selected, vector<float> additionnal_da
      //Log fin de log
 
      //add additionnal data from agents
-     for (int i = 0; i < additionnal_data.size(); i ++)
+
+     for (int i=0; i < (additionnal_data.size())-1; i ++)
      {
          //Log de valeur s�lectionn�e
          tmpFile << additionnal_data[i] ;
          tmpFile << "," ;
-     }
 
+     }
+    tmpFile << additionnal_data[additionnal_data.size()-1];
     tmpFile << std::endl ;
      //cout << "Ecriture dans fichier de logs" <<endl ;
 }
@@ -414,7 +416,7 @@ void Action::log_score()
         timenow = time(0);
         strcpy(timeToLog,ctime(&timenow));
         timeToLog[strlen(timeToLog)-1]='\0';
-        scoreFile << timeToLog<< ";" << grid->get_Case_score()->get_value() << ";" << nbTurnPlayed << ";" <<std::endl ;
+        scoreFile << timeToLog<< "," << grid->get_Case_score()->get_value() << "," << nbTurnPlayed  <<std::endl ;
     }
     else
     {
