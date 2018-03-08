@@ -1,10 +1,50 @@
 #include "Agent1_Logical.h"
 
-Agent1_Logical::Agent1_Logical(Grille* senseurs, int nb_game2Play, int decision_delay,string ProfilName): Struct_Agent(senseurs, nb_game2Play, decision_delay, ProfilName)
+Agent1_Logical::Agent1_Logical(Grille* senseurs, int nb_game2Play, int decision_delay,string ProfilName, int mode): Struct_Agent(senseurs, nb_game2Play, decision_delay, ProfilName)
 {
     //ctor
     srand (time(NULL));
     action = new Action(senseurs, ProfilName);
+    this->mode = mode;
+    /*INITIALISATION*/
+    for (int i = 0; i < 5; i++)
+    {
+        coefficients.push_back(0);
+    }
+    score_total = 0;
+    nb_game2Play_initial = nb_game2Play;
+
+    switch(mode)
+    {
+        case 1:
+            break;
+        case 2:
+            coefficients[0] = 1;
+            coefficients[1] = 1;
+            coefficients[2] = 1;
+            coefficients[3] = 1;
+            coefficients[4] = 1;
+            break;
+        case 3:
+            coefficients[0] = 20;
+            coefficients[1] = 35;
+            coefficients[2] = 25;
+            coefficients[3] = 15;
+            coefficients[4] = 10;
+            break;
+        case 4:
+//            coefficients[0] = 16;
+//            coefficients[1] = 55;
+//            coefficients[2] = 9;
+//            coefficients[3] = 11;
+//            coefficients[4] = 9;
+            coefficients[0] = 15;
+            coefficients[1] = 53;
+            coefficients[2] = 7;
+            coefficients[3] = 13;
+            coefficients[4] = 12;
+            break;
+    }
 }
 
 Agent1_Logical::~Agent1_Logical()
@@ -63,7 +103,7 @@ void Agent1_Logical::deep_course(vector<Case*> v_casesCourante)
         {
             if (voisins[k]->get_id() == vector_chemin[z]->get_id())
             {
-                //on retire les voisins d�j� pr�sents dans le vector_casesCourante et on ajuste l'indice du vector voisins
+                //on retire les voisins d?j? pr?sents dans le vector_casesCourante et on ajuste l'indice du vector voisins
                 voisins.erase(voisins.begin()+k);
                 z = 26;
                 k --;
@@ -95,7 +135,7 @@ void  Agent1_Logical::compute_destination_reward()
     {
         vector<Case*> voisins = senseurs->get_all_voisins( all_possibilities[z].back());
 
-        //retire voisins pr�sent dans le chemin
+        //retire voisins pr?sent dans le chemin
 
         for (int i =0; i < all_possibilities[z].size(); i++)
         {
@@ -263,6 +303,7 @@ void Agent1_Logical::compute_decision(int mode,bool affichage)
     }
     else
     {
+        score_total += senseurs->get_Case_score()->get_value();
         action->log_score();
         action->reset();
         nb_game2Play --;
@@ -282,7 +323,7 @@ void Agent1_Logical::compute_possibilities_cost(int mode)
     compute_destination_reward();
     compute_random_reward();
     compute_destination_base3_reward();
-    compute_destination_4_reward();
+    //compute_destination_4_reward();
     compute_position_reward();
 
     switch(mode)
@@ -296,7 +337,7 @@ void Agent1_Logical::compute_possibilities_cost(int mode)
         case 2:
             for (int z = 0; z < all_possibilities.size(); z ++)
             {
-                reward = destination_base3_reward[z]+destination_4_reward[z]+destination_reward_same_value[z]+destination_reward_multiple_value[z]+position_reward[z]+random_reward[z] ;
+                reward = destination_base3_reward[z]+destination_reward_same_value[z]+destination_reward_multiple_value[z]+position_reward[z]+random_reward[z] ;
 
                 if (reward_best < reward)
                 {
@@ -320,11 +361,24 @@ void Agent1_Logical::compute_possibilities_cost(int mode)
             }
             break;
 
-        /*MODE FCTION AVEC COEFF OPTI*/
+        /*MODE FCTION AVEC COEFF TEST*/
         case 4:
             for (int z = 0; z < all_possibilities.size(); z ++)
             {
-                reward = 0.2*destination_base3_reward[z]+0.35*destination_reward_same_value[z]+0.25*destination_reward_multiple_value[z]+0.15*position_reward[z]+0.1*random_reward[z] ;
+                reward = coefficients[0]*destination_base3_reward[z]+coefficients[1]*destination_reward_same_value[z]+coefficients[2]*destination_reward_multiple_value[z]+coefficients[3]*position_reward[z]+coefficients[4]*random_reward[z] ;
+
+                if (reward_best < reward)
+                {
+                    reward_best = reward;
+                    choix = z;
+                }
+            }
+            break;
+        /*MODE FCTION AVEC COEFF VARIABLES*/
+        case 5:
+            for (int z = 0; z < all_possibilities.size(); z ++)
+            {
+                reward = coefficients[0]*destination_base3_reward[z]+coefficients[1]*destination_reward_same_value[z]+coefficients[2]*destination_reward_multiple_value[z]+coefficients[3]*position_reward[z]+coefficients[4]*random_reward[z] ;
 
                 if (reward_best < reward)
                 {
@@ -360,6 +414,70 @@ void Agent1_Logical::compute_possibilities_cost(int mode)
 
 }
 
+void Agent1_Logical::learn_coeff(int mode)
+{
+    ofstream logFile;
+
+    logFile.open (("../../Logs/Learning_"+ProfilName).c_str(),ios::app);
+
+    logFile << "Base3" << ",";
+    logFile << "sameValue" << ",";
+    logFile << "multiple" << ",";
+    logFile << "position" << ",";
+    logFile << "random" << ",";
+    logFile << "moyenne" << endl;
+
+    logFile.close ();
+
+    cout << "go t o bfqjklsdbfj" << endl;
+    /*INCREMENTATION*/
+    for ( ;(MAX_COEFF-coefficients[0]) >=0 ;coefficients[0]++)
+    {
+          for ( ;(MAX_COEFF-coefficients[0]-coefficients[1])>=0; coefficients[1]++)
+         {
+               for ( ;(MAX_COEFF-coefficients[0]-coefficients[1]-coefficients[2] ) >=0; coefficients[2]++)
+               {
+                       for ( ;(MAX_COEFF-coefficients[0]-coefficients[1]-coefficients[2] -coefficients[3])  >=0; coefficients[3]++)
+                       {
+                           coefficients[4]=(MAX_COEFF-coefficients[0]-coefficients[1]-coefficients[2] -coefficients[3] -coefficients[4]);
+
+                            cout << coefficients[0];
+                            cout << coefficients[1];
+                            cout << coefficients[2];
+                            cout << coefficients[3];
+                            cout << coefficients[4];
+                            cout << " , score: " << (float)(score_total/(nb_game2Play_initial *1.0f)) << endl;
+
+                            logFile.open (("../../Logs/Learning_"+ProfilName).c_str(),ios::app);
+
+                            while (nb_game2Play > 0)
+                            {
+                                compute_decision(mode, false);
+                            }
+
+                            for (int i = 0; i < coefficients.size(); i++)
+                            {
+                                logFile << coefficients[i] << ",";
+                            }
+                            logFile << (float)(score_total/(nb_game2Play_initial *1.0f)) << endl ;
+                            logFile.close ();
+
+                            score_total = 0;
+                            nb_game2Play = nb_game2Play_initial;
+
+                            coefficients[4]=0;
+                       }
+                       coefficients[3]=0;
+               }
+               coefficients[2]=0;
+          }
+          coefficients[1]=0;
+    }
+    nb_game2Play = 0;
+
+
+}
+
 
 /*FONCTIONS GET*/
 
@@ -391,5 +509,3 @@ float Agent1_Logical::get_position_reward()
 {
     return position_reward[choix];
 }
-
-

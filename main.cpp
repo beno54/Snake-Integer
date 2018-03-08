@@ -15,14 +15,14 @@ int main (int argc, char* argv[])
     app.setFramerateLimit(20);
     sf::Font font;
     //default value to launch game. 0 is human, 1 is agent 1
-    int option_lancement = 3;
+    int option_lancement = 4;
     vector<float> seeds;
     Grille* ma_grille;
 
     //veriables propre à l'agent
-    int affichage = 1 ;
-    int nb_game = 1;
-    int ms_delay = 809; // ms
+    int affichage = 0 ;
+    int nb_game = 1000;
+    int ms_delay = 0; // ms
 
     string ProfilName;
     if (argc > 1)
@@ -69,7 +69,7 @@ int main (int argc, char* argv[])
         cout << "Police de texte non chargee." << endl;
     }
 
-    //on cr�e la grille et le EventListener
+    //on cr?e la grille et le EventListener
     if (argc > 6)
     {
         ma_grille = new Grille(Vector2f (250, 100), 450, &app, seeds);
@@ -87,8 +87,9 @@ int main (int argc, char* argv[])
     switch (option_lancement)
     {
         case 0 :        Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);break;
-        case 1 ... 4 :  agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay,ProfilName); break;
-        default :       agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay,ProfilName); break;
+        case 1 ... 4 :  agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
+        case 5 :  agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
+        default :       agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
     }
 
 
@@ -125,7 +126,7 @@ int main (int argc, char* argv[])
             ma_grille->draw_cases();
             but_start->draw(app);
         }
-        //on d�tecte le clique de souris et on fait les actions correspondantes
+        //on d?tecte le clique de souris et on fait les actions correspondantes
         //Listenner->listen();
 
         switch (option_lancement)
@@ -135,6 +136,7 @@ int main (int argc, char* argv[])
             case 2 : agent1->compute_decision(2,affichage);break;
             case 3 : agent1->compute_decision(3,affichage);break;
             case 4 : agent1->compute_decision(4,affichage);break;
+            case 5 : agent1->learn_coeff(5);break;
         }
 
         while (app.pollEvent(event))
