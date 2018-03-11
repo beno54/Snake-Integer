@@ -20,8 +20,8 @@ int main (int argc, char* argv[])
     Grille* ma_grille;
 
     //veriables propre à l'agent
-    int affichage = 0 ;
-    int nb_game = 1000;
+    int affichage = 1 ;
+    int nb_game = 20;
     int ms_delay = 0; // ms
 
     string ProfilName;

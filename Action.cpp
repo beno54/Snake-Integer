@@ -235,21 +235,17 @@ void Action::log_data(vector<Case*> cases_selected, vector<float> additionnal_da
 
      //Log Nombres de groupements de m�me valeur
      tmpFile << nbPossibilities;
-     tmpFile << "," ;
      //cout << nbPossibilities << endl ;
      //Log fin de log
 
      //add additionnal data from agents
 
-     for (int i=0; i < (additionnal_data.size())-1; i ++)
+     for (int i=0; i < (additionnal_data.size()); i ++)
      {
          //Log de valeur s�lectionn�e
-         tmpFile << additionnal_data[i] ;
          tmpFile << "," ;
-
+         tmpFile << additionnal_data[i] ;
      }
-    tmpFile << additionnal_data[additionnal_data.size()-1];
-    tmpFile << std::endl ;
      //cout << "Ecriture dans fichier de logs" <<endl ;
 }
 
@@ -391,6 +387,45 @@ void Action::reinitialize_nbTurnPlayed()
 void Action::set_nbTurnPlayed()
 {
     nbTurnPlayed ++;
+}
+
+void Action::log_score( vector<int> additionnal_data)
+{
+        //on copie le contenu du fichiuer temporaire dans le fichier de log
+    //ferme le fichier en écriture
+    tmpFile.close();
+    //ouvre le fichier en lecture
+    ifstream tmpFile_reader("../../Logs/TmpfileLog",std::ifstream::in);
+    string line;
+    while (getline(tmpFile_reader,line))
+    {
+        logFile << line;
+        logFile << std::endl ;
+    }
+
+    //réouvre le fichier en écriture
+    tmpFile_reader.close();
+
+    if (scoreFile )
+    {
+        //Uodate du moment courant + Log score avant GAME OVER + nb tour jou�
+        char timeToLog [256];
+        timenow = time(0);
+        strcpy(timeToLog,ctime(&timenow));
+        timeToLog[strlen(timeToLog)-1]='\0';
+        scoreFile << timeToLog<< "," << grid->get_Case_score()->get_value() << "," << nbTurnPlayed ;
+        for (int i=0; i < (additionnal_data.size()); i ++)
+         {
+             //Log de valeur s�lectionn�e
+             scoreFile << "," ;
+             scoreFile << additionnal_data[i] ;
+         }
+         scoreFile << std::endl ;
+    }
+    else
+    {
+        cout << "Ouverture failed" <<endl ;
+    }
 }
 void Action::log_score()
 {
