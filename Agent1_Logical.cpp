@@ -124,163 +124,117 @@ void Agent1_Logical::deep_course(vector<Case*> v_casesCourante)
 
 /*FONCTIONS MAJ PARAMETRES */
 
-void  Agent1_Logical::compute_destination_reward()
+void  Agent1_Logical::compute_reward()
 {
     destination_reward_same_value.clear();
     destination_reward_multiple_value.clear();
-
+    random_reward.clear();
+    destination_base3_reward.clear();
+     position_reward.clear();
     int destvalue  ;
+
     for (int z = 0; z < all_possibilities.size(); z ++)
     {
-        vector<Case*> voisins = senseurs->get_all_voisins( all_possibilities[z].back());
+        //calcul voisins autres cases que dest
+        vector<Case*> voisins_no_dest;
+         for (int x = 0; x < (all_possibilities[z].size()-1); x ++)
+        {
+            vector<Case*> tmp = senseurs->get_all_voisins(all_possibilities[z][x]);
+            voisins_no_dest.insert (voisins_no_dest.end(),tmp.begin(),tmp.end());
+        }
+        //calcul voisins dest
+        vector<Case*> voisins_dest = senseurs->get_all_voisins( all_possibilities[z].back());
 
-        //retire voisins pr?sent dans le chemin
+        //calcul position param
+        int nb_voisins_tot = voisins_dest.size();
+        float reward_position = 0 ;
+        switch (nb_voisins_tot)
+        {
+            case 2 : reward_position = 1 ; break ;
+            case 3 : reward_position = 0.5 ; break ;
+        }
 
+        //retire voisins present dans le chemin
         for (int i =0; i < all_possibilities[z].size(); i++)
         {
-            for (int e =0; e < voisins.size(); e++)
+            for (int e =0; e < voisins_dest.size(); e++)
             {
-                if(voisins[e]->get_id() == all_possibilities[z][i]->get_id())
+                if(voisins_dest[e]->get_id() == all_possibilities[z][i]->get_id())
                 {
-                    voisins.erase(voisins.begin()+ e);
+                    voisins_dest.erase(voisins_dest.begin()+ e);
+                    e--;
+                }
+            }
+            for (int e = 0; e < voisins_no_dest.size(); e ++)
+            {
+                if (voisins_no_dest[e]->get_id()  == all_possibilities[z][i]->get_id())
+                {
+                    voisins_no_dest.erase(voisins_no_dest.begin()+e);
                     e--;
                 }
             }
         }
 
+
+        //calcul destination
         float reward = 0;
         float reward_multiple = 0 ;
         float reward_double_value  = 0 ;
-
-        for (int x = 0; x < voisins.size(); x ++)
+        float  reward_random  = 0 ;
+        for (int x = 0; x < voisins_dest.size(); x ++)
         {
             destvalue = (all_possibilities[z].size())*(all_possibilities[z].back())->get_value();
 
-            if (voisins[x]->get_value() == destvalue )
+            if (voisins_dest[x]->get_value() == destvalue )
             {
                 reward++;
             }
             else
-            if( (voisins[x]->get_value() % destvalue) == 0 )
+            if( (voisins_dest[x]->get_value() % destvalue) == 0 )
             {
                 reward_multiple++;
             }
         }
-        //coefficient entre 1 et 3
 
+        //calcul random
+        float Nb_voisins = voisins_no_dest.size()*1.0f;
+        float  nb = 0 ;
+        for (int e = 0; e < voisins_no_dest.size(); e ++)
+        {
+            if ((voisins_no_dest[e]->get_value() == 1)||(voisins_no_dest[e]->get_value() == 2)||(voisins_no_dest[e]->get_value() == 3))nb ++;
+        }
+        if (Nb_voisins) reward_random = float(nb/Nb_voisins) ;
+        else {cout <<" DIVISION PAR ZERO EVITEE" << endl ;reward_random = 0;}
+
+
+
+        //calcul param base 3
+        float reward_b3 = 0;
+        int number = (all_possibilities[z].back()->get_value())*(all_possibilities[z].size());
+        while (number%2 == 0)
+        {
+            if (number/2 == 3)
+            {
+                reward_b3 = 1;
+            }
+            number = number/2;
+        }
+
+
+
+
+        //coefficient entre 1 et 3
+        destination_base3_reward.push_back(reward_b3);
+        position_reward.push_back(reward_position);
+        random_reward.push_back(reward_random);
         destination_reward_same_value.push_back(reward/3.0f);
         destination_reward_multiple_value.push_back(reward_multiple/3.0f);
     }
 
 }
 
-void Agent1_Logical::compute_random_reward()
-{
-    random_reward.clear();
-
-    for (int z = 0; z < all_possibilities.size(); z ++)
-    {
-
-        cout << endl ;
-        vector<Case*> voisins_no_dest;
-         for (int x = 0; x < (all_possibilities[z].size()-1); x ++)
-        {
-             vector<Case*> tmp = senseurs->get_all_voisins(all_possibilities[z][x]);
-            voisins_no_dest.insert (voisins_no_dest.end(),tmp.begin(),tmp.end());
-        }
 
 
-        for (int p = 0 ; p < voisins_no_dest.size(); p ++)
-        {
-         cout <<    voisins_no_dest[p]->get_id();
-        }
-        cout << endl ;
-
-        cout << "erase : " ;
-        for (int w = 0; w < (all_possibilities[z].size()); w ++)
-        {
-
-             for (int y = 0; y < voisins_no_dest.size(); y ++)
-            {
-                if (voisins_no_dest[y]->get_id()  == all_possibilities[z][w]->get_id())
-                {
-                     cout << voisins_no_dest[y]->get_id() << " ";
-                    voisins_no_dest.erase(voisins_no_dest.begin()+y);
-                    y--;
-                }
-            }
-        }
-         cout << endl ;
-
-        float Nb_voisins = voisins_no_dest.size()*1.0f;
-
-        cout << "taille :" <<  voisins_no_dest.size() << endl  ;
-        if (voisins_no_dest.size()== 0)
-        {
-            for (int x = 0; x < (all_possibilities[z].size()); x ++)
-            {
-                    cout << all_possibilities[z][x]->get_id() << " -> " ;
-            }
-            cout << endl ;
-            system ("pause");
-        }
-
-        float  nb = 0 ;
-
-        for (int e = 0; e < voisins_no_dest.size(); e ++)
-        {
-            if ((voisins_no_dest[e]->get_value() == 1)||(voisins_no_dest[e]->get_value() == 2)||(voisins_no_dest[e]->get_value() == 3))nb ++;
-        }
-
-        float  reward_random  = 0 ;
-        if (Nb_voisins) reward_random = float(nb/Nb_voisins) ;
-        else {cout <<" DIVISION PAR ZERO EVITE" << endl ;reward_random = float(nb/Nb_voisins);}
-        random_reward.push_back(reward_random);
-    }
-}
-
-void Agent1_Logical::compute_destination_base3_reward()
-{
-    destination_base3_reward.clear();
-
-    for (int z = 0; z < all_possibilities.size(); z ++)
-    {
-        float reward = 0;
-        int number = (all_possibilities[z].back()->get_value())*(all_possibilities[z].size());
-        while (number%2 == 0)
-        {
-            if (number/2 == 3)
-            {
-                reward = 1;
-            }
-            number = number/2;
-        }
-        destination_base3_reward.push_back(reward);
-    }
-}
-
-
-
-void  Agent1_Logical::compute_position_reward()
-{
-    vector<Case*> cases = senseurs->get_Cases();
-
-    position_reward.clear();
-    float reward ;
-    for (int z = 0; z < all_possibilities.size(); z ++)
-    {
-        int nb_voisins_tot = (senseurs->get_all_voisins(all_possibilities[z].back())).size();
-        reward = 0 ;
-       // cout << nb_voisins_tot << endl ;
-        switch (nb_voisins_tot)
-        {
-            case 2 : reward = 1 ; break ;
-            case 3 : reward = 0.5 ; break ;
-        }
-       // cout << "reward : " << reward << endl ;
-        position_reward.push_back(reward);
-    }
-}
 
 
 /*FONCTIONS  DE PRISE DE DECISION*/
@@ -320,13 +274,8 @@ void Agent1_Logical::compute_possibilities_cost(int mode)
     float reward_best = 0;
     float reward  = 0 ;
 
-
     //MAJ DES Paramètres pour la grille courrante
-    compute_destination_reward();
-    compute_random_reward();
-    compute_destination_base3_reward();
-
-    compute_position_reward();
+    compute_reward(); // + random + base 3 + destination same + multiple dest + position
 
     switch(mode)
     {
@@ -407,7 +356,7 @@ void Agent1_Logical::compute_possibilities_cost(int mode)
 //    cout << "the best is                     : " << reward_best                                  << endl;
 //    cout << "NB VOISINS MULTIPLE  VALUE      : " << destination_reward_multiple_value[choix]     << endl;
 //    cout << "NB VOISINS  SAME VALUE          : " << destination_reward_same_value[choix]         << endl;
-    cout << "NB 1-3 VOISINS                  : " << random_reward[choix]                         << endl;
+//    cout << "NB 1-3 VOISINS                  : " << random_reward[choix]                         << endl;
 //    cout << "BASE 3                          : " << destination_base3_reward[choix]              << endl;
 //    cout << "POSITION REWARD                 : " << position_reward[choix]                       << endl;
 //    cout << "MEAN RATION                     : " << senseurs->get_mean()/(all_possibilities[choix].size() *all_possibilities[choix][0]->get_value())        << endl;
@@ -499,10 +448,7 @@ float Agent1_Logical::get_destination_base3_reward()
 {
     return destination_base3_reward[choix];
 }
-float Agent1_Logical::get_destination_4_reward()
-{
-    return destination_4_reward[choix];
-}
+
 float Agent1_Logical::get_position_reward()
 {
     return position_reward[choix];
