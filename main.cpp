@@ -15,12 +15,12 @@ int main (int argc, char* argv[])
     app.setFramerateLimit(20);
     sf::Font font;
     //default value to launch game. 0 is human, 1 is agent 1
-    int option_lancement = 10;
+    int option_lancement = 0;
     vector<float> seeds;
     Grille* ma_grille;
 
     //veriables propre à l'agent
-    int affichage = 0 ;
+    int affichage = 1 ;
     int nb_game = 10;
     int ms_delay = 1000; // ms
 
@@ -88,7 +88,8 @@ int main (int argc, char* argv[])
     Button* but_start = new Button(100, Vector2f (800, 100), font, ma_grille);
     switch (option_lancement)
     {
-        case 0 :        Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);break;
+        // case 0 appelle qd meme agent 1 constructeur vide pour initialiser son nbgamtoplay à 0
+        case 0 :        Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);agent1=new Agent1_Logical(); break;
         case 1 ... 4 :  agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
         case 10 :  agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
     }

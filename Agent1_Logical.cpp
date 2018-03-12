@@ -47,6 +47,11 @@ Agent1_Logical::Agent1_Logical(Grille* senseurs, int nb_game2Play, int decision_
     }
 }
 
+Agent1_Logical::Agent1_Logical(): Struct_Agent()
+{
+    nb_game2Play_initial = 0 ;
+}
+
 Agent1_Logical::~Agent1_Logical()
 {
     //dtor

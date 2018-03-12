@@ -8,7 +8,10 @@ Struct_Agent::Struct_Agent(Grille* senseurs, int nb_game2Play,int decision_delay
     this->decision_delay =decision_delay;
     this->ProfilName =  ProfilName;
 }
+Struct_Agent::Struct_Agent()
+{
 
+}
 Struct_Agent::~Struct_Agent()
 {
     //dtor
