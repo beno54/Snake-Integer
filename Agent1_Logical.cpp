@@ -16,23 +16,23 @@ Agent1_Logical::Agent1_Logical(Grille* senseurs, int nb_game2Play, int decision_
 
     switch(mode)
     {
-        case 1:
+        case 1://pas de cout calculé
             break;
-        case 2:
+        case 2://tout à 1
             coefficients[0] = 1;
             coefficients[1] = 1;
             coefficients[2] = 1;
             coefficients[3] = 1;
             coefficients[4] = 1;
             break;
-        case 3:
+        case 3://trouvé par essais-erreur
             coefficients[0] = 20;
             coefficients[1] = 35;
             coefficients[2] = 25;
             coefficients[3] = 15;
             coefficients[4] = 10;
             break;
-        case 4:
+        case 4://trouvé par optimsiation ML
 //            coefficients[0] = 16;
 //            coefficients[1] = 55;
 //            coefficients[2] = 9;
@@ -61,6 +61,7 @@ bool Agent1_Logical::has_games2Play()
     if (nb_game2Play <= 0)
     {
         monbool = false;
+
     }
     return monbool;
 }
@@ -130,7 +131,8 @@ void  Agent1_Logical::compute_reward()
     destination_reward_multiple_value.clear();
     random_reward.clear();
     destination_base3_reward.clear();
-     position_reward.clear();
+    position_reward.clear();
+
     int destvalue  ;
 
     for (int z = 0; z < all_possibilities.size(); z ++)
@@ -204,7 +206,7 @@ void  Agent1_Logical::compute_reward()
             if ((voisins_no_dest[e]->get_value() == 1)||(voisins_no_dest[e]->get_value() == 2)||(voisins_no_dest[e]->get_value() == 3))nb ++;
         }
         if (Nb_voisins) reward_random = float(nb/Nb_voisins) ;
-        else {cout <<" DIVISION PAR ZERO EVITEE" << endl ;reward_random = 0;}
+        else {reward_random = 0;}
 
 
 
@@ -219,9 +221,6 @@ void  Agent1_Logical::compute_reward()
             }
             number = number/2;
         }
-
-
-
 
         //coefficient entre 1 et 3
         destination_base3_reward.push_back(reward_b3);
@@ -285,49 +284,8 @@ void Agent1_Logical::compute_possibilities_cost(int mode)
             break;
 
         /*MODE FCT NOT OPTI*/
-        case 2:
-            for (int z = 0; z < all_possibilities.size(); z ++)
-            {
-                reward = destination_base3_reward[z]+destination_reward_same_value[z]+destination_reward_multiple_value[z]+position_reward[z]+random_reward[z] ;
-
-                if (reward_best < reward)
-                {
-                    reward_best = reward;
-                    choix = z;
-                }
-            }
-            break;
-
-        /*MODE FCT COEFF FROM ESSAI ERROR*/
-        case 3:
-            for (int z = 0; z < all_possibilities.size(); z ++)
-            {
-                reward = 0.2*destination_base3_reward[z]+0.35*destination_reward_same_value[z]+0.25*destination_reward_multiple_value[z]+0.15*position_reward[z]+0.1*random_reward[z] ;
-
-                if (reward_best < reward)
-                {
-                    reward_best = reward;
-                    choix = z;
-                }
-            }
-            break;
-
-        /*MODE FCTION AVEC COEFF TEST*/
-        case 4:
-            for (int z = 0; z < all_possibilities.size(); z ++)
-            {
-                reward = coefficients[0]*destination_base3_reward[z]+coefficients[1]*destination_reward_same_value[z]+coefficients[2]*destination_reward_multiple_value[z]+coefficients[3]*position_reward[z]+coefficients[4]*random_reward[z] ;
-
-                if (reward_best < reward)
-                {
-                    reward_best = reward;
-                    choix = z;
-                }
-            }
-            break;
-        /*MODE FCTION AVEC COEFF VARIABLES*/
-        case 5:
-            for (int z = 0; z < all_possibilities.size(); z ++)
+        default :
+           for (int z = 0; z < all_possibilities.size(); z ++)
             {
                 reward = coefficients[0]*destination_base3_reward[z]+coefficients[1]*destination_reward_same_value[z]+coefficients[2]*destination_reward_multiple_value[z]+coefficients[3]*position_reward[z]+coefficients[4]*random_reward[z] ;
 
@@ -396,7 +354,7 @@ void Agent1_Logical::learn_coeff(int mode)
                             cout << coefficients[2];
                             cout << coefficients[3];
                             cout << coefficients[4];
-                            cout << " , score: " << (float)(score_total/(nb_game2Play_initial *1.0f)) << endl;
+
 
                             logFile.open (("../../Logs/Learning_"+ProfilName).c_str(),ios::app);
 
@@ -404,7 +362,7 @@ void Agent1_Logical::learn_coeff(int mode)
                             {
                                 compute_decision(mode, false);
                             }
-
+                            cout << " , score: " << (float)(score_total/(nb_game2Play_initial *1.0f)) << endl;
                             for (int i = 0; i < coefficients.size(); i++)
                             {
                                 logFile << coefficients[i] << ",";
