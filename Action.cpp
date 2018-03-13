@@ -185,6 +185,7 @@ void Action::log_data(vector<Case*> cases_selected, vector<float> additionnal_da
 
     //Log  moyenne de la grille
     tmpFile << GridAverage ;
+
     tmpFile << "," ;
 
     //Log score grille courrante
@@ -247,6 +248,7 @@ void Action::log_data(vector<Case*> cases_selected, vector<float> additionnal_da
          tmpFile << additionnal_data[i] ;
      }
      //cout << "Ecriture dans fichier de logs" <<endl ;
+     tmpFile << std::endl ;
 }
 
 void Action::compute_NbPossibilities_in_grid()

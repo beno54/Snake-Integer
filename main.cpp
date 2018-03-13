@@ -49,7 +49,6 @@ int main (int argc, char* argv[])
         }
         if (argc > 6)
         {
-            cout << "haaaaaahjauhdfuhfeuhé" << endl;
             seeds.push_back(atof(argv[6]));
             seeds.push_back(atof(argv[7]));
             seeds.push_back(atof(argv[8]));
