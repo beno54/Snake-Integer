@@ -2,9 +2,7 @@
 #include "Agent1_Logical.h"
 #include "Button.h"
 #include "string.h"
-
-
-
+#include "Python.h"
 
 
 
@@ -15,7 +13,7 @@ int main (int argc, char* argv[])
     app.setFramerateLimit(20);
     sf::Font font;
     //default value to launch game. 0 is human, 1 is agent 1
-    int option_lancement = 0;
+    int option_lancement = 4;
     vector<float> seeds;
     Grille* ma_grille;
 
@@ -80,6 +78,17 @@ int main (int argc, char* argv[])
         ma_grille = new Grille(Vector2f (250, 100), 450, &app);
     }
 
+//    std::string command2 = "py";
+//    system(command2.c_str());
+//
+//    command2 = "import SuperNNSnakeInteger_b";
+//    system(command2.c_str());
+
+//    std::string filename = "SuperNNSnakeInteger_b.py train ModelNN Agent1_to_train.csv";
+//    std::string command = "SuperNNSnakeInteger_b.train_with_model('ModelNN', '1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5')";
+    std::string command = "py SuperNNSnakeInteger_b.py predict ModelNN 1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5";
+//    std::string command = "py SuperNNSnakeInteger_b.train_with_model('ModelNN', 'Agent1_to_train.csv')";
+    system(command.c_str());
 
 
     EventListenner* Listenner;

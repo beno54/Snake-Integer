@@ -3,3 +3,4 @@
 /obj/*
 *.depend
 Logs/*
+bin/Debug/ModelNN/*
