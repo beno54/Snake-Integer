@@ -5,4 +5,6 @@ def getInteger():
 
 def getInteger_param(value, osef):
     print('Python function getInteger() called' + value + " - " + osef)
-    return {45,152.15,1522}
+    liste = []
+    liste = [45,152.15,1522]
+    return liste

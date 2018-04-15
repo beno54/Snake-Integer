@@ -1,11 +1,17 @@
 import pandas as pd
 import tensorflow as tf
 import numpy as np
-import argparse
 import sys
 from sklearn import preprocessing
+import os
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+tf.logging.set_verbosity(tf.logging.ERROR)
 
 LEARNING_RATE = 0.10
+# Classifier par défaut
+
+
 STEPS = 1000
 NB_EVAL = 2
 BATCH = 150
@@ -124,17 +130,20 @@ def model_fn(features, labels, mode, params):
     # Connect the output layer to second hidden layer (no activation fn)
     logits = tf.layers.Dense(25)(fourth_hidden_layer)
     # Reshape output layer to 1-dim Tensor to return predictions
-    predictions = {'class_ids': tf.argmax(input=logits, axis=1),
-                   'probabilities': tf.nn.softmax(logits)}
+    # predictions = {'class_ids': tf.argmax(input=logits, axis=1),
+    #                'probabilities': tf.nn.softmax(logits)}
 
+    predictions = tf.nn.softmax(logits)
     # Provide an estimator spec for `ModeKeys.PREDICT`.
     if mode == tf.estimator.ModeKeys.PREDICT:
         return tf.estimator.EstimatorSpec(
             mode=mode,
             predictions=predictions)
 
+    # accuracy = tf.metrics.accuracy(labels=labels,
+    #                                predictions=predictions['class_ids'])
     accuracy = tf.metrics.accuracy(labels=labels,
-                                   predictions=predictions['class_ids'])
+                                   predictions=tf.argmax(input=logits, axis=1))
 
     loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
     metrics = {'accuracy': accuracy}
@@ -143,7 +152,7 @@ def model_fn(features, labels, mode, params):
     tf.summary.scalar('accuracy', accuracy[1])
     tf.summary.scalar('loss', loss)
 
-    print(mode)
+    # print(mode)
 
     # Calculate loss using mean squared error
     # Calculate root mean squared error as additional eval metric
@@ -175,6 +184,12 @@ def model_fn(features, labels, mode, params):
             )])
 
 
+# Set model params
+model_params = {"learning_rate": LEARNING_RATE}
+# Instantiate Estimator after fonction model_fn
+classifier = tf.estimator.Estimator(model_fn=model_fn, params=model_params, model_dir="ModelNN")
+
+
 def train_input_fn(features, labels, batch_size):
     dataset = tf.data.Dataset.from_tensor_slices((dict(features), labels))
     dataset = dataset.shuffle(buffer_size=1000).repeat(count=None).batch(batch_size)
@@ -203,40 +218,65 @@ def eval_input_fn(features, labels=None, batch_size=None):
     # Return the read end of the pipeline.
     return dataset.make_one_shot_iterator().get_next()
 
-
-def predict_with_model(model_dir, grid_value):
-    tf.logging.set_verbosity(tf.logging.INFO)
+def load_model(model_dir):
     # Set model params
     model_params = {"learning_rate": LEARNING_RATE}
-
-    # Instantiate Estimator
+    # ecrase le classifier par défaut
+    global classifier
     classifier = tf.estimator.Estimator(model_fn=model_fn, params=model_params, model_dir=model_dir)
 
-    # PREDICTION
-    predictions = classifier.predict(
-        input_fn=lambda: eval_input_fn(grid_value,
-                                       batch_size=BATCH))
 
-    with open("predict.tmp", "w") as file:
-        for pred_dict in predictions:
-            print(pred_dict["probabilities"] * 100)
-            for prob in pred_dict["probabilities"]:
-                # class_id = pred_dict['class_ids']
-                # probability = pred_dict['probabilities'][class_id]
-                # print(pred_dict["probabilities"] * 100)
-                file.write(str(prob))
-                file.write(",")
+def predict_with_model( grid_value):
+
+    data = []
+    all_data = grid_value
+    data = all_data.split(",")
+    data = list(map(int, data))
+
+    grid = {
+        'case1': [data[0]],
+        'case2': [data[1]],
+        'case3': [data[2]],
+        'case4': [data[3]],
+        'case5': [data[4]],
+        'case6': [data[5]],
+        'case7': [data[6]],
+        'case8': [data[7]],
+        'case9': [data[8]],
+        'case10': [data[9]],
+        'case11': [data[10]],
+        'case12': [data[11]],
+        'case13': [data[12]],
+        'case14': [data[13]],
+        'case15': [data[14]],
+        'case16': [data[15]],
+        'case17': [data[16]],
+        'case18': [data[17]],
+        'case19': [data[18]],
+        'case20': [data[19]],
+        'case21': [data[20]],
+        'case22': [data[21]],
+        'case23': [data[22]],
+        'case24': [data[23]],
+        'case25': [data[24]]
+    }
+
+# PREDICTION
+    listePrediction = []
+
+    for i in range(1, 100):
+        print (i)
+        predictions = classifier.predict(
+            input_fn=lambda: eval_input_fn(grid,
+                                           batch_size=BATCH))
+        for p in predictions:
+            print(p)
+        #listePrediction =(list(predictions))[0]['probabilities']
+
+    return listePrediction
 
 
-def train_with_model(model_dir, filename_csv):
-    # Set model params
-    model_params = {"learning_rate": LEARNING_RATE}
-
-    # Instantiate Estimator
-    classifier = tf.estimator.Estimator(model_fn=model_fn, params=model_params, model_dir=model_dir)
-
-    # # prend les argument par défaut en entrée
-    # args = parser.parse_args(argv[1:])
+def train_with_model( filename_csv):
 
     # Call load_data() to parse the CSV file.
     (train_feature, train_label), (test_feature, test_label) = load_data(filename_csv)
@@ -266,14 +306,36 @@ def train_with_model(model_dir, filename_csv):
 
 
 def main(args):
-    print('Number of arguments:', len(sys.argv), 'arguments.')
-    print('Argument List:', str(sys.argv))
-
-    tf.logging.set_verbosity(tf.logging.INFO)
-
+    # grid = {
+    #     'case1': [1],
+    #     'case2': [1],
+    #     'case3': [1],
+    #     'case4': [2],
+    #     'case5': [1],
+    #     'case6': [1],
+    #     'case7': [1],
+    #     'case8': [2],
+    #     'case9': [1],
+    #     'case10': [1],
+    #     'case11': [1],
+    #     'case12': [2],
+    #     'case13': [1],
+    #     'case14': [1],
+    #     'case15': [1],
+    #     'case16': [2],
+    #     'case17': [1],
+    #     'case18': [1],
+    #     'case19': [1],
+    #     'case20': [2],
+    #     'case21': [1],
+    #     'case22': [1],
+    #     'case23': [1],
+    #     'case24': [2],
+    #     'case25': [2]
+    # }
     if len(sys.argv) > 1:
         launch_mode = sys.argv[1]
-        print(launch_mode)
+        # print(launch_mode)
         # Directory Model + fichier d'entrainement
         if launch_mode == "train":
             train_with_model(sys.argv[2], sys.argv[3])
@@ -313,7 +375,7 @@ def main(args):
             }
 
             # predict_with_model(sys.argv[2], sys.argv[3])
-            predict_with_model(sys.argv[2], grid)
+            return predict_with_model(sys.argv[2], grid)
 
 
 if __name__ == '__main__':
@@ -328,3 +390,6 @@ if __name__ == '__main__':
     # predict_with_model("ModelNN", grid)
     tf.app.run(main)
 
+def Maboucle():
+    grid = "1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7"
+    predict_with_model(grid)

@@ -138,36 +138,39 @@ void  Agent1_Logical::compute_reward()
     random_reward.clear();
     destination_base3_reward.clear();
     position_reward.clear();
-
+    vector<float> probabilities ;
     int destvalue  ;
 
-	CPyObject pName = PyUnicode_FromString("log");
+    /*PYTHON START*/
+	CPyObject pName = PyUnicode_FromString("SuperNNSnakeInteger_b");
 	CPyObject pModule = PyImport_Import(pName);
 
 	if(pModule)
 	{
-		CPyObject pFunc = PyObject_GetAttrString(pModule, "getInteger");
-		if(pFunc && PyCallable_Check(pFunc))
-		{
-			CPyObject pValue = PyObject_CallObject(pFunc, NULL);
-
-			printf_s("C: getInteger() = %ld\n", PyLong_AsLong(pValue));
-		}
-		else
-		{
-			printf("ERROR: function getInteger()\n");
-		}
-
-		CPyObject pFunc2 = PyObject_GetAttrString(pModule, "getInteger_param");
-
-		PyObject* pArgs = PyTuple_Pack(2, PyUnicode_FromString("Benoit"), PyUnicode_FromString("est con"));
+		CPyObject pFunc2 = PyObject_GetAttrString(pModule, "predict_with_model");
+		PyObject* pArgs = PyTuple_Pack(2, PyUnicode_FromString("ModelNN"), PyUnicode_FromString("1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25"));
 
 		if(pFunc2 && PyCallable_Check(pFunc2))
 		{
 		    CPyObject pValue = PyObject_CallObject(pFunc2, pArgs);
-			//CPyObject pValue = PyObject_CallObject(pFunc2, arglist);
+			if (pValue != NULL)
+            {
+                //compte le nombre d'élément de la liste
+                int counter = (int) PyList_Size(pValue);
+                //variables utilisées pour transposer la liste en float
+                PyObject *ptemp, *objectsRepresentation ;
+                char* a11;
+                //reprendra la liste en float
+                float temp[counter];
+                for (int i = 0 ; i < counter ; i++ )
+                {
+                    ptemp = PyList_GetItem(pValue,i);
+                    objectsRepresentation = PyObject_Repr(ptemp);
+                    a11 = PyUnicode_AsUTF8(objectsRepresentation);
+                    probabilities.push_back((float)strtod(a11,NULL));
 
-			cout << "C: getInteger_param() = " << PyLong_AsLong(pValue) << endl;
+                }
+			}
 		}
 		else
 		{
@@ -177,8 +180,9 @@ void  Agent1_Logical::compute_reward()
 	}
 	else
 	{
-		printf_s("ERROR: Module not imported\n");
+		printf("ERROR: Module not imported\n");
 	}
+	/*PYTHON END*/
 
     for (int z = 0; z < all_possibilities.size(); z ++)
     {
