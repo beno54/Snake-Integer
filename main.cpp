@@ -2,7 +2,7 @@
 #include "Agent1_Logical.h"
 #include "Button.h"
 #include "string.h"
-#include "Python.h"
+//#include "c_api.h"
 
 
 
@@ -18,8 +18,8 @@ int main (int argc, char* argv[])
     Grille* ma_grille;
 
     //veriables propre à l'agent
-    int affichage = 1 ;
-    int nb_game = 10;
+    int affichage = 0 ;
+    int nb_game = 100;
     int ms_delay = 1000; // ms
 
     if (affichage ==0)ms_delay==0;
@@ -86,9 +86,33 @@ int main (int argc, char* argv[])
 
 //    std::string filename = "SuperNNSnakeInteger_b.py train ModelNN Agent1_to_train.csv";
 //    std::string command = "SuperNNSnakeInteger_b.train_with_model('ModelNN', '1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5')";
-    std::string command = "py SuperNNSnakeInteger_b.py predict ModelNN 1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5";
 //    std::string command = "py SuperNNSnakeInteger_b.train_with_model('ModelNN', 'Agent1_to_train.csv')";
-    system(command.c_str());
+
+//    std::string command = "py SuperNNSnakeInteger_b.py predict ModelNN 1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5";
+//    system(command.c_str());
+
+//    ///Test d'existance du fichier
+//    ifstream fichier("log.py");
+//
+//    if (fichier.fail()) {
+//        cout << "Fichier de script introuvable : " << "log.py" <<"\n";
+//        return 0;
+//    }
+//
+//    ///Lance le script
+//    cout << "\n--- Execution du script : " << "log.py" <<" ---\n";
+//
+//    // Ouvre le script python a executer
+//    FILE* pyFile = fopen("log.py", "r");
+//
+//    Py_Initialize();
+//
+//
+//    PyRun_SimpleString("");
+//    // Execute le script
+//    PyRun_AnyFile(pyFile, "log.py");
+//
+//    Py_Finalize();
 
 
     EventListenner* Listenner;

@@ -2,6 +2,9 @@
 #define AGENT1_LOGICAL_H
 #include "Struct_Agent.h"
 
+#include <Python.h>
+#include "pyhelper.hpp"
+
 #define MAX_COEFF 10
 
 class Agent1_Logical: public Struct_Agent
@@ -41,6 +44,8 @@ class Agent1_Logical: public Struct_Agent
         vector<int> coefficients;
 
         int choix, mode, nb_game2Play_initial, score_total;
+
+        CPyInstance hInstance;
 };
 
 #endif // AGENT1_LOGICAL_H

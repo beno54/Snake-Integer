@@ -45,6 +45,7 @@ Agent1_Logical::Agent1_Logical(Grille* senseurs, int nb_game2Play, int decision_
             coefficients[4] = 12;
             break;
     }
+
 }
 
 Agent1_Logical::Agent1_Logical(): Struct_Agent()
@@ -139,6 +140,45 @@ void  Agent1_Logical::compute_reward()
     position_reward.clear();
 
     int destvalue  ;
+
+	CPyObject pName = PyUnicode_FromString("log");
+	CPyObject pModule = PyImport_Import(pName);
+
+	if(pModule)
+	{
+		CPyObject pFunc = PyObject_GetAttrString(pModule, "getInteger");
+		if(pFunc && PyCallable_Check(pFunc))
+		{
+			CPyObject pValue = PyObject_CallObject(pFunc, NULL);
+
+			printf_s("C: getInteger() = %ld\n", PyLong_AsLong(pValue));
+		}
+		else
+		{
+			printf("ERROR: function getInteger()\n");
+		}
+
+		CPyObject pFunc2 = PyObject_GetAttrString(pModule, "getInteger_param");
+
+		PyObject* pArgs = PyTuple_Pack(2, PyUnicode_FromString("Benoit"), PyUnicode_FromString("est con"));
+
+		if(pFunc2 && PyCallable_Check(pFunc2))
+		{
+		    CPyObject pValue = PyObject_CallObject(pFunc2, pArgs);
+			//CPyObject pValue = PyObject_CallObject(pFunc2, arglist);
+
+			cout << "C: getInteger_param() = " << PyLong_AsLong(pValue) << endl;
+		}
+		else
+		{
+			printf("ERROR: function getInteger()\n");
+		}
+
+	}
+	else
+	{
+		printf_s("ERROR: Module not imported\n");
+	}
 
     for (int z = 0; z < all_possibilities.size(); z ++)
     {

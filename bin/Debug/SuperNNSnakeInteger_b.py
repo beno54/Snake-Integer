@@ -271,35 +271,6 @@ def main(args):
 
     tf.logging.set_verbosity(tf.logging.INFO)
 
-
-
-    # grid = {
-    #     'case1': [1],
-    #     'case2': [1],
-    #     'case3': [1],
-    #     'case4': [2],
-    #     'case5': [1],
-    #     'case6': [1],
-    #     'case7': [1],
-    #     'case8': [2],
-    #     'case9': [1],
-    #     'case10': [1],
-    #     'case11': [1],
-    #     'case12': [2],
-    #     'case13': [1],
-    #     'case14': [1],
-    #     'case15': [1],
-    #     'case16': [2],
-    #     'case17': [1],
-    #     'case18': [1],
-    #     'case19': [1],
-    #     'case20': [2],
-    #     'case21': [1],
-    #     'case22': [1],
-    #     'case23': [1],
-    #     'case24': [2],
-    #     'case25': [2]
-    # }
     if len(sys.argv) > 1:
         launch_mode = sys.argv[1]
         print(launch_mode)
