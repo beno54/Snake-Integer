@@ -148,11 +148,12 @@ void  Agent1_Logical::compute_reward()
 	if(pModule)
 	{
 		CPyObject pFunc2 = PyObject_GetAttrString(pModule, "predict_with_model");
-		PyObject* pArgs = PyTuple_Pack(2, PyUnicode_FromString("ModelNN"), PyUnicode_FromString("1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25"));
+		PyObject* pArgs = PyTuple_Pack(1, PyUnicode_FromString("1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25"));
 
 		if(pFunc2 && PyCallable_Check(pFunc2))
 		{
 		    CPyObject pValue = PyObject_CallObject(pFunc2, pArgs);
+		    cout << "NEWLINE" << endl ;
 			if (pValue != NULL)
             {
                 //compte le nombre d'élément de la liste
@@ -167,7 +168,9 @@ void  Agent1_Logical::compute_reward()
                     ptemp = PyList_GetItem(pValue,i);
                     objectsRepresentation = PyObject_Repr(ptemp);
                     a11 = PyUnicode_AsUTF8(objectsRepresentation);
-                    probabilities.push_back((float)strtod(a11,NULL));
+                    temp[i]=(float)strtod(a11,NULL);
+                    //probabilities.push_back((float)strtod(a11,NULL));
+                    cout <<  temp[i]<< endl ;
 
                 }
 			}
