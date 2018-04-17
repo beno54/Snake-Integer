@@ -1,5 +1,5 @@
 #include "EventListenner.h"  // Inclut SFML/Graphics
-#include "Agent1_Logical.h"
+#include "Agent1b_Logical.h"
 #include "Button.h"
 #include "string.h"
 //#include "c_api.h"
@@ -116,14 +116,14 @@ int main (int argc, char* argv[])
 
 
     EventListenner* Listenner;
-    Agent1_Logical* agent1;
+    Agent1b_Logical* agent1;
     Button* but_start = new Button(100, Vector2f (800, 100), font, ma_grille);
     switch (option_lancement)
     {
         // case 0 appelle qd meme agent 1 constructeur vide pour initialiser son nbgamtoplay à 0
-        case 0 :        Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);agent1=new Agent1_Logical(); break;
-        case 1 ... 4 :  agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
-        case 10 :  agent1 = new Agent1_Logical(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
+        case 0 :        Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);agent1=new Agent1b_Logical(); break;
+        case 1 ... 4 :  agent1 = new Agent1b_Logical(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
+        case 10 :  agent1 = new Agent1b_Logical(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
     }
 
 

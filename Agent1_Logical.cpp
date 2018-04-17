@@ -141,51 +141,51 @@ void  Agent1_Logical::compute_reward()
     vector<float> probabilities ;
     int destvalue  ;
 
-    /*PYTHON START*/
-	CPyObject pName = PyUnicode_FromString("SuperNNSnakeInteger_b");
-	CPyObject pModule = PyImport_Import(pName);
-
-	if(pModule)
-	{
-		CPyObject pFunc2 = PyObject_GetAttrString(pModule, "predict_with_model");
-		PyObject* pArgs = PyTuple_Pack(1, PyUnicode_FromString("1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25"));
-
-		if(pFunc2 && PyCallable_Check(pFunc2))
-		{
-		    CPyObject pValue = PyObject_CallObject(pFunc2, pArgs);
-		    cout << "NEWLINE" << endl ;
-			if (pValue != NULL)
-            {
-                //compte le nombre d'élément de la liste
-                int counter = (int) PyList_Size(pValue);
-                //variables utilisées pour transposer la liste en float
-                PyObject *ptemp, *objectsRepresentation ;
-                char* a11;
-                //reprendra la liste en float
-                float temp[counter];
-                for (int i = 0 ; i < counter ; i++ )
-                {
-                    ptemp = PyList_GetItem(pValue,i);
-                    objectsRepresentation = PyObject_Repr(ptemp);
-                    a11 = PyUnicode_AsUTF8(objectsRepresentation);
-                    temp[i]=(float)strtod(a11,NULL);
-                    //probabilities.push_back((float)strtod(a11,NULL));
-                    cout <<  temp[i]<< endl ;
-
-                }
-			}
-		}
-		else
-		{
-			printf("ERROR: function getInteger()\n");
-		}
-
-	}
-	else
-	{
-		printf("ERROR: Module not imported\n");
-	}
-	/*PYTHON END*/
+//    /*PYTHON START*/
+//	CPyObject pName = PyUnicode_FromString("SuperNNSnakeInteger_b");
+//	CPyObject pModule = PyImport_Import(pName);
+//
+//	if(pModule)
+//	{
+//		CPyObject pFunc2 = PyObject_GetAttrString(pModule, "predict_with_model");
+//		PyObject* pArgs = PyTuple_Pack(1, PyUnicode_FromString("1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25"));
+//
+//		if(pFunc2 && PyCallable_Check(pFunc2))
+//		{
+//		    CPyObject pValue = PyObject_CallObject(pFunc2, pArgs);
+//		    cout << "NEWLINE" << endl ;
+//			if (pValue != NULL)
+//            {
+//                //compte le nombre d'élément de la liste
+//                int counter = (int) PyList_Size(pValue);
+//                //variables utilisées pour transposer la liste en float
+//                PyObject *ptemp, *objectsRepresentation ;
+//                char* a11;
+//                //reprendra la liste en float
+//                float temp[counter];
+//                for (int i = 0 ; i < counter ; i++ )
+//                {
+//                    ptemp = PyList_GetItem(pValue,i);
+//                    objectsRepresentation = PyObject_Repr(ptemp);
+//                    a11 = PyUnicode_AsUTF8(objectsRepresentation);
+//                    temp[i]=(float)strtod(a11,NULL);
+//                    //probabilities.push_back((float)strtod(a11,NULL));
+//                    //cout <<  temp[i]<< endl ;
+//
+//                }
+//			}
+//		}
+//		else
+//		{
+//			printf("ERROR: function getInteger()\n");
+//		}
+//
+//	}
+//	else
+//	{
+//		printf("ERROR: Module not imported\n");
+//	}
+//	/*PYTHON END*/
 
     for (int z = 0; z < all_possibilities.size(); z ++)
     {

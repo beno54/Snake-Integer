@@ -130,10 +130,10 @@ def model_fn(features, labels, mode, params):
     # Connect the output layer to second hidden layer (no activation fn)
     logits = tf.layers.Dense(25)(fourth_hidden_layer)
     # Reshape output layer to 1-dim Tensor to return predictions
-    # predictions = {'class_ids': tf.argmax(input=logits, axis=1),
-    #                'probabilities': tf.nn.softmax(logits)}
+    predictions = {'class_ids': tf.argmax(input=logits, axis=1),
+                   'probabilities': tf.nn.softmax(logits)}
 
-    predictions = tf.nn.softmax(logits)
+
     # Provide an estimator spec for `ModeKeys.PREDICT`.
     if mode == tf.estimator.ModeKeys.PREDICT:
         return tf.estimator.EstimatorSpec(
@@ -226,7 +226,7 @@ def load_model(model_dir):
     classifier = tf.estimator.Estimator(model_fn=model_fn, params=model_params, model_dir=model_dir)
 
 
-def predict_with_model( grid_value):
+def predict_with_model(grid_value):
 
     data = []
     all_data = grid_value
@@ -261,19 +261,19 @@ def predict_with_model( grid_value):
         'case25': [data[24]]
     }
 
-# PREDICTION
-    listePrediction = []
+    # PREDICTION
+    predictions = classifier.predict(
+        input_fn=lambda: eval_input_fn(grid,
+                                       batch_size=BATCH))
+    proba_list = []
+    for pred_dict in predictions:
+        for prob in pred_dict["probabilities"]:
+            proba_list.append(prob)
 
-    for i in range(1, 100):
-        print (i)
-        predictions = classifier.predict(
-            input_fn=lambda: eval_input_fn(grid,
-                                           batch_size=BATCH))
-        for p in predictions:
-            print(p)
-        #listePrediction =(list(predictions))[0]['probabilities']
+    # listePrediction = list(predictions)
+    # listePrediction =listePrediction[0]['probabilities']
 
-    return listePrediction
+    return proba_list
 
 
 def train_with_model( filename_csv):
