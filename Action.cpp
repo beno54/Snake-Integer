@@ -76,6 +76,32 @@ void Action::compute_score(vector<Case*> cases_selected)
     }
 }
 
+void Action::compute_predict_score(vector<Case*> cases_selected, Grille* grid_predict)
+{
+    int score = 0;
+
+    //log_data(cases_selected,NULL);
+
+    for (int e = 0;e<cases_selected.size();e++)
+    {
+        score += cases_selected[e]->get_value();
+        cases_selected[e]->set_value(grid_predict->get_numG()->nexNum());
+    }
+    cases_selected.back()->set_value(score);
+//    grid->update_score(score);
+//    calcul_groups_in_grid();
+//    compute_NbPossibilities_in_grid();
+
+//    nbTurnPlayed ++;
+//    if (nbPossibilities==0)
+//    {
+//        cout << " GAME OVER : " <<  grid->get_Case_score()->get_value() << endl ;
+//        grid->set_isOver(true);
+//        //log_score();
+//        //reinitialize_nbTurnPlayed();
+//    }
+}
+
 void Action::log_data(vector<Case*> cases_selected)
 {
     vector<Case*>  Cases = grid->get_Cases();

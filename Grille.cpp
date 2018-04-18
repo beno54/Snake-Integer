@@ -86,6 +86,19 @@ Grille::Grille(Vector2f posi, int taille, RenderWindow* win, vector<float> seeds
     gameOver.setColor(Color::Red);
 }
 
+void Grille::copy_grille(Grille* grid2Copy)
+{
+    cout << "okoko" << grid2Copy->get_numG()->get_seed1() << endl;
+    (this->numG)->copy_NumGenerator(grid2Copy->get_numG());
+
+    vector<Case*> old_cases = grid2Copy->get_Cases();
+
+    for (int i = 0; i < old_cases.size(); i++)
+    {
+        this->cases[i]->set_value((old_cases[i])->get_value());
+    }
+}
+
 // on supprime tous les objets dynamiques contenu dans la grille
 Grille::~Grille()
 {
@@ -294,4 +307,19 @@ vector<Case*> Grille::get_all_voisins(Case* case_courante)
     }
 
     return voisins;
+}
+
+Vector2f Grille::get_posi()
+{
+    return posi;
+}
+
+int Grille::get_taille()
+{
+    return taille;
+}
+
+RenderWindow* Grille::get_window()
+{
+    return window;
 }

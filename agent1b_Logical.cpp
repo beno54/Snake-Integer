@@ -358,3 +358,63 @@ float Agent1b_Logical::get_position_reward()
 {
     return position_reward[choix];
 }
+
+void Agent1b_Logical::test_copy()
+{
+    compute_all_possibilities();
+
+    Grille* copy_grid = new Grille(Vector2f (250, 100), 450, NULL);
+
+    cout << "START LOOP" << endl;
+    for (int j = 0; j < all_possibilities.size(); j ++)
+    {
+        cout << "START POSSIBILITE" << endl;
+        copy_grid->copy_grille(senseurs);
+
+        for (int k = 0; k < all_possibilities[j].size(); k ++)
+        {
+            cout << all_possibilities[j][k]->get_id() << " ";
+        }
+        cout << endl;
+
+        vector<Case*> copy_cases_selected;
+        for (int k = 0; k < all_possibilities[j].size(); k ++)
+        {
+            /*
+             * Copy case selected from all possibilities, using the copy of the case
+             */
+            copy_cases_selected.push_back(copy_grid->get_Cases()[all_possibilities[j][k]->get_id()-1]);
+        }
+
+        for (int k = 0; k < copy_cases_selected.size(); k ++)
+        {
+            cout << copy_cases_selected[k]->get_id() << " ";
+        }
+        cout << endl;
+
+        action->compute_predict_score(copy_cases_selected, copy_grid);
+
+        vector<Case*> copy_all_cases = copy_grid->get_Cases();
+        for (int x = 0; x < copy_all_cases.size(); x ++)
+        {
+            cout << copy_all_cases[x]->get_value() << " ";
+            if (x%5 == 4)
+            {
+                cout << endl;
+            }
+        }
+        cout << endl;
+    }
+
+
+//    Grille* copy_grid = new Grille(Vector2f (250, 100), 450, NULL);
+//    copy_grid->copy_grille(senseurs);
+//
+//    vector<Case*> cases = copy_grid->get_Cases();
+//
+//    for (int i = 0; i < cases.size(); i ++)
+//    {
+//        cout << cases[i]->get_value() << endl;
+//    }
+
+}

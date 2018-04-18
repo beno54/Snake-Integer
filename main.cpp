@@ -18,7 +18,7 @@ int main (int argc, char* argv[])
     Grille* ma_grille;
 
     //veriables propre à l'agent
-    int affichage = 0 ;
+    int affichage = 1 ;
     int nb_game = 100;
     int ms_delay = 1000; // ms
 
@@ -163,15 +163,17 @@ int main (int argc, char* argv[])
         //on d?tecte le clique de souris et on fait les actions correspondantes
         //Listenner->listen();
 
-        switch (option_lancement)
-        {
-            case 0 : Listenner->listen();break;
-            case 1 : agent1->compute_decision(1,affichage);break;
-            case 2 : agent1->compute_decision(2,affichage);break;
-            case 3 : agent1->compute_decision(3,affichage);break;
-            case 4 : agent1->compute_decision(4,affichage);break;
-            case 10 : agent1->learn_coeff(4);break;
-        }
+//        switch (option_lancement)
+//        {
+//            case 0 : Listenner->listen();break;
+//            case 1 : agent1->compute_decision(1,affichage);break;
+//            case 2 : agent1->compute_decision(2,affichage);break;
+//            case 3 : agent1->compute_decision(3,affichage);break;
+//            case 4 : agent1->compute_decision(4,affichage);break;
+//            case 10 : agent1->learn_coeff(4);break;
+//        }
+        agent1->test_copy();
+
 
         while (app.pollEvent(event))
         {

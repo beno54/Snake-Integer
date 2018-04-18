@@ -11,6 +11,10 @@ class NumGenerator
         NumGenerator(float seed1, float seed2, float seed3);
         virtual ~NumGenerator();
         int nexNum();
+        void copy_NumGenerator(NumGenerator* numG2Copy);
+        float get_seed1();
+        float get_seed2();
+        float get_seed3();
     protected:
 
     private:

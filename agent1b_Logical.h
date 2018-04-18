@@ -29,6 +29,8 @@ class Agent1b_Logical: public Struct_Agent
         float get_destination_base3_reward();
         float get_position_reward();
 
+        void test_copy();
+
     protected:
     private:
 

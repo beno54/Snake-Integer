@@ -16,6 +16,7 @@ class Action
         Action(Grille *grid,string ProfilName);
         virtual ~Action();
         void compute_score(vector<Case*> cases_selected);
+        void compute_predict_score(vector<Case*> cases_selected, Grille* grid_predict);
         void log_data(vector<Case*> cases_selected);
         void log_data(vector<Case*> cases_selected, vector<float> additionnal_data);
         void log_score();

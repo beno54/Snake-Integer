@@ -59,3 +59,28 @@ int NumGenerator::nexNum()
 		nextnb=nextSeed(1,3,&seed3);
 	return nextnb;
 }
+
+void NumGenerator::copy_NumGenerator(NumGenerator* numG2Copy)
+{
+    this->seed1 = numG2Copy->get_seed1();
+    this->seed2 = numG2Copy->get_seed2();
+    this->seed3 = numG2Copy->get_seed3();
+
+//    cout << "Copy Seed 1 : " << seed1 << endl;
+//    cout << "Copy Seed 2 : " << seed2 << endl;
+//    cout << "Copy Seed 3 : " << seed3 << endl;
+}
+
+float NumGenerator::get_seed1()
+{
+    return seed1;
+}
+
+float NumGenerator::get_seed2()
+{
+    return seed2;
+}
+float NumGenerator::get_seed3()
+{
+    return seed3;
+}
