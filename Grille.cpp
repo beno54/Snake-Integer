@@ -88,7 +88,7 @@ Grille::Grille(Vector2f posi, int taille, RenderWindow* win, vector<float> seeds
 
 void Grille::copy_grille(Grille* grid2Copy)
 {
-    cout << "okoko" << grid2Copy->get_numG()->get_seed1() << endl;
+    //cout << "okoko" << grid2Copy->get_numG()->get_seed1() << endl;
     (this->numG)->copy_NumGenerator(grid2Copy->get_numG());
 
     vector<Case*> old_cases = grid2Copy->get_Cases();

@@ -64,6 +64,22 @@ void Agent1b_Logical::compute_all_possibilities()
     }
 }
 
+/*FONCTIONS PARCOURS DES POSS*/
+vector< vector<Case*> > Agent1b_Logical::compute_all_predict_possibilities(Grille* grid_predict)
+{
+    vector< vector<Case*> > all_predict_possibilities;
+    vector<Case*>  tab_group = grid_predict->get_Cases();
+
+    for (int i = 0; i < tab_group.size(); i ++)
+    {
+            vector<Case*> racine;
+            racine.push_back(tab_group[i]);
+            deep_course_predict(racine, grid_predict, all_predict_possibilities);
+    }
+
+    return all_predict_possibilities;
+}
+
 void Agent1b_Logical::deep_course(vector<Case*> v_casesCourante)
 {
     vector<Case*> vector_chemin = v_casesCourante;
@@ -93,6 +109,35 @@ void Agent1b_Logical::deep_course(vector<Case*> v_casesCourante)
     }
 }
 
+void Agent1b_Logical::deep_course_predict(vector<Case*> v_casesCourante, Grille* grid_predict, vector< vector<Case*> > &all_predict_possibilities)
+{
+    vector<Case*> vector_chemin = v_casesCourante;
+    vector<Case*> voisins = grid_predict->get_voisins(vector_chemin.back());
+
+    for (int k = 0; k < voisins.size(); k ++)
+    {
+        for (int z = 0; z < vector_chemin.size(); z ++)
+        {
+            if (voisins[k]->get_id() == vector_chemin[z]->get_id())
+            {
+                //on retire les voisins d?j? pr?sents dans le vector_casesCourante et on ajuste l'indice du vector voisins
+                voisins.erase(voisins.begin()+k);
+                z = 26;
+                k --;
+            }
+        }
+    }
+
+    for (int k = 0; k < voisins.size(); k ++)
+    {
+        vector_chemin.push_back(voisins[k]);
+
+        all_predict_possibilities.push_back(vector_chemin);
+        deep_course_predict(vector_chemin, grid_predict, all_predict_possibilities);
+        vector_chemin.pop_back();
+    }
+}
+
 
 /*FONCTIONS MAJ PARAMETRES */
 
@@ -110,7 +155,7 @@ void  Agent1b_Logical::compute_reward()
     {
         //calcul voisins autres cases que dest
         vector<Case*> voisins_no_dest;
-         for (int x = 0; x < (all_possibilities[z].size()-1); x ++)
+        for (int x = 0; x < (all_possibilities[z].size()-1); x ++)
         {
             vector<Case*> tmp = senseurs->get_all_voisins(all_possibilities[z][x]);
             voisins_no_dest.insert (voisins_no_dest.end(),tmp.begin(),tmp.end());
@@ -204,7 +249,33 @@ void  Agent1b_Logical::compute_reward()
 }
 
 
+/*FONCTIONS  DE PRISE DE DECISION*/
+void Agent1b_Logical::compute_decision_predict(bool affichage)
+{
+    if (!senseurs->get_isOver())
+    {
+        test_copy();
 
+        if (action->test_case_selected(all_possibilities[choix]) == true)
+        {
+            if (affichage == true)
+            {
+                action->affiche_cases_selected(all_possibilities[choix], decision_delay);
+            }
+
+            //action->log_data(all_possibilities[choix], additionnal_data);
+
+            action->compute_score(all_possibilities[choix]);
+        }
+    }
+    else
+    {
+        score_total += senseurs->get_Case_score()->get_value();
+        action->log_score(coefficients);
+        action->reset();
+        nb_game2Play --;
+    }
+}
 
 
 /*FONCTIONS  DE PRISE DE DECISION*/
@@ -268,6 +339,107 @@ void Agent1b_Logical::compute_possibilities_cost(int mode)
     additionnal_data.push_back(position_reward[choix]);
     additionnal_data.push_back(reward_best);
 
+}
+
+float Agent1b_Logical::compute_predict_possibilities_cost(Grille* grid_predict, vector< vector<Case*> > &all_predict_possibilities)
+{
+    choix = 0;
+    float reward_total = 0;
+
+    int destvalue  ;
+
+    for (int z = 0; z < all_predict_possibilities.size(); z ++)
+    {
+        //calcul voisins autres cases que dest
+        vector<Case*> voisins_no_dest;
+        for (int x = 0; x < (all_predict_possibilities[z].size()-1); x ++)
+        {
+            vector<Case*> tmp = grid_predict->get_all_voisins(all_predict_possibilities[z][x]);
+            voisins_no_dest.insert (voisins_no_dest.end(),tmp.begin(),tmp.end());
+        }
+        //calcul voisins dest
+        vector<Case*> voisins_dest = grid_predict->get_all_voisins( all_predict_possibilities[z].back());
+
+        //calcul position param
+        int nb_voisins_tot = voisins_dest.size();
+        float reward_position = 0 ;
+        switch (nb_voisins_tot)
+        {
+            case 2 : reward_position = 1 ; break ;
+            case 3 : reward_position = 0.5 ; break ;
+        }
+
+        //retire voisins present dans le chemin
+        for (int i =0; i < all_predict_possibilities[z].size(); i++)
+        {
+            for (int e =0; e < voisins_dest.size(); e++)
+            {
+                if(voisins_dest[e]->get_id() == all_predict_possibilities[z][i]->get_id())
+                {
+                    voisins_dest.erase(voisins_dest.begin()+ e);
+                    e--;
+                }
+            }
+            for (int e = 0; e < voisins_no_dest.size(); e ++)
+            {
+                if (voisins_no_dest[e]->get_id()  == all_predict_possibilities[z][i]->get_id())
+                {
+                    voisins_no_dest.erase(voisins_no_dest.begin()+e);
+                    e--;
+                }
+            }
+        }
+
+
+        //calcul destination
+        float reward = 0;
+        float reward_multiple = 0 ;
+        float reward_double_value  = 0 ;
+        float  reward_random  = 0 ;
+        for (int x = 0; x < voisins_dest.size(); x ++)
+        {
+            destvalue = (all_predict_possibilities[z].size())*(all_predict_possibilities[z].back())->get_value();
+
+            if (voisins_dest[x]->get_value() == destvalue )
+            {
+                reward++;
+            }
+            else
+            if( (voisins_dest[x]->get_value() % destvalue) == 0 )
+            {
+                reward_multiple++;
+            }
+        }
+
+        //calcul random
+        float Nb_voisins = voisins_no_dest.size()*1.0f;
+        float  nb = 0 ;
+        for (int e = 0; e < voisins_no_dest.size(); e ++)
+        {
+            if ((voisins_no_dest[e]->get_value() == 1)||(voisins_no_dest[e]->get_value() == 2)||(voisins_no_dest[e]->get_value() == 3))nb ++;
+        }
+        if (Nb_voisins) reward_random = float(nb/Nb_voisins) ;
+        else {reward_random = 0;}
+
+
+        //calcul param base 3
+        float reward_b3 = 0;
+        int number = (all_predict_possibilities[z].back()->get_value())*(all_predict_possibilities[z].size());
+        while (number%2 == 0)
+        {
+            if (number/2 == 3)
+            {
+                reward_b3 = 1;
+            }
+            number = number/2;
+        }
+
+//        cout << "b3=" << reward_b3 << "same=" << (reward/3.0f) << "multi=" << (reward_multiple/3.0f) << "posi=" << reward_position << "rand=" << reward_random << endl;
+
+        reward_total += coefficients[0]*reward_b3+coefficients[1]*(reward/3.0f)+coefficients[2]*(reward_multiple/3.0f)+coefficients[3]*reward_position+coefficients[4]*reward_random ;
+    }
+
+    return reward_total;
 }
 
 void Agent1b_Logical::learn_coeff(int mode)
@@ -365,17 +537,19 @@ void Agent1b_Logical::test_copy()
 
     Grille* copy_grid = new Grille(Vector2f (250, 100), 450, NULL);
 
-    cout << "START LOOP" << endl;
+    float best_score_grid = 0.0f;
+
+    //cout << "START LOOP" << endl;
     for (int j = 0; j < all_possibilities.size(); j ++)
     {
-        cout << "START POSSIBILITE" << endl;
+        //cout << "START POSSIBILITE" << endl;
         copy_grid->copy_grille(senseurs);
 
-        for (int k = 0; k < all_possibilities[j].size(); k ++)
-        {
-            cout << all_possibilities[j][k]->get_id() << " ";
-        }
-        cout << endl;
+//        for (int k = 0; k < all_possibilities[j].size(); k ++)
+//        {
+//            cout << all_possibilities[j][k]->get_id() << " ";
+//        }
+//        cout << endl;
 
         vector<Case*> copy_cases_selected;
         for (int k = 0; k < all_possibilities[j].size(); k ++)
@@ -386,25 +560,57 @@ void Agent1b_Logical::test_copy()
             copy_cases_selected.push_back(copy_grid->get_Cases()[all_possibilities[j][k]->get_id()-1]);
         }
 
-        for (int k = 0; k < copy_cases_selected.size(); k ++)
-        {
-            cout << copy_cases_selected[k]->get_id() << " ";
-        }
-        cout << endl;
+//        for (int k = 0; k < copy_cases_selected.size(); k ++)
+//        {
+//            cout << copy_cases_selected[k]->get_id() << " ";
+//        }
+//        cout << endl;
 
         action->compute_predict_score(copy_cases_selected, copy_grid);
 
         vector<Case*> copy_all_cases = copy_grid->get_Cases();
-        for (int x = 0; x < copy_all_cases.size(); x ++)
+//        for (int x = 0; x < copy_all_cases.size(); x ++)
+//        {
+//            cout << copy_all_cases[x]->get_value() << " ";
+//            if (x%5 == 4)
+//            {
+//                cout << endl;
+//            }
+//        }
+//        cout << endl;
+
+        //cout << "POSSIBILITIES IN PREDICTED GRID" << endl;
+        vector< vector<Case*> > all_possibilities_predit = compute_all_predict_possibilities(copy_grid);
+//        for (int x = 0; x < all_possibilities_predit.size(); x ++)
+//        {
+//            cout << "NEW POSSIBILITIE" <<endl;
+//            for (int y = 0; y < all_possibilities_predit[x].size(); y ++)
+//            {
+//                cout << all_possibilities_predit[x][y]->get_id() << " ";
+//            }
+//            cout << endl;
+//        }
+        float score_grid = compute_predict_possibilities_cost(copy_grid, all_possibilities_predit);
+//        cout << "Score GRID: " << score_grid << endl;
+
+        if (best_score_grid < score_grid)
         {
-            cout << copy_all_cases[x]->get_value() << " ";
-            if (x%5 == 4)
-            {
-                cout << endl;
-            }
+            best_score_grid = score_grid;
+            choix = j;
         }
-        cout << endl;
+
+//        Sleep(1000000);
+//        break;
     }
+
+    cout << "Score Best: " << best_score_grid << endl;
+    cout << "BEST POSSIBILITIE" <<endl;
+    for (int y = 0; y < all_possibilities[choix].size(); y ++)
+    {
+        cout << all_possibilities[choix][y]->get_id() << " ";
+    }
+    cout << endl;
+//    Sleep(1000000);
 
 
 //    Grille* copy_grid = new Grille(Vector2f (250, 100), 450, NULL);

@@ -14,10 +14,14 @@ class Agent1b_Logical: public Struct_Agent
         Agent1b_Logical();
         virtual ~Agent1b_Logical();
         void compute_decision (int mode,bool affichage);
+        void compute_decision_predict(bool affichage);
         void compute_all_possibilities();
+        vector< vector<Case*> > compute_all_predict_possibilities(Grille* grid_predict);
         bool has_games2Play();
         void deep_course(vector<Case*> v_casesCourante);
+        void deep_course_predict(vector<Case*> v_casesCourante, Grille* grid_predict, vector< vector<Case*> > &all_predict_possibilities);
         void compute_possibilities_cost(int option);
+        float compute_predict_possibilities_cost(Grille* grid_predict, vector< vector<Case*> > &all_predict_possibilities);
 
         void compute_reward();
 

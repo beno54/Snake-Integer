@@ -20,7 +20,7 @@ int main (int argc, char* argv[])
     //veriables propre à l'agent
     int affichage = 1 ;
     int nb_game = 100;
-    int ms_delay = 1000; // ms
+    int ms_delay = 200; // ms
 
     if (affichage ==0)ms_delay==0;
 
@@ -172,7 +172,7 @@ int main (int argc, char* argv[])
 //            case 4 : agent1->compute_decision(4,affichage);break;
 //            case 10 : agent1->learn_coeff(4);break;
 //        }
-        agent1->test_copy();
+        agent1->compute_decision_predict(affichage);
 
 
         while (app.pollEvent(event))
