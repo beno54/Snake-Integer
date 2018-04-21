@@ -46,7 +46,7 @@ class Agent1b_Logical: public Struct_Agent
         vector< float > destination_base3_reward;
         vector< float > position_reward;
         vector<float> additionnal_data;
-
+        Grille* copy_grid;
         vector<int> coefficients;
 
         int choix, mode, nb_game2Play_initial, score_total;

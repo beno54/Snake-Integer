@@ -15,12 +15,24 @@ Agent1b_Logical::Agent1b_Logical(Grille* senseurs, int nb_game2Play, int decisio
     nb_game2Play_initial = nb_game2Play;
 
 
-    coefficients[0] = 15;
-    coefficients[1] = 53;
-    coefficients[2] = 7;
-    coefficients[3] = 13;
-    coefficients[4] = 12;
+//    coefficients[0] = 15;
+//    coefficients[1] = 53;
+//    coefficients[2] = 7;
+//    coefficients[3] = 13;
+//    coefficients[4] = 12;
+//
+//    coefficients[0] = 15;
+//    coefficients[1] = 43;
+//    coefficients[2] = 18;
+//    coefficients[3] = 14;
+//    coefficients[4] = 10;
 
+    coefficients[0] = 1;
+    coefficients[1] = 1;
+    coefficients[2] = 1;
+    coefficients[3] = 1;
+    coefficients[4] = 1;
+    copy_grid = new Grille(Vector2f (250, 100), 450, NULL);
 
 
 }
@@ -254,7 +266,9 @@ void Agent1b_Logical::compute_decision_predict(bool affichage)
 {
     if (!senseurs->get_isOver())
     {
+        compute_all_possibilities();
         test_copy();
+
 
         if (action->test_case_selected(all_possibilities[choix]) == true)
         {
@@ -320,7 +334,15 @@ void Agent1b_Logical::compute_possibilities_cost(int mode)
 
     for (int z = 0; z < all_possibilities.size(); z ++)
     {
+        //    coefficients[0] = 15;
+//    coefficients[1] = 53;
+//    coefficients[2] = 7;
+//    coefficients[3] = 13;
+//    coefficients[4] = 12;
+
+        cout << "dont pass here" << endl  ;
         reward = coefficients[0]*destination_base3_reward[z]+coefficients[1]*destination_reward_same_value[z]+coefficients[2]*destination_reward_multiple_value[z]+coefficients[3]*position_reward[z]+coefficients[4]*random_reward[z] ;
+
 
         if (reward_best < reward)
         {
@@ -343,7 +365,7 @@ void Agent1b_Logical::compute_possibilities_cost(int mode)
 
 float Agent1b_Logical::compute_predict_possibilities_cost(Grille* grid_predict, vector< vector<Case*> > &all_predict_possibilities)
 {
-    choix = 0;
+
     float reward_total = 0;
 
     int destvalue  ;
@@ -435,16 +457,29 @@ float Agent1b_Logical::compute_predict_possibilities_cost(Grille* grid_predict, 
         }
 
 //        cout << "b3=" << reward_b3 << "same=" << (reward/3.0f) << "multi=" << (reward_multiple/3.0f) << "posi=" << reward_position << "rand=" << reward_random << endl;
-
-        reward_total += coefficients[0]*reward_b3+coefficients[1]*(reward/3.0f)+coefficients[2]*(reward_multiple/3.0f)+coefficients[3]*reward_position+coefficients[4]*reward_random ;
+    //float current =
+    /*
+On le met en dur car pendant p'hyperparametre, pour le futur, les coeffs doivent pas changer !
+*/
+         reward_total += ( 15*reward_b3+53*(reward/3.0f)+7*(reward_multiple/3.0f)+13*reward_position+12*reward_random)/5 ;
+      //   reward_total += 15*reward_b3[z]+53*destination_reward_same_value[z]+7*destination_reward_multiple_value[z]+13*position_reward[z]+12*random_reward[z] ;
+        //if (reward_total<current )
+        //{reward_total=current;}
     }
 
-    return reward_total;
+    // return reward_total/5;
+    return reward_total/= all_predict_possibilities.size();
 }
 
 void Agent1b_Logical::learn_coeff(int mode)
 {
     ofstream logFile;
+
+    coefficients[0]=0;
+    coefficients[1]=0;
+    coefficients[2]=0;
+    coefficients[3]=0;
+    coefficients[4]=0;
 
     logFile.open (("../../Logs/Learning_"+ProfilName).c_str(),ios::app);
 
@@ -479,7 +514,7 @@ void Agent1b_Logical::learn_coeff(int mode)
 
                             while (nb_game2Play > 0)
                             {
-                                compute_decision(mode, false);
+                                compute_decision_predict( false);
                             }
                             cout << " , score: " << (float)(score_total/(nb_game2Play_initial *1.0f)) << endl;
                             for (int i = 0; i < coefficients.size(); i++)
@@ -533,23 +568,16 @@ float Agent1b_Logical::get_position_reward()
 
 void Agent1b_Logical::test_copy()
 {
-    compute_all_possibilities();
+    choix = 0;
+    float reward_best = 0.0f;
+    float score_grid  = 0.0f;
+    float score_current_poss  = 0.0f;
 
-    Grille* copy_grid = new Grille(Vector2f (250, 100), 450, NULL);
+    compute_reward();
 
-    float best_score_grid = 0.0f;
-
-    //cout << "START LOOP" << endl;
     for (int j = 0; j < all_possibilities.size(); j ++)
     {
-        //cout << "START POSSIBILITE" << endl;
         copy_grid->copy_grille(senseurs);
-
-//        for (int k = 0; k < all_possibilities[j].size(); k ++)
-//        {
-//            cout << all_possibilities[j][k]->get_id() << " ";
-//        }
-//        cout << endl;
 
         vector<Case*> copy_cases_selected;
         for (int k = 0; k < all_possibilities[j].size(); k ++)
@@ -557,70 +585,27 @@ void Agent1b_Logical::test_copy()
             /*
              * Copy case selected from all possibilities, using the copy of the case
              */
-            copy_cases_selected.push_back(copy_grid->get_Cases()[all_possibilities[j][k]->get_id()-1]);
+          copy_cases_selected.push_back(copy_grid->get_Cases()[all_possibilities[j][k]->get_id()-1]);
         }
-
-//        for (int k = 0; k < copy_cases_selected.size(); k ++)
-//        {
-//            cout << copy_cases_selected[k]->get_id() << " ";
-//        }
-//        cout << endl;
-
         action->compute_predict_score(copy_cases_selected, copy_grid);
 
-        vector<Case*> copy_all_cases = copy_grid->get_Cases();
-//        for (int x = 0; x < copy_all_cases.size(); x ++)
-//        {
-//            cout << copy_all_cases[x]->get_value() << " ";
-//            if (x%5 == 4)
-//            {
-//                cout << endl;
-//            }
-//        }
-//        cout << endl;
-
-        //cout << "POSSIBILITIES IN PREDICTED GRID" << endl;
         vector< vector<Case*> > all_possibilities_predit = compute_all_predict_possibilities(copy_grid);
-//        for (int x = 0; x < all_possibilities_predit.size(); x ++)
-//        {
-//            cout << "NEW POSSIBILITIE" <<endl;
-//            for (int y = 0; y < all_possibilities_predit[x].size(); y ++)
-//            {
-//                cout << all_possibilities_predit[x][y]->get_id() << " ";
-//            }
-//            cout << endl;
-//        }
-        float score_grid = compute_predict_possibilities_cost(copy_grid, all_possibilities_predit);
-//        cout << "Score GRID: " << score_grid << endl;
 
-        if (best_score_grid < score_grid)
+        score_grid = compute_predict_possibilities_cost(copy_grid, all_possibilities_predit);
+
+//        cout << "BASE3 :    "   << destination_base3_reward[j]          << endl;
+//        cout << "SAMEVAL :  "   << destination_reward_same_value[j]     << endl;
+//        cout << "MULTVAL :  "   << destination_reward_multiple_value[j] << endl;
+//        cout << "POS :      "   << position_reward[j]                   << endl;
+//        cout << "FUTUR :    "   << score_grid                           << endl;
+//        system("pause");
+        score_current_poss = coefficients[0]*destination_base3_reward[j]+coefficients[1]*destination_reward_same_value[j]+coefficients[2]*destination_reward_multiple_value[j]+coefficients[3]*position_reward[j]+coefficients[4]*score_grid ; //random_reward[j]+s
+
+        if (reward_best < score_current_poss)
         {
-            best_score_grid = score_grid;
+            reward_best = score_current_poss;
             choix = j;
         }
-
-//        Sleep(1000000);
-//        break;
     }
-
-    cout << "Score Best: " << best_score_grid << endl;
-    cout << "BEST POSSIBILITIE" <<endl;
-    for (int y = 0; y < all_possibilities[choix].size(); y ++)
-    {
-        cout << all_possibilities[choix][y]->get_id() << " ";
-    }
-    cout << endl;
-//    Sleep(1000000);
-
-
-//    Grille* copy_grid = new Grille(Vector2f (250, 100), 450, NULL);
-//    copy_grid->copy_grille(senseurs);
-//
-//    vector<Case*> cases = copy_grid->get_Cases();
-//
-//    for (int i = 0; i < cases.size(); i ++)
-//    {
-//        cout << cases[i]->get_value() << endl;
-//    }
 
 }

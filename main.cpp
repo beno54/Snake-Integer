@@ -18,9 +18,9 @@ int main (int argc, char* argv[])
     Grille* ma_grille;
 
     //veriables propre à l'agent
-    int affichage = 1 ;
-    int nb_game = 100;
-    int ms_delay = 200; // ms
+    int affichage = 0 ;
+    int nb_game = 20;
+    int ms_delay = 0; // ms
 
     if (affichage ==0)ms_delay==0;
 
@@ -56,7 +56,7 @@ int main (int argc, char* argv[])
     }
     else
     {
-        ProfilName = "ProfilLogs.csv";
+        ProfilName = "Agent1b2.csv";
     }
 
     try
@@ -172,8 +172,8 @@ int main (int argc, char* argv[])
 //            case 4 : agent1->compute_decision(4,affichage);break;
 //            case 10 : agent1->learn_coeff(4);break;
 //        }
-        agent1->compute_decision_predict(affichage);
-
+        //agent1->compute_decision_predict(affichage);
+        agent1->learn_coeff(4);
 
         while (app.pollEvent(event))
         {

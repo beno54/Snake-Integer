@@ -12,10 +12,10 @@ NumGenerator::NumGenerator()
 //    seed1 = 22495;
 //    seed2 = 23073;
 //    seed3 = 10585;
-
-    cout << "Seed 1 : " << seed1 << endl;
-    cout << "Seed 2 : " << seed2 << endl;
-    cout << "Seed 3 : " << seed3 << endl;
+//
+//    cout << "Seed 1 : " << seed1 << endl;
+//    cout << "Seed 2 : " << seed2 << endl;
+//    cout << "Seed 3 : " << seed3 << endl;
 }
 
 NumGenerator::NumGenerator(float seed1, float seed2, float seed3)
@@ -32,9 +32,9 @@ NumGenerator::NumGenerator(float seed1, float seed2, float seed3)
     this->seed2 = seed2;
     this->seed3 = seed3;
 
-    cout << "Seed 1 : " << seed1 << endl;
-    cout << "Seed 2 : " << seed2 << endl;
-    cout << "Seed 3 : " << seed3 << endl;
+//    cout << "Seed 1 : " << seed1 << endl;
+//    cout << "Seed 2 : " << seed2 << endl;
+//    cout << "Seed 3 : " << seed3 << endl;
 }
 
 
