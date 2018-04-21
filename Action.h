@@ -35,6 +35,7 @@ class Action
         bool test_case_selected(vector<Case*> cases_selected) ;
         void affiche_cases_selected(vector<Case*> cases_selected, int time_sleep);
         void reset();
+        void reset(vector<float> seed);
     protected:
     private:
         Grille *grid;

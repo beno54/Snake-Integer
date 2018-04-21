@@ -539,3 +539,15 @@ void Action::reset()
     compute_NbPossibilities_in_grid();
 }
 
+
+//On reset les senseurs et recalcule les nouvelles possibilités
+void Action::reset(vector<float> seed)
+{
+    grid->reset(seed);
+    reinitialize_nbTurnPlayed();
+    reinitialize_tmpFile();
+    grid->set_isOver(false);
+
+    calcul_groups_in_grid();
+    compute_NbPossibilities_in_grid();
+}

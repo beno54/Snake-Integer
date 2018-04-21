@@ -19,6 +19,7 @@ class Grille
         NumGenerator* get_numG();
         void update_score(int valeur);
         void reset();
+        void reset(vector<float> seed);
         void reset_AllidGroup();
         void set_isOver(bool resultat);
         bool get_isOver();

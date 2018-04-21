@@ -193,6 +193,20 @@ void Grille::update_score(int valeur)
     case_score->update_value(valeur);
 }
 
+void Grille::reset(vector<float> seed)
+{
+    //on supprime l'ancien numG init par le reset de la partie
+    delete numG;
+    //on initie le numGénérator qui va générer les nombres aléatoires
+    numG = new NumGenerator(seed[0], seed[1], seed[2]);
+
+    for (int i = 0; i < 25; i++)
+    {
+        cases[i]->set_value(numG->nexNum());
+    }
+    case_score->set_value(0);
+}
+
 void Grille::reset()
 {
     for (int i = 0; i < 25; i++)

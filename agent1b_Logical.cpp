@@ -32,6 +32,7 @@ Agent1b_Logical::Agent1b_Logical(Grille* senseurs, int nb_game2Play, int decisio
     coefficients[2] = 1;
     coefficients[3] = 1;
     coefficients[4] = 1;
+
     copy_grid = new Grille(Vector2f (250, 100), 450, NULL);
 
 
@@ -269,7 +270,6 @@ void Agent1b_Logical::compute_decision_predict(bool affichage)
         compute_all_possibilities();
         test_copy();
 
-
         if (action->test_case_selected(all_possibilities[choix]) == true)
         {
             if (affichage == true)
@@ -459,21 +459,29 @@ float Agent1b_Logical::compute_predict_possibilities_cost(Grille* grid_predict, 
 //        cout << "b3=" << reward_b3 << "same=" << (reward/3.0f) << "multi=" << (reward_multiple/3.0f) << "posi=" << reward_position << "rand=" << reward_random << endl;
     //float current =
     /*
-On le met en dur car pendant p'hyperparametre, pour le futur, les coeffs doivent pas changer !
-*/
-         reward_total += ( 15*reward_b3+53*(reward/3.0f)+7*(reward_multiple/3.0f)+13*reward_position+12*reward_random)/5 ;
+    On le met en dur car pendant p'hyperparametre, pour le futur, les coeffs doivent pas changer !
+    */
+         float current = ( 15*reward_b3+53*(reward/3.0f)+7*(reward_multiple/3.0f)+13*reward_position+12*reward_random)/5 ;
+         //reward_total += ( 15*reward_b3+53*(reward/3.0f)+7*(reward_multiple/3.0f)+13*reward_position+12*reward_random)/5 ;
       //   reward_total += 15*reward_b3[z]+53*destination_reward_same_value[z]+7*destination_reward_multiple_value[z]+13*position_reward[z]+12*random_reward[z] ;
-        //if (reward_total<current )
-        //{reward_total=current;}
+        if (reward_total<current )
+        {reward_total=current;}
     }
 
     // return reward_total/5;
-    return reward_total/= all_predict_possibilities.size();
+    //return reward_total/= all_predict_possibilities.size();
+    return reward_total;
 }
 
 void Agent1b_Logical::learn_coeff(int mode)
 {
     ofstream logFile;
+
+    vector<vector<float> > seeds;
+    for (int i=0; i < 100; i ++)
+    {
+        seeds.push_back({i*5+2, i*3-2, i*20-4});
+    }
 
     coefficients[0]=0;
     coefficients[1]=0;
@@ -512,9 +520,21 @@ void Agent1b_Logical::learn_coeff(int mode)
 
                             logFile.open (("../../Logs/Learning_"+ProfilName).c_str(),ios::app);
 
+                            //cout << endl;
+                            action->reset(seeds[nb_game2Play]);
+                            //cout << "seed1: " << senseurs->get_numG()->get_seed1() << "seed2: " << senseurs->get_numG()->get_seed2() << "seed3: " << senseurs->get_numG()->get_seed3() << endl;
+
+                            int all_game2Play = 0;
                             while (nb_game2Play > 0)
                             {
+                                all_game2Play = nb_game2Play;
                                 compute_decision_predict( false);
+                                if ((all_game2Play != nb_game2Play) && nb_game2Play)
+                                {
+                                    //cout << endl;
+                                    action->reset(seeds[nb_game2Play]);
+                                    //cout << "seed1: " << senseurs->get_numG()->get_seed1() << "seed2: " << senseurs->get_numG()->get_seed2() << "seed3: " << senseurs->get_numG()->get_seed3() << endl;
+                                }
                             }
                             cout << " , score: " << (float)(score_total/(nb_game2Play_initial *1.0f)) << endl;
                             for (int i = 0; i < coefficients.size(); i++)
