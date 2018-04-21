@@ -7,7 +7,7 @@ Agent1b_Logical::Agent1b_Logical(Grille* senseurs, int nb_game2Play, int decisio
     action = new Action(senseurs, ProfilName);
     this->mode = mode;
     /*INITIALISATION*/
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 7; i++)
     {
         coefficients.push_back(0);
     }
@@ -27,11 +27,16 @@ Agent1b_Logical::Agent1b_Logical(Grille* senseurs, int nb_game2Play, int decisio
 //    coefficients[3] = 14;
 //    coefficients[4] = 10;
 
-    coefficients[0] = 1;
-    coefficients[1] = 1;
-    coefficients[2] = 1;
-    coefficients[3] = 1;
-    coefficients[4] = 1;
+    //coef present
+    coefficients[0] = 10;
+    coefficients[1] = 30;
+    coefficients[2] = 11;
+    coefficients[3] = 9;
+
+    //coef futur
+    coefficients[4] = 13;
+    coefficients[5] = 13;
+    coefficients[6] = 14;
 
     copy_grid = new Grille(Vector2f (250, 100), 450, NULL);
 
@@ -152,13 +157,41 @@ void Agent1b_Logical::deep_course_predict(vector<Case*> v_casesCourante, Grille*
 }
 
 
+//FONCTIONS  DE PRISE DE DECISION/
+void Agent1b_Logical::compute_decision(int mode,bool affichage)
+{
+    if (!senseurs->get_isOver())
+    {
+        compute_all_possibilities();
+        //compute_possibilities_cost(mode);
+
+        if (action->test_case_selected(all_possibilities[choix]) == true)
+        {
+            if (affichage == true)
+            {
+                action->affiche_cases_selected(all_possibilities[choix], decision_delay);
+            }
+
+            action->log_data(all_possibilities[choix], additionnal_data);
+
+            action->compute_score(all_possibilities[choix]);
+        }
+    }
+    else
+    {
+        score_total += senseurs->get_Case_score()->get_value();
+        action->log_score(coefficients);
+        action->reset();
+        nb_game2Play --;
+    }
+}
+
 /*FONCTIONS MAJ PARAMETRES */
 
 void  Agent1b_Logical::compute_reward()
 {
     destination_reward_same_value.clear();
     destination_reward_multiple_value.clear();
-    random_reward.clear();
     destination_base3_reward.clear();
     position_reward.clear();
     vector<float> probabilities ;
@@ -227,18 +260,6 @@ void  Agent1b_Logical::compute_reward()
             }
         }
 
-        //calcul random
-        float Nb_voisins = voisins_no_dest.size()*1.0f;
-        float  nb = 0 ;
-        for (int e = 0; e < voisins_no_dest.size(); e ++)
-        {
-            if ((voisins_no_dest[e]->get_value() == 1)||(voisins_no_dest[e]->get_value() == 2)||(voisins_no_dest[e]->get_value() == 3))nb ++;
-        }
-        if (Nb_voisins) reward_random = float(nb/Nb_voisins) ;
-        else {reward_random = 0;}
-
-
-
         //calcul param base 3
         float reward_b3 = 0;
         int number = (all_possibilities[z].back()->get_value())*(all_possibilities[z].size());
@@ -254,7 +275,6 @@ void  Agent1b_Logical::compute_reward()
         //coefficient entre 1 et 3
         destination_base3_reward.push_back(reward_b3);
         position_reward.push_back(reward_position);
-        random_reward.push_back(reward_random);
         destination_reward_same_value.push_back(reward/3.0f);
         destination_reward_multiple_value.push_back(reward_multiple/3.0f);
     }
@@ -292,185 +312,38 @@ void Agent1b_Logical::compute_decision_predict(bool affichage)
 }
 
 
-/*FONCTIONS  DE PRISE DE DECISION*/
-void Agent1b_Logical::compute_decision(int mode,bool affichage)
+float Agent1b_Logical::compute_predict_grid_cost(Grille* grid_predict)
 {
-    if (!senseurs->get_isOver())
-    {
-        compute_all_possibilities();
-        compute_possibilities_cost(mode);
-
-        if (action->test_case_selected(all_possibilities[choix]) == true)
-        {
-            if (affichage == true)
-            {
-                action->affiche_cases_selected(all_possibilities[choix], decision_delay);
-            }
-
-            action->log_data(all_possibilities[choix], additionnal_data);
-
-            action->compute_score(all_possibilities[choix]);
-        }
-    }
-    else
-    {
-        score_total += senseurs->get_Case_score()->get_value();
-        action->log_score(coefficients);
-        action->reset();
-        nb_game2Play --;
-    }
-}
-
-void Agent1b_Logical::compute_possibilities_cost(int mode)
-{
-    additionnal_data.clear();
-
-    choix = 0;
-    float reward_best = 0;
-    float reward  = 0 ;
-
-    //MAJ DES Paramètres pour la grille courrante
-    compute_reward(); // + random + base 3 + destination same + multiple dest + position
-
-    for (int z = 0; z < all_possibilities.size(); z ++)
-    {
-        //    coefficients[0] = 15;
-//    coefficients[1] = 53;
-//    coefficients[2] = 7;
-//    coefficients[3] = 13;
-//    coefficients[4] = 12;
-
-        cout << "dont pass here" << endl  ;
-        reward = coefficients[0]*destination_base3_reward[z]+coefficients[1]*destination_reward_same_value[z]+coefficients[2]*destination_reward_multiple_value[z]+coefficients[3]*position_reward[z]+coefficients[4]*random_reward[z] ;
-
-
-        if (reward_best < reward)
-        {
-            reward_best = reward;
-            choix = z;
-        }
-    }
-
-    //log les DATAS de l'agent 1
-    additionnal_data.push_back(destination_reward_same_value[choix]);
-    additionnal_data.push_back(destination_reward_multiple_value[choix]);
-    //additionnal_data.push_back(destination_reward_double_value[choix]);
-    additionnal_data.push_back(random_reward[choix]);
-    additionnal_data.push_back(destination_base3_reward[choix]);
-    //additionnal_data.push_back((destination_4_reward[choix]);
-    additionnal_data.push_back(position_reward[choix]);
-    additionnal_data.push_back(reward_best);
-
-}
-
-float Agent1b_Logical::compute_predict_possibilities_cost(Grille* grid_predict, vector< vector<Case*> > &all_predict_possibilities)
-{
-
     float reward_total = 0;
 
-    int destvalue  ;
+    vector< vector<Case*> > groups = action->calcul_groups_in_grid(grid_predict);
 
-    for (int z = 0; z < all_predict_possibilities.size(); z ++)
+    for (int i = 0; i < groups.size(); i ++)
     {
-        //calcul voisins autres cases que dest
-        vector<Case*> voisins_no_dest;
-        for (int x = 0; x < (all_predict_possibilities[z].size()-1); x ++)
+        if (groups[i].size() == 1)
         {
-            vector<Case*> tmp = grid_predict->get_all_voisins(all_predict_possibilities[z][x]);
-            voisins_no_dest.insert (voisins_no_dest.end(),tmp.begin(),tmp.end());
+            groups.erase(groups.begin()+i);
+            i --;
         }
-        //calcul voisins dest
-        vector<Case*> voisins_dest = grid_predict->get_all_voisins( all_predict_possibilities[z].back());
-
-        //calcul position param
-        int nb_voisins_tot = voisins_dest.size();
-        float reward_position = 0 ;
-        switch (nb_voisins_tot)
-        {
-            case 2 : reward_position = 1 ; break ;
-            case 3 : reward_position = 0.5 ; break ;
-        }
-
-        //retire voisins present dans le chemin
-        for (int i =0; i < all_predict_possibilities[z].size(); i++)
-        {
-            for (int e =0; e < voisins_dest.size(); e++)
-            {
-                if(voisins_dest[e]->get_id() == all_predict_possibilities[z][i]->get_id())
-                {
-                    voisins_dest.erase(voisins_dest.begin()+ e);
-                    e--;
-                }
-            }
-            for (int e = 0; e < voisins_no_dest.size(); e ++)
-            {
-                if (voisins_no_dest[e]->get_id()  == all_predict_possibilities[z][i]->get_id())
-                {
-                    voisins_no_dest.erase(voisins_no_dest.begin()+e);
-                    e--;
-                }
-            }
-        }
-
-
-        //calcul destination
-        float reward = 0;
-        float reward_multiple = 0 ;
-        float reward_double_value  = 0 ;
-        float  reward_random  = 0 ;
-        for (int x = 0; x < voisins_dest.size(); x ++)
-        {
-            destvalue = (all_predict_possibilities[z].size())*(all_predict_possibilities[z].back())->get_value();
-
-            if (voisins_dest[x]->get_value() == destvalue )
-            {
-                reward++;
-            }
-            else
-            if( (voisins_dest[x]->get_value() % destvalue) == 0 )
-            {
-                reward_multiple++;
-            }
-        }
-
-        //calcul random
-        float Nb_voisins = voisins_no_dest.size()*1.0f;
-        float  nb = 0 ;
-        for (int e = 0; e < voisins_no_dest.size(); e ++)
-        {
-            if ((voisins_no_dest[e]->get_value() == 1)||(voisins_no_dest[e]->get_value() == 2)||(voisins_no_dest[e]->get_value() == 3))nb ++;
-        }
-        if (Nb_voisins) reward_random = float(nb/Nb_voisins) ;
-        else {reward_random = 0;}
-
-
-        //calcul param base 3
-        float reward_b3 = 0;
-        int number = (all_predict_possibilities[z].back()->get_value())*(all_predict_possibilities[z].size());
-        while (number%2 == 0)
-        {
-            if (number/2 == 3)
-            {
-                reward_b3 = 1;
-            }
-            number = number/2;
-        }
-
-//        cout << "b3=" << reward_b3 << "same=" << (reward/3.0f) << "multi=" << (reward_multiple/3.0f) << "posi=" << reward_position << "rand=" << reward_random << endl;
-    //float current =
-    /*
-    On le met en dur car pendant p'hyperparametre, pour le futur, les coeffs doivent pas changer !
-    */
-         float current = ( 15*reward_b3+53*(reward/3.0f)+7*(reward_multiple/3.0f)+13*reward_position+12*reward_random)/5 ;
-         //reward_total += ( 15*reward_b3+53*(reward/3.0f)+7*(reward_multiple/3.0f)+13*reward_position+12*reward_random)/5 ;
-      //   reward_total += 15*reward_b3[z]+53*destination_reward_same_value[z]+7*destination_reward_multiple_value[z]+13*position_reward[z]+12*random_reward[z] ;
-        if (reward_total<current )
-        {reward_total=current;}
     }
+    vector<Case*> all_cases = grid_predict->get_Cases();
 
-    // return reward_total/5;
-    //return reward_total/= all_predict_possibilities.size();
-    return reward_total;
+    //nbre de groupes par grille
+    float reward_nbG = groups.size()/12.0f;
+    //nbre de cases moyen  par groupe
+    float average_group_size = 0;
+    //nbre de cases appartenant à un groupe
+    float nb_cases = 0;
+
+    for (int i=0; i<groups.size(); i++)
+    {
+        average_group_size += groups[i].size();
+    }
+    nb_cases = average_group_size/25.0f;
+
+    average_group_size /= (groups.size()*25.0f);
+
+    return (coefficients[4]*nb_cases + coefficients[5]*reward_nbG+ coefficients[6]*average_group_size);
 }
 
 void Agent1b_Logical::learn_coeff(int mode)
@@ -488,6 +361,9 @@ void Agent1b_Logical::learn_coeff(int mode)
     coefficients[2]=0;
     coefficients[3]=0;
     coefficients[4]=0;
+    coefficients[5]=0;
+    coefficients[6]=0;
+    coefficients[7]=0;
 
     logFile.open (("../../Logs/Learning_"+ProfilName).c_str(),ios::app);
 
@@ -572,10 +448,6 @@ float Agent1b_Logical::get_destination_reward_multiple_value()
     return destination_reward_multiple_value[choix];
 }
 
-float Agent1b_Logical::get_random_reward()
-{
-    return random_reward[choix];
-}
 float Agent1b_Logical::get_destination_base3_reward()
 {
     return destination_base3_reward[choix];
@@ -609,9 +481,9 @@ void Agent1b_Logical::test_copy()
         }
         action->compute_predict_score(copy_cases_selected, copy_grid);
 
-        vector< vector<Case*> > all_possibilities_predit = compute_all_predict_possibilities(copy_grid);
+        //vector< vector<Case*> > all_possibilities_predit = compute_all_predict_possibilities(copy_grid);
 
-        score_grid = compute_predict_possibilities_cost(copy_grid, all_possibilities_predit);
+        score_grid = compute_predict_grid_cost(copy_grid);
 
 //        cout << "BASE3 :    "   << destination_base3_reward[j]          << endl;
 //        cout << "SAMEVAL :  "   << destination_reward_same_value[j]     << endl;
@@ -619,7 +491,7 @@ void Agent1b_Logical::test_copy()
 //        cout << "POS :      "   << position_reward[j]                   << endl;
 //        cout << "FUTUR :    "   << score_grid                           << endl;
 //        system("pause");
-        score_current_poss = coefficients[0]*destination_base3_reward[j]+coefficients[1]*destination_reward_same_value[j]+coefficients[2]*destination_reward_multiple_value[j]+coefficients[3]*position_reward[j]+coefficients[4]*score_grid ; //random_reward[j]+s
+        score_current_poss = coefficients[0]*destination_base3_reward[j]+coefficients[1]*destination_reward_same_value[j]+coefficients[2]*destination_reward_multiple_value[j]+coefficients[3]*position_reward[j]+score_grid ; //random_reward[j]+s
 
         if (reward_best < score_current_poss)
         {

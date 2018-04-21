@@ -403,6 +403,105 @@ void Action::calcul_groups_in_grid()
     groups_in_grid = tab_group ;
 }
 
+vector< vector<Case*> > Action::calcul_groups_in_grid(Grille* grid_predict)
+{
+    vector< vector<Case*> > tab_group;
+    vector<Case*>  allCases = grid_predict->get_Cases();
+    Case* case_courante;
+    int idGroup = 0;
+    int compteur_cases_left = 25;
+
+    grid_predict->reset_AllidGroup();
+
+    while (compteur_cases_left != 0)
+    {
+        //cout << "\nDebut groupe" << idGroup  << endl;
+        idGroup ++;
+        vector<Case*>  Sous_Cases_to_Test;
+        vector<Case*>  new_groupe_cases;
+
+        int i = 0;
+        bool finded = false;
+        //on ajoute dans tab group
+        while(i < 25 && !finded)
+        {
+            if (allCases[i]->get_idGroup() == 0)
+            {
+                //ajout la 1ere case
+                Sous_Cases_to_Test.push_back(allCases[i]);
+                //cout << "ajout case" << allCases[i]->get_id()  << endl;
+                allCases[i]->set_idGroup(idGroup);
+
+
+                new_groupe_cases.push_back(allCases[i]);
+                compteur_cases_left--;
+
+                finded = true;
+            }
+            i++;
+        }
+
+
+        while (Sous_Cases_to_Test.size() != 0)
+        {
+            Case* case_courante = Sous_Cases_to_Test.front();
+            int id_courant = case_courante->get_id();
+
+            //voisin de droite ?
+            if (id_courant%5 != 0 && allCases[id_courant]->get_idGroup() == 0 && case_courante->get_value() == allCases[id_courant]->get_value())
+            {
+                //ok donc rajout
+                allCases[id_courant]->set_idGroup(idGroup);
+                Sous_Cases_to_Test.push_back(allCases[id_courant]);
+                compteur_cases_left--;
+            }
+
+            //voisin de gauche ?
+            if (id_courant%5 != 1 && allCases[id_courant-2]->get_idGroup() == 0 && case_courante->get_value() == allCases[id_courant-2]->get_value())
+            {
+                //ok donc rajout
+                allCases[id_courant-2]->set_idGroup(idGroup);
+                Sous_Cases_to_Test.push_back(allCases[id_courant-2]);
+                //cases_to_Test.erase (cases_to_Test.begin()+((id_courant-2)-compteur_grp_deleted));
+                compteur_cases_left--;
+            }
+
+            //voisin du haut ?
+            if (id_courant > 5 && allCases[id_courant-6]->get_idGroup() == 0 && case_courante->get_value() == allCases[id_courant-6]->get_value())
+            {
+                //ok donc rajout
+                allCases[id_courant-6]->set_idGroup(idGroup);
+                Sous_Cases_to_Test.push_back(allCases[id_courant-6]);
+                //cases_to_Test.erase (cases_to_Test.begin()+((id_courant-6)-compteur_grp_deleted));
+                compteur_cases_left--;
+            }
+
+            //voisin du bas ?
+            if (id_courant <= 20 && allCases[id_courant+4]->get_idGroup() == 0 && case_courante->get_value() == allCases[id_courant+4]->get_value())
+            {
+                //ok donc rajout
+                allCases[id_courant+4]->set_idGroup(idGroup);
+                Sous_Cases_to_Test.push_back(allCases[id_courant+4]);
+                //cases_to_Test.erase (cases_to_Test.begin()+((id_courant+4)-compteur_grp_deleted));
+                compteur_cases_left--;
+            }
+
+            Sous_Cases_to_Test.erase(Sous_Cases_to_Test.begin());
+
+            if (Sous_Cases_to_Test.size() != 0)
+            {
+                //on rajoute le suivant
+                new_groupe_cases.push_back(Sous_Cases_to_Test.front());
+                //cout << "ajout case" << Sous_Cases_to_Test.front()->get_id()  << endl;
+            }
+        }
+
+        tab_group.push_back(new_groupe_cases);
+    }
+
+    return tab_group ;
+}
+
 
 int Action::get_nbTurnPlayed()
 {

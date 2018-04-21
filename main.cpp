@@ -18,8 +18,8 @@ int main (int argc, char* argv[])
     Grille* ma_grille;
 
     //veriables propre à l'agent
-    int affichage = 1 ;
-    int nb_game = 10;
+    int affichage = 0 ;
+    int nb_game = 200;
     int ms_delay = 100; // ms
 
     if (affichage ==0)ms_delay==0;
@@ -56,7 +56,7 @@ int main (int argc, char* argv[])
     }
     else
     {
-        ProfilName = "Agent1b2.csv";
+        ProfilName = "Agent1b3.csv";
     }
 
     try

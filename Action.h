@@ -29,6 +29,7 @@ class Action
         void reinitialize_tmpFile();
 
         void calcul_groups_in_grid ();
+        vector< vector<Case*> > calcul_groups_in_grid(Grille* grid_predict);
         void compute_NbPossibilities_in_grid();
         int get_NbpPossibilities_in_grid();
         vector< vector<Case*> > get_tab_groups_in_grid();
