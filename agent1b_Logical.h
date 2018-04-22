@@ -39,7 +39,6 @@ class Agent1b_Logical: public Struct_Agent
         vector< vector<Case*> > all_possibilities;
         vector< vector<Case*> > all_possibilities_cost;
         vector< float > destination_reward_same_value;
-        vector< float > destination_reward_multiple_value;
         vector< float > destination_base3_reward;
         vector< float > position_reward;
         vector<float> additionnal_data;

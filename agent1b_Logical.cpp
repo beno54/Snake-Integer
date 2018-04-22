@@ -7,40 +7,25 @@ Agent1b_Logical::Agent1b_Logical(Grille* senseurs, int nb_game2Play, int decisio
     action = new Action(senseurs, ProfilName);
     this->mode = mode;
     /*INITIALISATION*/
-    for (int i = 0; i < 7; i++)
+    for (int i = 0; i < 6; i++)
     {
         coefficients.push_back(0);
     }
     score_total = 0;
     nb_game2Play_initial = nb_game2Play;
 
-
-//    coefficients[0] = 15;
-//    coefficients[1] = 53;
-//    coefficients[2] = 7;
-//    coefficients[3] = 13;
-//    coefficients[4] = 12;
-//
-//    coefficients[0] = 15;
-//    coefficients[1] = 43;
-//    coefficients[2] = 18;
-//    coefficients[3] = 14;
-//    coefficients[4] = 10;
-
     //coef present
-    coefficients[0] = 10;
-    coefficients[1] = 30;
-    coefficients[2] = 11;
-    coefficients[3] = 9;
+    coefficients[0] = 15;
+    coefficients[1] = 24;
+    coefficients[2] = 16;
+    coefficients[3] = 22;
 
     //coef futur
-    coefficients[4] = 13;
-    coefficients[5] = 13;
-    coefficients[6] = 14;
+    coefficients[4] = 8;
+    coefficients[5] = 15;
+
 
     copy_grid = new Grille(Vector2f (250, 100), 450, NULL);
-
-
 }
 
 Agent1b_Logical::Agent1b_Logical(): Struct_Agent()
@@ -51,6 +36,7 @@ Agent1b_Logical::Agent1b_Logical(): Struct_Agent()
 Agent1b_Logical::~Agent1b_Logical()
 {
     //dtor
+    delete(copy_grid);
     delete (action);
 }
 
@@ -191,7 +177,7 @@ void Agent1b_Logical::compute_decision(int mode,bool affichage)
 void  Agent1b_Logical::compute_reward()
 {
     destination_reward_same_value.clear();
-    destination_reward_multiple_value.clear();
+
     destination_base3_reward.clear();
     position_reward.clear();
     vector<float> probabilities ;
@@ -199,13 +185,6 @@ void  Agent1b_Logical::compute_reward()
 
     for (int z = 0; z < all_possibilities.size(); z ++)
     {
-        //calcul voisins autres cases que dest
-        vector<Case*> voisins_no_dest;
-        for (int x = 0; x < (all_possibilities[z].size()-1); x ++)
-        {
-            vector<Case*> tmp = senseurs->get_all_voisins(all_possibilities[z][x]);
-            voisins_no_dest.insert (voisins_no_dest.end(),tmp.begin(),tmp.end());
-        }
         //calcul voisins dest
         vector<Case*> voisins_dest = senseurs->get_all_voisins( all_possibilities[z].back());
 
@@ -229,22 +208,9 @@ void  Agent1b_Logical::compute_reward()
                     e--;
                 }
             }
-            for (int e = 0; e < voisins_no_dest.size(); e ++)
-            {
-                if (voisins_no_dest[e]->get_id()  == all_possibilities[z][i]->get_id())
-                {
-                    voisins_no_dest.erase(voisins_no_dest.begin()+e);
-                    e--;
-                }
-            }
         }
-
-
         //calcul destination
         float reward = 0;
-        float reward_multiple = 0 ;
-        float reward_double_value  = 0 ;
-        float  reward_random  = 0 ;
         for (int x = 0; x < voisins_dest.size(); x ++)
         {
             destvalue = (all_possibilities[z].size())*(all_possibilities[z].back())->get_value();
@@ -252,11 +218,6 @@ void  Agent1b_Logical::compute_reward()
             if (voisins_dest[x]->get_value() == destvalue )
             {
                 reward++;
-            }
-            else
-            if( (voisins_dest[x]->get_value() % destvalue) == 0 )
-            {
-                reward_multiple++;
             }
         }
 
@@ -276,7 +237,7 @@ void  Agent1b_Logical::compute_reward()
         destination_base3_reward.push_back(reward_b3);
         position_reward.push_back(reward_position);
         destination_reward_same_value.push_back(reward/3.0f);
-        destination_reward_multiple_value.push_back(reward_multiple/3.0f);
+
     }
 
 }
@@ -343,7 +304,7 @@ float Agent1b_Logical::compute_predict_grid_cost(Grille* grid_predict)
 
     average_group_size /= (groups.size()*25.0f);
 
-    return (coefficients[4]*nb_cases + coefficients[5]*reward_nbG+ coefficients[6]*average_group_size);
+    return (coefficients[3]*nb_cases + coefficients[4]*reward_nbG+ coefficients[5]*average_group_size);
 }
 
 void Agent1b_Logical::learn_coeff(int mode)
@@ -362,8 +323,8 @@ void Agent1b_Logical::learn_coeff(int mode)
     coefficients[3]=0;
     coefficients[4]=0;
     coefficients[5]=0;
-    coefficients[6]=0;
-    coefficients[7]=0;
+
+
 
     logFile.open (("../../Logs/Learning_"+ProfilName).c_str(),ios::app);
 
@@ -385,20 +346,21 @@ void Agent1b_Logical::learn_coeff(int mode)
                {
                        for ( ;(MAX_COEFF-coefficients[0]-coefficients[1]-coefficients[2] -coefficients[3])  >=0; coefficients[3]++)
                        {
-                           coefficients[4]=(MAX_COEFF-coefficients[0]-coefficients[1]-coefficients[2] -coefficients[3] -coefficients[4]);
+                            for ( ;(MAX_COEFF-coefficients[0]-coefficients[1]-coefficients[2] -coefficients[3]-coefficients[4])  >=0; coefficients[4]++)
+                        {
+                             coefficients[5]=(MAX_COEFF-coefficients[0]-coefficients[1]-coefficients[2] -coefficients[3] -coefficients[4]-coefficients[5]);
 
                             cout << coefficients[0];
                             cout << coefficients[1];
                             cout << coefficients[2];
                             cout << coefficients[3];
                             cout << coefficients[4];
-
+                            cout << coefficients[5];
 
                             logFile.open (("../../Logs/Learning_"+ProfilName).c_str(),ios::app);
 
-                            //cout << endl;
+
                             action->reset(seeds[nb_game2Play]);
-                            //cout << "seed1: " << senseurs->get_numG()->get_seed1() << "seed2: " << senseurs->get_numG()->get_seed2() << "seed3: " << senseurs->get_numG()->get_seed3() << endl;
 
                             int all_game2Play = 0;
                             while (nb_game2Play > 0)
@@ -407,9 +369,7 @@ void Agent1b_Logical::learn_coeff(int mode)
                                 compute_decision_predict( false);
                                 if ((all_game2Play != nb_game2Play) && nb_game2Play)
                                 {
-                                    //cout << endl;
                                     action->reset(seeds[nb_game2Play]);
-                                    //cout << "seed1: " << senseurs->get_numG()->get_seed1() << "seed2: " << senseurs->get_numG()->get_seed2() << "seed3: " << senseurs->get_numG()->get_seed3() << endl;
                                 }
                             }
                             cout << " , score: " << (float)(score_total/(nb_game2Play_initial *1.0f)) << endl;
@@ -422,8 +382,10 @@ void Agent1b_Logical::learn_coeff(int mode)
 
                             score_total = 0;
                             nb_game2Play = nb_game2Play_initial;
+                            coefficients[5]=0;
 
-                            coefficients[4]=0;
+                        }
+                          coefficients[4]=0;
                        }
                        coefficients[3]=0;
                }
@@ -442,10 +404,6 @@ void Agent1b_Logical::learn_coeff(int mode)
 float Agent1b_Logical::get_destination_reward_same_value()
 {
     return destination_reward_same_value[choix];
-}
-float Agent1b_Logical::get_destination_reward_multiple_value()
-{
-    return destination_reward_multiple_value[choix];
 }
 
 float Agent1b_Logical::get_destination_base3_reward()
@@ -491,7 +449,9 @@ void Agent1b_Logical::test_copy()
 //        cout << "POS :      "   << position_reward[j]                   << endl;
 //        cout << "FUTUR :    "   << score_grid                           << endl;
 //        system("pause");
-        score_current_poss = coefficients[0]*destination_base3_reward[j]+coefficients[1]*destination_reward_same_value[j]+coefficients[2]*destination_reward_multiple_value[j]+coefficients[3]*position_reward[j]+score_grid ; //random_reward[j]+s
+
+//   score_current_poss = coefficients[0]*destination_base3_reward[j]+coefficients[1]*destination_reward_same_value[j]+coefficients[3]*position_reward[j]+score_grid +coefficients[2]*destination_reward_multiple_value[j];
+        score_current_poss = coefficients[0]*destination_base3_reward[j]+coefficients[1]*destination_reward_same_value[j]+coefficients[2]*position_reward[j]+score_grid ; //random_reward[j]+s
 
         if (reward_best < score_current_poss)
         {
