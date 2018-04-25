@@ -40,6 +40,7 @@ class Grille
         Text gameOver;
         bool isOver ;
         RenderWindow* window;
+        float nbReset;
 };
 
 #endif // GRILLE_H

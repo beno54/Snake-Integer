@@ -15,15 +15,22 @@ Agent1b_Logical::Agent1b_Logical(Grille* senseurs, int nb_game2Play, int decisio
     nb_game2Play_initial = nb_game2Play;
 
     //coef present
-    coefficients[0] = 15;
-    coefficients[1] = 24;
-    coefficients[2] = 16;
-    coefficients[3] = 22;
+//    coefficients[0] = 15;
+//    coefficients[1] = 24;
+//    coefficients[2] = 16;
+//    coefficients[3] = 22;
+//
+//    //coef futur
+//    coefficients[4] = 8;
+//    coefficients[5] = 15;
+    coefficients[0] = 4;
+    coefficients[1] = 18;
+    coefficients[2] = 10;
+    coefficients[3] = 37;
 
     //coef futur
-    coefficients[4] = 8;
-    coefficients[5] = 15;
-
+    coefficients[4] = 13;
+    coefficients[5] = 18;
 
     copy_grid = new Grille(Vector2f (250, 100), 450, NULL);
 }
@@ -317,12 +324,7 @@ void Agent1b_Logical::learn_coeff(int mode)
         seeds.push_back({i*5+2, i*3-2, i*20-4});
     }
 
-    coefficients[0]=0;
-    coefficients[1]=0;
-    coefficients[2]=0;
-    coefficients[3]=0;
-    coefficients[4]=0;
-    coefficients[5]=0;
+
 
 
 
@@ -336,62 +338,102 @@ void Agent1b_Logical::learn_coeff(int mode)
     logFile << "moyenne" << endl;
 
     logFile.close ();
+    int boucle = 0 ;
+
+    /*set limite for each coeff (max and min )*/
+
+    //SCALE
+    int MAX_COEFF = 100 ;
+
+    //MIN COEFF
+    int limiteMin0 = 2;
+    int limiteMin1 = 17 ;
+    int limiteMin2 = 10;
+    int limiteMin3 = 34 ;
+    int limiteMin4 = 12;
+    int limiteMin5 = 16 ;
+
+    //MAX COEFF
+    int limiteMax0 = 5;
+    int limiteMax1 = 20;
+    int limiteMax2 = 13;
+    int limiteMax3 = 37 ;
+    int limiteMax4 = 15;
+    int limiteMax5 = 19;
 
     /*INCREMENTATION*/
+
+
+
+
+
+   coefficients[0]=limiteMin0;
     for ( ;(MAX_COEFF-coefficients[0]) >=0 ;coefficients[0]++)
-    {
+    {      coefficients[1]=limiteMin1;
+
           for ( ;(MAX_COEFF-coefficients[0]-coefficients[1])>=0; coefficients[1]++)
-         {
+         {   coefficients[2]=limiteMin2;
                for ( ;(MAX_COEFF-coefficients[0]-coefficients[1]-coefficients[2] ) >=0; coefficients[2]++)
-               {
+               {        coefficients[3]=limiteMin3;
                        for ( ;(MAX_COEFF-coefficients[0]-coefficients[1]-coefficients[2] -coefficients[3])  >=0; coefficients[3]++)
-                       {
+                       {     coefficients[4]=limiteMin4;
                             for ( ;(MAX_COEFF-coefficients[0]-coefficients[1]-coefficients[2] -coefficients[3]-coefficients[4])  >=0; coefficients[4]++)
-                        {
-                             coefficients[5]=(MAX_COEFF-coefficients[0]-coefficients[1]-coefficients[2] -coefficients[3] -coefficients[4]-coefficients[5]);
-
-                            cout << coefficients[0];
-                            cout << coefficients[1];
-                            cout << coefficients[2];
-                            cout << coefficients[3];
-                            cout << coefficients[4];
-                            cout << coefficients[5];
-
-                            logFile.open (("../../Logs/Learning_"+ProfilName).c_str(),ios::app);
-
-
-                            action->reset(seeds[nb_game2Play]);
-
-                            int all_game2Play = 0;
-                            while (nb_game2Play > 0)
                             {
-                                all_game2Play = nb_game2Play;
-                                compute_decision_predict( false);
-                                if ((all_game2Play != nb_game2Play) && nb_game2Play)
+                                coefficients[5]=MAX_COEFF-coefficients[0]-coefficients[1]-coefficients[2] -coefficients[3]-coefficients[4];
+
+
+                                if (coefficients[5]<=(limiteMax5) && coefficients[5]>=limiteMin5)
                                 {
+                                    boucle ++;
+                                    cout << boucle << " - " ;
+                                    cout << coefficients[0]<< " ";
+                                    cout << coefficients[1]<< " ";
+                                    cout << coefficients[2]<< " ";
+                                    cout << coefficients[3]<< " ";
+                                    cout << coefficients[4]<< " ";
+                                    cout << coefficients[5]<< " ";
+
+                                    logFile.open (("../../Logs/Learning_"+ProfilName).c_str(),ios::app);
+
+
                                     action->reset(seeds[nb_game2Play]);
+
+                                    int all_game2Play = 0;
+                                    while (nb_game2Play > 0)
+                                    {
+                                        all_game2Play = nb_game2Play;
+                                        compute_decision_predict( false);
+                                        if ((all_game2Play != nb_game2Play) && nb_game2Play)
+                                        {
+                                            action->reset(seeds[nb_game2Play]);
+                                        }
+                                    }
+                                    cout << " , score: " << (float)(score_total/(nb_game2Play_initial *1.0f)) << endl;
+                                    for (int i = 0; i < coefficients.size(); i++)
+                                    {
+                                        logFile << coefficients[i] << ",";
+                                    }
+                                    logFile << (float)(score_total/(nb_game2Play_initial *1.0f)) << endl ;
+                                    logFile.close ();
+
+                                    score_total = 0;
+                                    nb_game2Play = nb_game2Play_initial;
                                 }
-                            }
-                            cout << " , score: " << (float)(score_total/(nb_game2Play_initial *1.0f)) << endl;
-                            for (int i = 0; i < coefficients.size(); i++)
-                            {
-                                logFile << coefficients[i] << ",";
-                            }
-                            logFile << (float)(score_total/(nb_game2Play_initial *1.0f)) << endl ;
-                            logFile.close ();
 
-                            score_total = 0;
-                            nb_game2Play = nb_game2Play_initial;
-                            coefficients[5]=0;
 
-                        }
-                          coefficients[4]=0;
+                                if (coefficients[4]==limiteMax4)break;
+                            }
+
+                            if (coefficients[3]==limiteMax3)break;
                        }
-                       coefficients[3]=0;
+
+                       if (coefficients[2]==limiteMax2)break;
                }
-               coefficients[2]=0;
+
+               if (coefficients[1]==limiteMax1)break;
           }
-          coefficients[1]=0;
+
+          if (coefficients[0]==limiteMax0)break;
     }
     nb_game2Play = 0;
 

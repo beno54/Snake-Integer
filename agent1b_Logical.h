@@ -5,7 +5,7 @@
 #include <Python.h>
 #include "pyhelper.hpp"
 
-#define MAX_COEFF 10
+
 
 class Agent1b_Logical: public Struct_Agent
 {

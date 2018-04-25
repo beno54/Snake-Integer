@@ -26,10 +26,9 @@ Action::Action(Grille *grid, string ProfilName)
     }
     else
     {
-        cout << "Ouverture failed" <<endl ;
-        cerr << "\nError: " << strerror(errno);
+        cout << "lOuverture failed logFile" <<endl ;
+        cerr << "\nError: " << strerror(errno) << "k" ;
     }
-
     calcul_groups_in_grid();
     compute_NbPossibilities_in_grid();
 }
