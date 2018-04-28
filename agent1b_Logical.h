@@ -30,7 +30,7 @@ class Agent1b_Logical: public Struct_Agent
         float get_destination_reward_multiple_value();
         float get_destination_base3_reward();
         float get_position_reward();
-
+        void learn_cluster(string file_name_coeff);
         void test_copy();
 
     protected:
@@ -43,7 +43,7 @@ class Agent1b_Logical: public Struct_Agent
         vector< float > position_reward;
         vector<float> additionnal_data;
         Grille* copy_grid;
-        vector<int> coefficients;
+        vector<float> coefficients;
 
         int choix, mode, nb_game2Play_initial, score_total;
 

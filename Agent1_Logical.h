@@ -41,7 +41,7 @@ class Agent1_Logical: public Struct_Agent
         vector< float > position_reward;
         vector<float> additionnal_data;
 
-        vector<int> coefficients;
+        vector<float> coefficients;
 
         int choix, mode, nb_game2Play_initial, score_total;
 

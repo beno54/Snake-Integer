@@ -23,14 +23,14 @@ Agent1b_Logical::Agent1b_Logical(Grille* senseurs, int nb_game2Play, int decisio
 //    //coef futur
 //    coefficients[4] = 8;
 //    coefficients[5] = 15;
-    coefficients[0] = 4;
-    coefficients[1] = 18;
-    coefficients[2] = 10;
-    coefficients[3] = 37;
+    coefficients[0] = 2;
+    coefficients[1] = 22;
+    coefficients[2] = 16;
+    coefficients[3] = 24;
 
     //coef futur
-    coefficients[4] = 13;
-    coefficients[5] = 18;
+    coefficients[4] = 11;
+    coefficients[5] = 25;
 
     copy_grid = new Grille(Vector2f (250, 100), 450, NULL);
 }
@@ -319,7 +319,7 @@ void Agent1b_Logical::learn_coeff(int mode)
     ofstream logFile;
 
     vector<vector<float> > seeds;
-    for (int i=0; i < 100; i ++)
+    for (int i=0; i < 1000; i ++)
     {
         seeds.push_back({i*5+2, i*3-2, i*20-4});
     }
@@ -347,27 +347,22 @@ void Agent1b_Logical::learn_coeff(int mode)
 
     //MIN COEFF
     int limiteMin0 = 2;
-    int limiteMin1 = 17 ;
-    int limiteMin2 = 10;
-    int limiteMin3 = 34 ;
-    int limiteMin4 = 12;
-    int limiteMin5 = 16 ;
+    int limiteMin1 = 21;
+    int limiteMin2 = 15;
+    int limiteMin3 = 23;
+    int limiteMin4 = 8;
+    int limiteMin5 = 22;
 
     //MAX COEFF
     int limiteMax0 = 5;
-    int limiteMax1 = 20;
-    int limiteMax2 = 13;
-    int limiteMax3 = 37 ;
-    int limiteMax4 = 15;
-    int limiteMax5 = 19;
+    int limiteMax1 = 24;
+    int limiteMax2 = 18;
+    int limiteMax3 = 26;
+    int limiteMax4 = 11;
+    int limiteMax5 = 25;
 
     /*INCREMENTATION*/
-
-
-
-
-
-   coefficients[0]=limiteMin0;
+    coefficients[0]=limiteMin0;
     for ( ;(MAX_COEFF-coefficients[0]) >=0 ;coefficients[0]++)
     {      coefficients[1]=limiteMin1;
 
@@ -440,7 +435,85 @@ void Agent1b_Logical::learn_coeff(int mode)
 
 }
 
+void Agent1b_Logical::learn_cluster(string file_name_coeff)
+{
+    ifstream newPopCsv (file_name_coeff);
+    ofstream logFile;
 
+    vector<vector<float> > seeds;
+    for (int i=0; i < 1000; i ++)
+    {
+        seeds.push_back({i*5+2, i*3-2, i*20-4});
+    }
+
+    vector<vector<float>> coefficients_to_test;
+    vector<float> line_coeff ;
+
+    string c0,c1,c2,c3,c4,c5,score,value,line;
+    string delimiter="," ;
+
+    logFile.open (("../../Logs/Learning_"+ProfilName).c_str(),ios::app);
+    while ( getline ( newPopCsv, line, '\n' ) )
+    {
+        std::stringstream ss(line);
+        line_coeff.clear();
+        getline ( ss, c0, ',' ) ;
+        getline ( ss, c1, ',' ) ;
+        getline ( ss, c2, ',' ) ;
+        getline ( ss, c3, ',' ) ;
+        getline ( ss, c4, ',' ) ;
+        getline ( ss, c5, ',' ) ;
+        getline ( ss, score, ' ' ) ;
+
+        coefficients[0] = std::atof(c0.c_str()) ;
+        coefficients[1] = std::atof(c1.c_str()) ;
+        coefficients[2] = std::atof(c2.c_str()) ;
+        coefficients[3] = std::atof(c3.c_str()) ;
+        coefficients[4] = std::atof(c4.c_str()) ;
+        coefficients[5] = std::atof(c5.c_str()) ;
+
+        cout << coefficients[0]<< " ";
+        cout << coefficients[1]<< " ";
+        cout << coefficients[2]<< " ";
+        cout << coefficients[3]<< " ";
+        cout << coefficients[4]<< " ";
+        cout << coefficients[5]<< " ";
+
+        /*PLAY ON SAME SEEDS*/
+        action->reset(seeds[nb_game2Play]);
+
+        /*COMPUTE GAMES FOR THIS COEFF*/
+        int all_game2Play = 0;
+        while (nb_game2Play > 0)
+        {
+            all_game2Play = nb_game2Play;
+            compute_decision_predict( false);
+            if ((all_game2Play != nb_game2Play) && nb_game2Play)
+            {
+                action->reset(seeds[nb_game2Play]);
+            }
+        }
+
+        /*PRINT*/
+        cout << " , score: " << (float)(score_total/(nb_game2Play_initial *1.0f)) << endl;
+
+        /*LOG DATAS*/
+        for (int i = 0; i < coefficients.size(); i++)
+        {
+            logFile << coefficients[i] << ",";
+        }
+        logFile << (float)(score_total/(nb_game2Play_initial *1.0f)) << endl ;
+
+        /*RESET FOR NEXT COMPUTATION*/
+        score_total = 0;
+        nb_game2Play = nb_game2Play_initial;
+    }
+
+    logFile.close ();
+    // fin du programme
+    nb_game2Play = 0 ;
+
+}
 /*FONCTIONS GET*/
 
 float Agent1b_Logical::get_destination_reward_same_value()

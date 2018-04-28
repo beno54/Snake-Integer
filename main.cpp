@@ -13,13 +13,13 @@ int main (int argc, char* argv[])
     app.setFramerateLimit(20);
     sf::Font font;
     //default value to launch game. 0 is human, 1 is agent 1
-    int option_lancement = 4;
+    int option_lancement = 11;
     vector<float> seeds;
     Grille* ma_grille;
 
     //veriables propre à l'agent
     int affichage = 0 ;
-    int nb_game = 1000;
+    int nb_game = 50;
     int ms_delay = 1000; // ms
 
     if (affichage ==0)ms_delay==0;
@@ -56,7 +56,7 @@ int main (int argc, char* argv[])
     }
     else
     {
-        ProfilName = "agent1_1_exec.csv";
+        ProfilName = "test.csv";
     }
 
     try
@@ -122,8 +122,7 @@ int main (int argc, char* argv[])
     {
         // case 0 appelle qd meme agent 1 constructeur vide pour initialiser son nbgamtoplay à 0
         case 0 :        Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);agent1=new Agent1b_Logical(); break;
-        case 1 ... 4 :  agent1 = new Agent1b_Logical(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
-        case 10 :  agent1 = new Agent1b_Logical(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
+        case 1 ... 15 :  agent1 = new Agent1b_Logical(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
     }
 
 
@@ -163,17 +162,18 @@ int main (int argc, char* argv[])
         //on d?tecte le clique de souris et on fait les actions correspondantes
         //Listenner->listen();
 
-//        switch (option_lancement)
-//        {
-//            case 0 : Listenner->listen();break;
-//            case 1 : agent1->compute_decision(1,affichage);break;
-//            case 2 : agent1->compute_decision(2,affichage);break;
-//            case 3 : agent1->compute_decision(3,affichage);break;
-//            case 4 : agent1->compute_decision(4,affichage);break;
-//            case 10 : agent1->learn_coeff(4);break;
-//        }
-        agent1->compute_decision_predict(affichage);
-        //agent1->learn_coeff(4);
+        switch (option_lancement)
+        {
+            case 0 : Listenner->listen();break;
+            case 1 : agent1->compute_decision(1,affichage);break;
+            case 2 : agent1->compute_decision(2,affichage);break;
+            case 3 : agent1->compute_decision(3,affichage);break;
+            case 4 : agent1->learn_coeff(4);break;
+            case 11 : agent1->learn_cluster("../../Logs/Learn_coeff/test.csv"); break ;
+            case 12 : agent1->compute_decision_predict(affichage);break ;
+        }
+
+
 
         while (app.pollEvent(event))
         {

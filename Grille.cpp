@@ -9,7 +9,7 @@ Grille::Grille(Vector2f posi, int taille, RenderWindow* win)
     this->taille = taille;
     int taille_case = taille/5;
     isOver = false;
-    nbReset = (rand()+2)*3 ;
+    nbReset = 0 ;
     //on initie le numGénérator qui va générer les nombres aléatoires
     numG = new NumGenerator();
 
@@ -197,8 +197,9 @@ void Grille::update_score(int valeur)
 void Grille::reset(vector<float> seed)
 {
     //on supprime l'ancien numG init par le reset de la partie
-    //delete numG;
+    delete numG;
     //on initie le numGénérator qui va générer les nombres aléatoires
+    numG = new NumGenerator(seed[0], seed[1], seed[2]);
 
     for (int i = 0; i < 25; i++)
     {

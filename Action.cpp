@@ -515,7 +515,7 @@ void Action::set_nbTurnPlayed()
     nbTurnPlayed ++;
 }
 
-void Action::log_score( vector<int> additionnal_data)
+void Action::log_score( vector<float> additionnal_data)
 {
         //on copie le contenu du fichiuer temporaire dans le fichier de log
     //ferme le fichier en écriture

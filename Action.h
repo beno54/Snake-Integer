@@ -20,7 +20,7 @@ class Action
         void log_data(vector<Case*> cases_selected);
         void log_data(vector<Case*> cases_selected, vector<float> additionnal_data);
         void log_score();
-        void log_score( vector<int> additionnal_data);
+        void log_score( vector<float> additionnal_data);
         //void log_score(vector<float> additionnal_data);
 
         int get_nbTurnPlayed();
