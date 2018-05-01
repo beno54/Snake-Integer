@@ -13,14 +13,14 @@ int main (int argc, char* argv[])
     app.setFramerateLimit(20);
     sf::Font font;
     //default value to launch game. 0 is human, 1 is agent 1
-    int option_lancement = 11;
+    int option_lancement = 12;
     vector<float> seeds;
     Grille* ma_grille;
 
     //veriables propre à l'agent
     int affichage = 0 ;
-    int nb_game = 50;
-    int ms_delay = 1000; // ms
+    int nb_game = 2000;
+    int ms_delay = 2000; // ms
 
     if (affichage ==0)ms_delay==0;
 
@@ -56,7 +56,7 @@ int main (int argc, char* argv[])
     }
     else
     {
-        ProfilName = "test.csv";
+        ProfilName = "agent1_10games_final.csv";
     }
 
     try
@@ -169,7 +169,7 @@ int main (int argc, char* argv[])
             case 2 : agent1->compute_decision(2,affichage);break;
             case 3 : agent1->compute_decision(3,affichage);break;
             case 4 : agent1->learn_coeff(4);break;
-            case 11 : agent1->learn_cluster("../../Logs/Learn_coeff/test.csv"); break ;
+            case 11 : agent1->learn_cluster("../../Logs/Learn_coeff/Learning_agent1_10games_newPop5.csv"); break ;
             case 12 : agent1->compute_decision_predict(affichage);break ;
         }
 

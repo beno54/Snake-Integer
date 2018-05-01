@@ -107,78 +107,93 @@ void Action::log_data(vector<Case*> cases_selected)
     double GridAverage = 0;
     int maxvalue = 0;
     int caseSelectOrNot[25]={0};
-
     for (int i=0;i<25;i++)
     {
         int currentvalue = Cases[i]->get_value();
 
         //test max value
-        if (currentvalue>maxvalue) maxvalue = currentvalue;
+        //if (currentvalue>maxvalue) maxvalue = currentvalue;
 
         //calcul moyenne
-        GridAverage += currentvalue ;
+        //GridAverage += currentvalue ;
         //Logs Grid
         tmpFile << currentvalue ;
         tmpFile << "," ;
     }
+    /* LOG ID OF SELECTED CASE BETWEEN 1 AND 25 */
+    tmpFile << (cases_selected.back()->get_id()) ;
 
-    //calcul moyenne
-    GridAverage /= 25 ;
-
-    //Log  moyenne de la grille
-    tmpFile << GridAverage ;
-    tmpFile << "," ;
-
-    //Log score grille courrante
-    tmpFile << grid->get_Case_score()->get_value() ;
-    tmpFile << "," ;
-
-    //Logs Valeur max
-    tmpFile << maxvalue ;
-    tmpFile << "," ;
-
-    //Logs Cases s�lectionn�es
-    for (int e=0;e<cases_selected.size();e++)
-    {
-        caseSelectOrNot[cases_selected[e]->get_id()-1]=1;
-    }
-
-    for (int e=0;e<25;e++)
-    {
-        tmpFile << caseSelectOrNot[e] ;
-        tmpFile << "," ;
-    }
-
-     //Log case en fin de tableau ou non
-     for (int e=0;e<25;e++)
-     {
-        if ((cases_selected[cases_selected.size()-1]->get_id()-1) == e)
-        {
-            tmpFile << 1;
-        }
-        else
-        {
-            tmpFile << 0 ;
-        }
-        tmpFile << "," ;
-     }
-
-     //Log de valeur s�lectionn�e
-     tmpFile << cases_selected[0]->get_value() ;
-     tmpFile << "," ;
-
-     //Log de nombre de cases s�lectionn�es
-     tmpFile << cases_selected.size() ;
-     tmpFile << "," ;
-
-     //Log valeur ajout�e au score = nb case s�lectionn�e * valeur s�lecitonn�e
-     tmpFile << cases_selected.size()* cases_selected[0]->get_value() ;
-     tmpFile << "," ;
-
-     //Log Nombres de groupements de m�me valeur
-     tmpFile << nbPossibilities;
-     //cout << nbPossibilities << endl ;
-     //Log fin de log
+//    for (int i=0;i<25;i++)
+//    {
+//        int currentvalue = Cases[i]->get_value();
+//
+//        //test max value
+//        if (currentvalue>maxvalue) maxvalue = currentvalue;
+//
+//        //calcul moyenne
+//        GridAverage += currentvalue ;
+//        //Logs Grid
+//        tmpFile << currentvalue ;
+//        tmpFile << "," ;
+//    }
+//
+//    //calcul moyenne
+//    GridAverage /= 25 ;
+//
+//    //Log  moyenne de la grille
+//    tmpFile << GridAverage ;
+//    tmpFile << "," ;
+//
+//    //Log score grille courrante
+//    tmpFile << grid->get_Case_score()->get_value() ;
+//    tmpFile << "," ;
+//
+//    //Logs Valeur max
+//    tmpFile << maxvalue ;
+//    tmpFile << "," ;
+//
+//    //Logs Cases s�lectionn�es
+//    for (int e=0;e<cases_selected.size();e++)
+//    {
+//        caseSelectOrNot[cases_selected[e]->get_id()-1]=1;
+//    }
+//
+//    for (int e=0;e<25;e++)
+//    {
+//        tmpFile << caseSelectOrNot[e] ;
+//        tmpFile << "," ;
+//    }
+//
+//     //Log case en fin de tableau ou non
+//     for (int e=0;e<25;e++)
+//     {
+//        if ((cases_selected[cases_selected.size()-1]->get_id()-1) == e)
+//        {
+//            tmpFile << 1;
+//        }
+//        else
+//        {
+//            tmpFile << 0 ;
+//        }
+//        tmpFile << "," ;
+//     }
+//
+//     //Log de valeur s�lectionn�e
+//     tmpFile << cases_selected[0]->get_value() ;
+//     tmpFile << "," ;
+//
+//     //Log de nombre de cases s�lectionn�es
+//     tmpFile << cases_selected.size() ;
+//     tmpFile << "," ;
+//
+//     //Log valeur ajout�e au score = nb case s�lectionn�e * valeur s�lecitonn�e
+//     tmpFile << cases_selected.size()* cases_selected[0]->get_value() ;
+//     tmpFile << "," ;
+//
+//     //Log Nombres de groupements de m�me valeur
+//     tmpFile << nbPossibilities;
+//     //cout << nbPossibilities << endl ;
+//     //Log fin de log
 
     tmpFile << std::endl ;
      //cout << "Ecriture dans fichier de logs" <<endl ;

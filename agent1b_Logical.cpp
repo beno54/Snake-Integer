@@ -23,14 +23,14 @@ Agent1b_Logical::Agent1b_Logical(Grille* senseurs, int nb_game2Play, int decisio
 //    //coef futur
 //    coefficients[4] = 8;
 //    coefficients[5] = 15;
-    coefficients[0] = 2;
-    coefficients[1] = 22;
-    coefficients[2] = 16;
-    coefficients[3] = 24;
+    coefficients[0] = 0.535107;
+    coefficients[1] = 0.951775;
+    coefficients[2] = 0.689043;
+    coefficients[3] = 6.38658;
 
     //coef futur
-    coefficients[4] = 11;
-    coefficients[5] = 25;
+    coefficients[4] = 0.111111;
+    coefficients[5] = 1.32639;
 
     copy_grid = new Grille(Vector2f (250, 100), 450, NULL);
 }
@@ -265,7 +265,7 @@ void Agent1b_Logical::compute_decision_predict(bool affichage)
                 action->affiche_cases_selected(all_possibilities[choix], decision_delay);
             }
 
-            //action->log_data(all_possibilities[choix], additionnal_data);
+            action->log_data(all_possibilities[choix]);
 
             action->compute_score(all_possibilities[choix]);
         }
@@ -343,23 +343,23 @@ void Agent1b_Logical::learn_coeff(int mode)
     /*set limite for each coeff (max and min )*/
 
     //SCALE
-    int MAX_COEFF = 100 ;
+    int MAX_COEFF = 10 ;
 
     //MIN COEFF
-    int limiteMin0 = 2;
-    int limiteMin1 = 21;
-    int limiteMin2 = 15;
-    int limiteMin3 = 23;
-    int limiteMin4 = 8;
-    int limiteMin5 = 22;
+    int limiteMin0 = 0;
+    int limiteMin1 = 0;
+    int limiteMin2 = 0;
+    int limiteMin3 = 0;
+    int limiteMin4 = 0;
+    int limiteMin5 = 0;
 
     //MAX COEFF
-    int limiteMax0 = 5;
-    int limiteMax1 = 24;
-    int limiteMax2 = 18;
-    int limiteMax3 = 26;
-    int limiteMax4 = 11;
-    int limiteMax5 = 25;
+    int limiteMax0 = 10;
+    int limiteMax1 = 10;
+    int limiteMax2 = 10;
+    int limiteMax3 = 10;
+    int limiteMax4 = 10;
+    int limiteMax5 = 10;
 
     /*INCREMENTATION*/
     coefficients[0]=limiteMin0;
@@ -441,7 +441,7 @@ void Agent1b_Logical::learn_cluster(string file_name_coeff)
     ofstream logFile;
 
     vector<vector<float> > seeds;
-    for (int i=0; i < 1000; i ++)
+    for (int i=0; i < 100000; i ++)
     {
         seeds.push_back({i*5+2, i*3-2, i*20-4});
     }
