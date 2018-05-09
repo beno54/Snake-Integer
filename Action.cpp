@@ -68,7 +68,7 @@ void Action::compute_score(vector<Case*> cases_selected)
     nbTurnPlayed ++;
     if (nbPossibilities==0)
     {
-        //cout << " GAME OVER : " <<  grid->get_Case_score()->get_value() << endl ;
+        cout << " GAME OVER : " <<  grid->get_Case_score()->get_value() << endl ;
         grid->set_isOver(true);
         //log_score();
         //reinitialize_nbTurnPlayed();

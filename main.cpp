@@ -2,6 +2,7 @@
 #include "Agent1b_Logical.h"
 #include "Button.h"
 #include "string.h"
+#include "agent2.h"
 //#include "c_api.h"
 
 
@@ -13,14 +14,14 @@ int main (int argc, char* argv[])
     app.setFramerateLimit(20);
     sf::Font font;
     //default value to launch game. 0 is human, 1 is agent 1
-    int option_lancement = 12;
+    int option_lancement = 20;
     vector<float> seeds;
     Grille* ma_grille;
 
     //veriables propre à l'agent
-    int affichage = 0 ;
-    int nb_game = 2000;
-    int ms_delay = 2000; // ms
+    int affichage = 1 ;
+    int nb_game = 50;
+    int ms_delay = 0; // ms
 
     if (affichage ==0)ms_delay==0;
 
@@ -56,7 +57,7 @@ int main (int argc, char* argv[])
     }
     else
     {
-        ProfilName = "agent1_10games_final.csv";
+        ProfilName = "agent2.csv";
     }
 
     try
@@ -78,51 +79,17 @@ int main (int argc, char* argv[])
         ma_grille = new Grille(Vector2f (250, 100), 450, &app);
     }
 
-//    std::string command2 = "py";
-//    system(command2.c_str());
-//
-//    command2 = "import SuperNNSnakeInteger_b";
-//    system(command2.c_str());
 
-//    std::string filename = "SuperNNSnakeInteger_b.py train ModelNN Agent1_to_train.csv";
-//    std::string command = "SuperNNSnakeInteger_b.train_with_model('ModelNN', '1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5')";
-//    std::string command = "py SuperNNSnakeInteger_b.train_with_model('ModelNN', 'Agent1_to_train.csv')";
-
-//    std::string command = "py SuperNNSnakeInteger_b.py predict ModelNN 1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5";
-//    system(command.c_str());
-
-//    ///Test d'existance du fichier
-//    ifstream fichier("log.py");
-//
-//    if (fichier.fail()) {
-//        cout << "Fichier de script introuvable : " << "log.py" <<"\n";
-//        return 0;
-//    }
-//
-//    ///Lance le script
-//    cout << "\n--- Execution du script : " << "log.py" <<" ---\n";
-//
-//    // Ouvre le script python a executer
-//    FILE* pyFile = fopen("log.py", "r");
-//
-//    Py_Initialize();
-//
-//
-//    PyRun_SimpleString("");
-//    // Execute le script
-//    PyRun_AnyFile(pyFile, "log.py");
-//
-//    Py_Finalize();
-
-
-    EventListenner* Listenner;
-    Agent1b_Logical* agent1;
+    EventListenner* Listenner = NULL;
+    Agent1b_Logical* agent1 = NULL;
+    agent2* my_agent2 = NULL;
     Button* but_start = new Button(100, Vector2f (800, 100), font, ma_grille);
     switch (option_lancement)
     {
         // case 0 appelle qd meme agent 1 constructeur vide pour initialiser son nbgamtoplay à 0
         case 0 :        Listenner = new  EventListenner(&app,ma_grille, but_start,ProfilName);agent1=new Agent1b_Logical(); break;
         case 1 ... 15 :  agent1 = new Agent1b_Logical(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
+        case 20 ... 30 :  my_agent2 = new agent2(ma_grille, nb_game, ms_delay,ProfilName, option_lancement); break;
     }
 
 
@@ -146,8 +113,10 @@ int main (int argc, char* argv[])
         app.display();
     }
 
+
+
 	// Start the game loop
-    while (app.isOpen() && (agent1->has_games2Play() || option_lancement == 0))
+    while (app.isOpen())
     {
         sf::Event event;
         if (affichage)
@@ -171,6 +140,7 @@ int main (int argc, char* argv[])
             case 4 : agent1->learn_coeff(4);break;
             case 11 : agent1->learn_cluster("../../Logs/Learn_coeff/Learning_agent1_10games_newPop5.csv"); break ;
             case 12 : agent1->compute_decision_predict(affichage);break ;
+            case 20 : my_agent2->compute_decision(0, affichage);break ;
         }
 
 
@@ -186,6 +156,21 @@ int main (int argc, char* argv[])
         {
             // Update the window
             app.display();
+        }
+
+        if (my_agent2!=NULL)
+        {
+            if (!my_agent2->has_games2Play())
+            {
+                break;
+            }
+        }
+        if (agent1!=NULL)
+        {
+            if (!agent1->has_games2Play())
+            {
+                break;
+            }
         }
     }
 

@@ -2,8 +2,8 @@
 #define AGENT1B_LOGICAL_H
 #include "Struct_Agent.h"
 
-#include <Python.h>
-#include "pyhelper.hpp"
+//#include <Python.h>
+//#include "pyhelper.hpp"
 
 
 
@@ -42,11 +42,12 @@ class Agent1b_Logical: public Struct_Agent
         vector< float > destination_base3_reward;
         vector< float > position_reward;
         vector<float> additionnal_data;
+        vector<float> seeds;
         Grille* copy_grid;
         vector<float> coefficients;
 
         int choix, mode, nb_game2Play_initial, score_total;
 
-        CPyInstance hInstance;
+//        CPyInstance hInstance;
 };
 #endif // AGENT1B_LOGICAL_H
