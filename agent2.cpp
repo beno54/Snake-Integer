@@ -11,8 +11,29 @@ agent2::agent2(Grille* senseurs, int nb_game2Play, int decision_delay,string Pro
     nb_game2Play_initial = nb_game2Play;
 
     /*Import du script*/
-	CPyObject pName = PyUnicode_FromString("tettt");
-	CPyObject pModule = PyImport_Import(pName);
+	pName = PyUnicode_FromString("keras_CNN");
+	pModule = PyImport_Import(pName);
+	if(pModule)
+	{
+	    /*Appel de la fonction de prediction*/
+		CPyObject pFunc2 = PyObject_GetAttrString(pModule, "load_models");
+
+		if(pFunc2 && PyCallable_Check(pFunc2))
+		{
+		    cout << "Import des modeles ok." << endl;
+		    /*Recuperation de la prediction (list de float)*/
+		    CPyObject pValue = PyObject_CallObject(pFunc2, NULL);
+		}
+		else
+		{
+			printf("ERROR: function getInteger()\n");
+		}
+
+	}
+	else
+	{
+		printf("ERROR: Module not imported\n");
+	}
 }
 
 agent2::agent2(): Struct_Agent()
@@ -81,15 +102,10 @@ void agent2::convert_grid2String()
 
 void agent2::call_tensorflow()
 {
-    /*PYTHON START*/
-    /*Import du script*/
-	CPyObject pName = PyUnicode_FromString("tettt");
-	CPyObject pModule = PyImport_Import(pName);
-
 	if(pModule)
 	{
 	    /*Appel de la fonction de prediction*/
-		CPyObject pFunc2 = PyObject_GetAttrString(pModule, "predict2model");
+		CPyObject pFunc2 = PyObject_GetAttrString(pModule, "predict_2_models");
 
 		/*init des param de la fonction (grille d'entree)*/
 		const char *c = param.c_str();
@@ -200,7 +216,6 @@ void agent2::call_tensorflow()
 	{
 		printf("ERROR: Module not imported\n");
 	}
-
 	/*PYTHON END*/
 }
 
@@ -210,18 +225,27 @@ void agent2::compute_all_possibilities()
     all_possibilities.clear();
     vector<Case*>  tab_group = senseurs->get_Cases();
 
-    int indice = 0;
-    vector<Case*> racine;
-    racine.push_back(tab_group[sorted_ind_dest.front()]);
-    deep_course(racine);
-
-    while (all_possibilities.size() < 1)
+    for (int i = 0; i < tab_group.size(); i ++)
     {
-        racine.clear();
-        racine.push_back(tab_group[sorted_ind_dest[indice]]);
-        deep_course(racine);
-        indice ++;
+            vector<Case*> racine;
+            racine.push_back(tab_group[i]);
+            deep_course(racine);
     }
+
+
+
+//    int indice = 0;
+//    vector<Case*> racine;
+//    racine.push_back(tab_group[sorted_ind_dest.front()]);
+//    deep_course(racine);
+//
+//    while (all_possibilities.size() < 1)
+//    {
+//        racine.clear();
+//        racine.push_back(tab_group[sorted_ind_dest[indice]]);
+//        deep_course(racine);
+//        indice ++;
+//    }
 }
 
 
@@ -235,31 +259,53 @@ void agent2::compute_decision(int mode,bool affichage)
 
         compute_all_possibilities();
 
+        vector< vector<Case*> > size_possibilities;
         bool choice = false;
         /*Insertion de la new proba dans la liste*/
         for (int j = 0 ; j < sorted_ind_nb.size() && !choice; j++ )
         {
             /*Insertion de la new proba dans la liste*/
-            for (int i = 0 ; i < all_possibilities.size() && !choice; i++ )
+            for (int i = 0 ; i < all_possibilities.size(); i++ )
             {
                 if ((all_possibilities[i].size()) == sorted_ind_nb[j])
                 {
+                    size_possibilities.push_back(all_possibilities[i]);
                     choice = true;
-                    choix = i;
+//                    choix = i;
+                }
+            }
+        }
+
+        float best_prob = 0;
+        choix = 0;
+        for (int i = 0 ; i < size_possibilities.size(); i++ )
+        {
+            int id = (size_possibilities[i].back()->get_id())-1;
+            for (int j = 0 ; j < sorted_ind_dest.size(); j++ )
+            {
+                if (sorted_ind_dest[j] == id)
+                {
+                    if (best_prob < sorted_cases_dest[j])
+                    {
+                        best_prob = sorted_cases_dest[j];
+                        choix = i;
+                    }
+
+                    break;
                 }
             }
         }
 
         //choix = rand() % all_possibilities.size();
 
-        if (action->test_case_selected(all_possibilities[choix]) == true)
+        if (action->test_case_selected(size_possibilities[choix]) == true)
         {
             if (affichage == true)
             {
                 action->affiche_cases_selected(all_possibilities[choix], decision_delay);
             }
 
-            //action->log_data(all_possibilities[choix], additionnal_data);
+            action->log_data(all_possibilities[choix], additionnal_data);
 
             action->compute_score(all_possibilities[choix]);
         }
@@ -267,7 +313,7 @@ void agent2::compute_decision(int mode,bool affichage)
     else
     {
         score_total += senseurs->get_Case_score()->get_value();
-        //action->log_score(coefficients);
+        action->log_score();
         action->reset();
         nb_game2Play --;
     }

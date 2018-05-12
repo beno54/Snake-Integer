@@ -37,6 +37,8 @@ class agent2: public Struct_Agent
         vector<int > sorted_ind_nb;
 
         CPyInstance hInstance;
+        CPyObject pName;
+        CPyObject pModule;
 };
 #endif // AGENT2_H
 
