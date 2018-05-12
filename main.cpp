@@ -14,13 +14,13 @@ int main (int argc, char* argv[])
     app.setFramerateLimit(20);
     sf::Font font;
     //default value to launch game. 0 is human, 1 is agent 1
-    int option_lancement = 20;
+    int option_lancement = 11;
     vector<float> seeds;
     Grille* ma_grille;
 
     //veriables propre à l'agent
-    int affichage = 1 ;
-    int nb_game = 50;
+    int affichage = 0 ;
+    int nb_game =200;
     int ms_delay = 0; // ms
 
     if (affichage ==0)ms_delay==0;
@@ -57,7 +57,7 @@ int main (int argc, char* argv[])
     }
     else
     {
-        ProfilName = "agent2.csv";
+        ProfilName = "100Games_To_Normalize_2.csv";
     }
 
     try
@@ -183,6 +183,7 @@ int main (int argc, char* argv[])
             case 0 : delete (Listenner);;break;
             case 1 ... 4 : delete (agent1);break;
             case 10 :  delete (agent1);break;
+            case 20 : delete(my_agent2);break;
         }
 
 

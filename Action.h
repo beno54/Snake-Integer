@@ -42,8 +42,10 @@ class Action
         Grille *grid;
         ofstream logFile, scoreFile, tmpFile ;
         int nbTurnPlayed,nbPossibilities;
+        float Grid_average_value;
         time_t timenow ;
         vector< vector<Case*> > groups_in_grid;
+
 
 };
 

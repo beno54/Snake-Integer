@@ -109,8 +109,11 @@ void Action::log_data(vector<Case*> cases_selected)
     int caseSelectOrNot[25]={0};
     for (int i=0;i<25;i++)
     {
-        int currentvalue = Cases[i]->get_value();
-
+        int currentvalue = 0;
+        if ((Cases[i]->get_idGroup()) != 0 )
+        {
+            currentvalue = Cases[i]->get_value();
+        }
         //test max value
         //if (currentvalue>maxvalue) maxvalue = currentvalue;
 
@@ -121,8 +124,15 @@ void Action::log_data(vector<Case*> cases_selected)
         tmpFile << "," ;
     }
     /* LOG ID OF SELECTED CASE BETWEEN 1 AND 25 */
-    tmpFile << (cases_selected.back()->get_id()) ;
+    tmpFile << ((cases_selected.back()->get_id())-1) ;
+    tmpFile << "," ;
+    /*log size */
+    tmpFile << cases_selected.size() ;
+    //tmpFile << nbPossibilities << "," ;
+    //tmpFile << Grid_average_value  << ",";
 
+
+    //tmpFile << cases_selected[0]->get_value()  ;
 //    for (int i=0;i<25;i++)
 //    {
 //        int currentvalue = Cases[i]->get_value();
@@ -294,16 +304,22 @@ void Action::log_data(vector<Case*> cases_selected, vector<float> additionnal_da
 void Action::compute_NbPossibilities_in_grid()
 {
     nbPossibilities = 0;
-
+    Grid_average_value = 0 ;
     for (int i = 0; i < groups_in_grid.size(); i ++)
     {
         if (groups_in_grid[i].size() == 1)
         {
+            groups_in_grid[i][0]->set_idGroup(0);
             groups_in_grid.erase(groups_in_grid.begin()+i);
             i --;
         }
+        else
+        {
+            Grid_average_value += groups_in_grid[i].size() ;
+        }
     }
     nbPossibilities = groups_in_grid.size();
+    Grid_average_value /= nbPossibilities ;
 }
 /*
 renvoie le nombre de possibilit�s restantes !

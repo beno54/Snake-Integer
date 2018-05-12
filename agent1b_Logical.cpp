@@ -319,7 +319,7 @@ void Agent1b_Logical::learn_coeff(int mode)
     ofstream logFile;
 
     vector<vector<float> > seeds;
-    for (int i=0; i < 1000; i ++)
+    for (int i=0; i < 101; i ++)
     {
         seeds.push_back({i*5+2, i*3-2, i*20-4});
     }
@@ -441,7 +441,7 @@ void Agent1b_Logical::learn_cluster(string file_name_coeff)
     ofstream logFile;
 
     vector<vector<float> > seeds;
-    for (int i=0; i < 100000; i ++)
+    for (int i=0; i < 201; i ++)
     {
         seeds.push_back({i*5+2, i*3-2, i*20-4});
     }
